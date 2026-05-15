@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { shipState } from '../lib/shipState.svelte';
+  import { shipState } from '../../lib/shipState.svelte';
   let { 
     options, 
     value = $bindable(), 

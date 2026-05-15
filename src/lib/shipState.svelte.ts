@@ -1,23 +1,37 @@
 import hulls from '../data/hulls.json';
 import constants from '../data/constants.json';
 import reactors from '../data/reactors.json';
-import engines from '../data/engines.json';
+import rawEngines from '../data/engines.json'; // We import this as raw data
 import fittings from '../data/fittings.json';
 import defenses from '../data/defenses.json';
 import weapons from '../data/weapons.json';
+import type { ActiveCondition, Engine } from './types'; // Import the new blueprint
+
+// Force TypeScript to accept the new JSON structure
+const engines = rawEngines as unknown as Engine[];
 
 class ShipBuilderState {
   name = $state("Unnamed Ship");
   #hull = $state(hulls.find(h => h.hullType === "Free Merchant") as typeof hulls[0]);
   reactor = $state(reactors[0] as typeof reactors[0]);
-  engine = $state(engines.find(e => e.parentEngine === "Ion Cluster") as typeof engines[0]);
+  
+  // 1. Initialize the engine safely using the NEW key (engineName)
+  _engine = $state<Engine | null>(engines.find(e => e.engineName === "Ion Cluster") || null);
+  
   components = $state<any[]>([]);
   currentHealth = $state(0);
+  currentRI = $state(0);
+  activeConditions = $state<ActiveCondition[]>([]);
+  
+  // 2. The propulsion states (No duplicates!)
+  activeFuel = $state<string | null>(null);
+  activeMode = $state<string | null>(null);
+  currentFuel = $state(0);
 
   constructor() {
     this.currentHealth = this.hull.health; 
+    this.currentRI = this.reactor?.reactorIntegrity || 6;
   }
-
   get hull() {
     return this.#hull;
   }
@@ -26,6 +40,26 @@ class ShipBuilderState {
     this.#hull = newHull;
     this.components = [];
     this.currentHealth = newHull.health; // Set to max HP on load
+  }
+
+  get engine(): Engine | null {
+    return this._engine;
+  }
+
+  set engine(newEngine: any) {
+    if (!newEngine) {
+      this._engine = null;
+      return;
+    }
+    
+    // LEGACY UPGRADE: If it's an old save file using 'parentEngine', intercept and upgrade it
+    if (newEngine.parentEngine && !newEngine.engineName) {
+      this._engine = engines.find(e => e.engineName === newEngine.parentEngine) || null;
+      return;
+    }
+    
+    // MODERN PATH: If it's selected from the dropdown, it's already the perfect live object. Trust it!
+    this._engine = newEngine;
   }
 
   getTier(className: string) {
@@ -58,8 +92,13 @@ class ShipBuilderState {
       return;
     }
 
-    // New item entry
-    this.components.push({ item, category, id: crypto.randomUUID(), quantity: 1 });
+    this.components.push({ 
+      item, 
+      category, 
+      id: crypto.randomUUID(), 
+      quantity: 1, 
+      status: "Online" 
+    });
   }
 
   removeComponent(id: string, removeAll = false) {
@@ -99,6 +138,25 @@ class ShipBuilderState {
     return baseItemCost;
   }
 
+  advanceTravelSegment() {
+    // Increases the timer on all active conditions
+    for (const cond of this.activeConditions) {
+      cond.segmentsActive += 1;
+    }
+  }
+
+  addCondition(conditionTemplate: Omit<ActiveCondition, 'id' | 'segmentsActive'>) {
+    this.activeConditions.push({
+      ...conditionTemplate,
+      id: crypto.randomUUID(),
+      segmentsActive: 0
+    });
+  }
+
+  removeCondition(id: string) {
+    this.activeConditions = this.activeConditions.filter(c => c.id !== id);
+  }
+
   get multipliers() {
     return constants.find(c => c.hullClass === this.hull.class)!;
   }
@@ -115,7 +173,8 @@ class ShipBuilderState {
   get totalHardpoints() { return this.hull.hardpoints; }
 
   get usedMass() { 
-    const coreMass = (this.reactor.baseMass + this.engine.baseMass) * this.multipliers.massPowerMult;
+    // Added optional chaining (?.) and a fallback (|| 0)
+    const coreMass = (this.reactor.baseMass + (this.engine?.baseMass || 0)) * this.multipliers.massPowerMult;
     let mass = coreMass;
 
     for (const comp of this.components) {
@@ -128,7 +187,8 @@ class ShipBuilderState {
   }
 
   get usedPower() { 
-    let power = this.engine.basePower * this.multipliers.massPowerMult;
+    // Added optional chaining (?.) and a fallback (|| 0)
+    let power = (this.engine?.basePower || 0) * this.multipliers.massPowerMult;
 
     for (const comp of this.components) {
       const base = comp.item.basePower ?? comp.item.power ?? 0;
@@ -150,11 +210,11 @@ class ShipBuilderState {
   get totalCost() {
     let cost = this.hull.cost;
     
-    const coreCost = (this.reactor.baseCost || 0) + (this.engine.baseCost || 0);
+    // Added optional chaining (?.) and a fallback (|| 0)
+    const coreCost = (this.reactor.baseCost || 0) + (this.engine?.baseCost || 0);
     cost += (coreCost * this.multipliers.costMult);
     
     for (const comp of this.components) {
-      // Reuse the logic!
       cost += this.calculateItemCost(comp.item) * comp.quantity;
     }
     
@@ -211,6 +271,32 @@ class ShipBuilderState {
       multiplierBonus += (comp.item.maxCrewMultiplier ?? 0) * comp.quantity;
     }
     return baseHullCrew + flatBonus + Math.floor(baseHullCrew * multiplierBonus);
+  }
+
+  get totalCargo() {
+    let cargoModules = 0;
+
+    // 1. Find how many "Cargo space" fittings are installed
+    for (const comp of this.components) {
+      const name = (comp.item.fittingName || comp.item.name || "").toLowerCase();
+      if (name.includes("cargo space")) {
+        cargoModules += comp.quantity;
+      }
+    }
+
+    // 2. Determine the multiplier based on the Hull Class
+    const hullClass = this.hull?.class?.toLowerCase() || "fighter";
+    let multiplier = 0;
+    
+    if (hullClass === "fighter") multiplier = 2;
+    else if (hullClass === "frigate") multiplier = 20;
+    else if (hullClass === "cruiser") multiplier = 200;
+    else if (hullClass === "capital") multiplier = 2000;
+
+    // 3. Add base hull cargo (if your hulls.json has it) + the calculated module cargo
+    const baseHullCargo = 0; 
+    
+    return baseHullCargo + (cargoModules * multiplier);
   }
 }
 

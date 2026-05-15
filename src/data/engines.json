@@ -1,74 +1,243 @@
 [
   {
-    "parentEngine": "Methalox Rocket",
+    "id": "eng_methalox",
+    "engineName": "Methalox Rocket",
+    "class": "Fighter",
     "baseCost": 2000,
     "basePower": 0,
     "baseMass": 1,
-    "class": "Fighter",
-    "description": "Chemical brute-force thruster, commonly called the Matchstick. Burns methane and liquid oxygen for a brief, violent kick. High thrust, zero endurance - no one uses these for interplanetary work, but every shuttle, emergency pod, and surface lander relies on one."
+    "description": "Chemical full-flow staged combustion engine. Burns methane and liquid oxygen for a brief, violent kick. High thrust, zero endurance - no one uses these for interplanetary work, but every shuttle, emergency pod, and surface lander relies on one.",
+    "availableFuels": ["Methalox"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "Methalox",
+        "mode": "Standard",
+        "efficiency": 10,
+        "twrG": 5,
+        "fuelMix": [
+          { "type": "CH4", "ratio": 1 },
+          { "type": "LOX", "ratio": 1 }
+        ]
+      }
+    ]
   },
   {
-    "parentEngine": "Ion Cluster",
+    "id": "eng_ion_cluster",
+    "engineName": "Ion Cluster",
+    "class": "Fighter",
     "baseCost": 5000,
     "basePower": 1,
     "baseMass": 1,
-    "class": "Fighter",
-    "description": "A cluster of gridded ion thrusters that sip argon so slowly you'll die of old age before the tank runs dry. Acceleration is measured in milligees, but fuel is cheap and the engine survives everything short of a direct missile hit."
+    "description": "A cluster of gridded ion thrusters that sip argon so slowly you'll die of old age before the tank runs dry. Acceleration is measured in milligees, but fuel is cheap and the engine survives everything short of a direct missile hit.",
+    "availableFuels": ["Argon", "Xenon"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "Argon",
+        "mode": "Standard",
+        "efficiency": 100,
+        "twrG": 0.05,
+        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+      },
+      {
+        "fuel": "Xenon",
+        "mode": "Standard",
+        "efficiency": 250,
+        "twrG": 0.05,
+        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+      }
+    ]
   },
   {
-    "parentEngine": "VASIMR",
+    "id": "eng_vasimr",
+    "engineName": "VASIMR",
+    "class": "Fighter",
     "baseCost": 15000,
     "basePower": 2,
     "baseMass": 1,
-    "class": "Fighter",
-    "description": "A variable-mode magnetoplasma rocket that can switch between high-efficiency cruise and high-thrust sprint. Respectable performance on argon, genuinely useful on hydrogen."
+    "description": "A variable-mode magnetoplasma rocket that can switch between high-efficiency cruise and high-thrust sprint. Respectable performance on argon, genuinely useful on hydrogen.",
+    "availableFuels": ["Argon", "Xenon", "LH2"],
+    "availableModes": ["Mode 1 (Efficient)", "Mode 2 (Afterburner)"],
+    "configs": [
+      {
+        "fuel": "Argon",
+        "mode": "Mode 1 (Efficient)",
+        "efficiency": 100,
+        "twrG": 0.1,
+        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+      },
+      {
+        "fuel": "Argon",
+        "mode": "Mode 2 (Afterburner)",
+        "efficiency": 180,
+        "twrG": 0.25,
+        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+      },
+      {
+        "fuel": "Xenon",
+        "mode": "Mode 1 (Efficient)",
+        "efficiency": 200,
+        "twrG": 0.1,
+        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+      },
+      {
+        "fuel": "Xenon",
+        "mode": "Mode 2 (Afterburner)",
+        "efficiency": 350,
+        "twrG": 0.25,
+        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+      },
+      {
+        "fuel": "LH2",
+        "mode": "Mode 1 (Efficient)",
+        "efficiency": 300,
+        "twrG": 0.1,
+        "fuelMix": [{ "type": "LH2", "ratio": 1 }]
+      },
+      {
+        "fuel": "LH2",
+        "mode": "Mode 2 (Afterburner)",
+        "efficiency": 550,
+        "twrG": 0.25,
+        "fuelMix": [{ "type": "LH2", "ratio": 1 }]
+      }
+    ]
   },
   {
-    "parentEngine": "Nuclear Saltwater",
+    "id": "eng_nsw",
+    "engineName": "Nuclear Saltwater",
+    "class": "Fighter",
     "baseCost": 10000,
     "basePower": 1,
     "baseMass": 2,
-    "class": "Fighter",
-    "description": "A continuous nuclear detonation magnetically channeled out the back. Acceleration is brutal, efficiency is mediocre, and every traffic control system in the system flags you as a war crime waiting to happen."
+    "description": "A continuous nuclear detonation magnetically channeled out the back. Acceleration is brutal, efficiency is mediocre, and every traffic control system in the system flags you as a war crime waiting to happen.",
+    "availableFuels": ["NSW"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "NSW",
+        "mode": "Standard",
+        "efficiency": 500,
+        "twrG": 2,
+        "fuelMix": [{ "type": "NSW", "ratio": 1 }]
+      }
+    ]
   },
   {
-    "parentEngine": "Fission Fragment",
+    "id": "eng_fission_frag",
+    "engineName": "Fission Fragment",
+    "class": "Frigate",
     "baseCost": 60000,
     "basePower": 1,
     "baseMass": 2,
-    "class": "Frigate",
-    "description": "A fission fragment rocket that can cruise almost forever on a single load of pellets, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable."
+    "description": "A fission fragment rocket that can cruise almost forever on a single load of pellets, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable.",
+    "availableFuels": ["Pellets"],
+    "availableModes": ["Mode 1 (Efficient)", "Mode 2 (Afterburner)"],
+    "configs": [
+      {
+        "fuel": "Pellets",
+        "mode": "Mode 1 (Efficient)",
+        "efficiency": 11000,
+        "twrG": 0.01,
+        "fuelMix": [{ "type": "Pellets", "ratio": 1 }]
+      },
+      {
+        "fuel": "Pellets",
+        "mode": "Mode 2 (Afterburner)",
+        "efficiency": 1000,
+        "twrG": 0.15,
+        "fuelMix": [
+          { "type": "Pellets", "ratio": 1 },
+          { "type": "LH2", "ratio": 11 }
+        ]
+      }
+    ]
   },
   {
-    "parentEngine": "Tokamak",
+    "id": "eng_tokamak",
+    "engineName": "Tokamak",
+    "class": "Frigate",
     "baseCost": 40000,
     "basePower": 2,
     "baseMass": 2,
-    "class": "Frigate",
-    "description": "The standard fusion drive of the 26th century. Burns deuterium-helium-3 cleanly enough to make atmospheric flight viable, though it drinks a full fuel cell per segment when doing so. Respectable thrust in space, impressive thrust in atmo, and a reliability record that spans a century."
+    "description": "The standard fusion drive of the 26th century. Burns deuterium-helium-3 cleanly enough to make atmospheric flight viable, though it drinks a full fuel cell per segment when doing so. Respectable thrust in space, impressive thrust in atmo, and a reliability record that spans a century.",
+    "availableFuels": ["D+He-3"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "D+He-3",
+        "mode": "Standard",
+        "efficiency": 1000,
+        "twrG": 0.5,
+        "fuelMix": [{ "type": "D+He-3", "ratio": 1 }]
+      }
+    ]
   },
   {
-    "parentEngine": "Axial Flow Z-Pinch",
+    "id": "eng_z_pinch",
+    "engineName": "Axial Flow Z-Pinch",
+    "class": "Cruiser",
     "baseCost": 120000,
     "basePower": 3,
     "baseMass": 4,
-    "class": "Cruiser",
-    "description": "A torch drive that made Hohmann transfers a historical footnote.The Z-pinch fusion pulse hurls a cruiser across the system at 0.8g with enough delta-V to chase down anything short of antimatter. Power and mass requirements restrict it to cruiser hulls or larger."
+    "description": "A torch drive that made Hohmann transfers a historical footnote.The Z-pinch fusion pulse hurls a cruiser across the system at 0.8g with enough delta-V to chase down anything short of antimatter. Power and mass requirements restrict it to cruiser hulls or larger.",
+    "availableFuels": ["D+He-3"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "D+He-3",
+        "mode": "Standard",
+        "efficiency": 9000,
+        "twrG": 0.8,
+        "fuelMix": [{ "type": "D+He-3", "ratio": 1 }]
+      }
+    ]
   },
   {
-    "parentEngine": "AM-Catalyzed Microfusion",
+    "id": "eng_am_microfusion",
+    "engineName": "AM-Catalyzed Microfusion",
+    "class": "Frigate",
     "baseCost": 80000,
     "basePower": 2,
     "baseMass": 2,
-    "class": "Frigate",
-    "description": "A few picograms of antimatter spark a deuterium-helium-3 burn far hotter than any pure fusion reactor can manage. Requires stabilized antimatter pellets from POS, so independence is an illusion."
+    "description": "A few picograms of antimatter spark a deuterium-helium-3 burn far hotter than any pure fusion reactor can manage. Requires stabilized antimatter pellets from POS, so independence is an illusion.",
+    "availableFuels": ["AM + D+He-3"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "AM + D+He-3",
+        "mode": "Standard",
+        "efficiency": 4000,
+        "twrG": 0.5,
+        "fuelMix": [
+          { "type": "AM", "ratio": 1 },
+          { "type": "D+He-3", "ratio": 10 }
+        ]
+      }
+    ]
   },
   {
-    "parentEngine": "Pure Antimatter",
+    "id": "eng_pure_am",
+    "engineName": "Pure Antimatter",
+    "class": "Cruiser",
     "baseCost": 1500000,
     "basePower": 4,
     "baseMass": 4,
-    "class": "Cruiser",
-    "description": "A beam-core antimatter torch that annihilates matter itself for thrust. The fastest propulsion system ever built, period. The fuel is so dangerous it isn't sold, it's leased."
+    "description": "A beam-core antimatter torch that annihilates matter itself for thrust. The fastest propulsion system ever built, period. The fuel is so dangerous it isn't sold, it's leased.",
+    "availableFuels": ["AM + LH2"],
+    "availableModes": ["Standard"],
+    "configs": [
+      {
+        "fuel": "AM + LH2",
+        "mode": "Standard",
+        "efficiency": 65000,
+        "twrG": 1,
+        "fuelMix": [
+          { "type": "AM", "ratio": 1 },
+          { "type": "LH2", "ratio": 1 }
+        ]
+      }
+    ]
   }
 ]

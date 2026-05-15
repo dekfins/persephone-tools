@@ -87,5 +87,38 @@ export interface InstalledComponent {
   category: "Weapon" | "Defense" | "Fitting";
   quantity: number;
   item: InstallableItem;
-  status: "Online" | "Damaged" | "Destroyed"; 
+  status: "Online" | "Damaged" | "Destroyed";
+}
+
+export interface ActiveCondition {
+  id: string;
+  name: string;
+  effect: string;
+  fixDC: string;
+  segmentsActive: number;
+}
+
+export interface FuelMix {
+  type: string;
+  ratio: number;
+}
+
+export interface EngineConfig {
+  fuel: string;
+  mode: string;
+  efficiency: number;
+  twrG: number;
+  fuelMix: FuelMix[];
+}
+
+export interface Engine {
+  id: string;
+  engineName: string; // Note: We replaced 'parentEngine' with this cleaner name
+  class: string;
+  baseCost: number;
+  basePower: number;
+  baseMass: number;
+  availableFuels: string[];
+  availableModes: string[];
+  configs: EngineConfig[];
 }

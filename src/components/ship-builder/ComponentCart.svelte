@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { shipState } from '../lib/shipState.svelte';
-  import fittings from '../data/fittings.json';
-  import defenses from '../data/defenses.json';
-  import weapons from '../data/weapons.json';
-  import TerminalSelect from './TerminalSelect.svelte';
+  import { shipState } from '../../lib/shipState.svelte';
+  import fittings from '../../data/fittings.json';
+  import defenses from '../../data/defenses.json';
+  import weapons from '../../data/weapons.json';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
 
   let activeTab = $state('Fittings');
 
@@ -62,7 +62,6 @@
 
   function getClassTag(className: string) {
     if (!className) return 'unknown';
-    // Standardizes "Fighter " or "FIGHTER" into "fighter"
     return className.toLowerCase().trim();
   }
 </script>

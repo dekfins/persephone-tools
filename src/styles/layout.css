@@ -1,22 +1,48 @@
-.grid {
+:root {
+  --page-padding-x: 4rem;
+  --page-padding-top: 0.5rem;
+  --page-padding-bottom: 1rem;
+  --layout-gap: 1.5rem; /* Unified spacing for both grids and columns */
+  --max-width: 1600px;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-gap);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--page-padding-bottom);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: auto; /* Fixes the 'big chin' by not forcing 100vh */
+}
+
+/* --- 3. THE GRID SYSTEM --- */
+.layout-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 2rem; /* Horizontal spacing */
+  gap: var(--layout-gap);
   align-items: start;
 }
 
-.col-left, .col-middle, .col-right {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; /* Vertical spacing between blocks */
+/* Modifier: Ship Builder (3 Columns) */
+.grid-builder {
+  grid-template-columns: 1fr 2fr 1fr;
 }
 
-.container {
+.grid-condition {
+  grid-template-columns: 320px 1fr;
+  align-items: start; 
+}
+
+.col-stack {
   display: flex;
   flex-direction: column;
-  gap: 2rem; /* This moves the header away from the grid automatically */
-  min-height: 100vh;
-  padding-top: 1rem;
-  padding-left: 4rem;
-  padding-right: 4rem;
+  gap: var(--layout-gap);
+}
+
+.span-full {
+  grid-column: 1 / -1;
+}
+
+.text-dim {
+  opacity: 0.6;
 }

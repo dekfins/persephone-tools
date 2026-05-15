@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { shipState } from '../lib/shipState.svelte';
-  import hulls from '../data/hulls.json'
-  import reactors from '../data/reactors.json';
-  import engines from '../data/engines.json';
-  import TerminalSelect from './TerminalSelect.svelte';
+  import { shipState } from '../../lib/shipState.svelte';
+  import hulls from '../../data/hulls.json'
+  import reactors from '../../data/reactors.json';
+  import engines from '../../data/engines.json';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
 
   let availableReactors = $derived(
     reactors.filter(r => shipState.getTier(r.class) <= shipState.multipliers.classTier)
@@ -58,7 +58,6 @@
       id="engine-select"
       options={availableEngines} 
       bind:value={shipState.engine} 
-      labelKey="parentEngine" 
-    />
+      labelKey="engineName" />
   </div>
 </div>

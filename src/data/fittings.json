@@ -10,7 +10,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "A lab suitable for investigating alien xenolife, planetary geology, esoteric technology, and other mysteries. Skill rolls improved by +1 (frigate), +2 (cruiser), or +3 (capital)."
+    "description": "A lab suitable for investigating alien xenolife, planetary geology, esoteric technology, and other mysteries. Skill rolls improved by +1 (frigate), +2 (cruiser), or +3 (capital).",
+    "attribute": "Skill bonus for analysis and research"
   },
   {
     "fittingName": "Advanced nav computer",
@@ -23,7 +24,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Reduces the DC of all Pilot/Nav checks made during travel segments by 2."
+    "description": "Reduces the DC of all Pilot/Nav checks made during travel segments by 2.",
+    "attribute": "+2 for Pilot/Nav checks during travel segments"
   },
   {
     "fittingName": "Amphibious operation",
@@ -36,7 +38,8 @@
     "class": "Fighter",
     "maxClass": "Frigate",
     "isStackable": "FALSE",
-    "description": "Includes Atmospheric Configuration benefits plus the ability to operate while immersed in a liquid medium. Only fighter and frigate hulls."
+    "description": "Includes Atmospheric Configuration benefits plus the ability to operate while immersed in a liquid medium. Only fighter and frigate hulls.",
+    "attribute": "Can land and can operate under water"
   },
   {
     "fittingName": "Antimatter bottle",
@@ -48,7 +51,8 @@
     "hasScaleMass": "TRUE",
     "class": "Frigate",
     "isStackable": "FALSE",
-    "description": "Stores one cell of antimatter. Has active magnetic confinement. At 0 Power, containment fails in 1d6 rounds."
+    "description": "Stores one cell of antimatter. Has active magnetic confinement. At 0 Power, containment fails in 1d6 rounds.",
+    "attribute": "Stores 1 cell of antimatter"
   },
   {
     "fittingName": "Armory",
@@ -61,7 +65,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Ships so equipped have whatever amounts of TL4 military-grade weaponry and armor that a crew might require, and integral maintenance facilities for its upkeep."
+    "description": "Ships so equipped have whatever amounts of TL4 military-grade weaponry and armor that a crew might require, and integral maintenance facilities for its upkeep.",
+    "attribute": "Weapons and armor for the crew"
   },
   {
     "fittingName": "Atmospheric configuration",
@@ -74,7 +79,8 @@
     "class": "Fighter",
     "maxClass": "Frigate",
     "isStackable": "FALSE",
-    "description": "Must be put in place when the ship is built. Cannot be installed on cruiser-class or larger ships. A ship designed for atmospheric flight can land on most solid or aqueous surfaces."
+    "description": "Must be put in place when the ship is built. Cannot be installed on cruiser-class or larger ships. A ship designed for atmospheric flight can land on most solid or aqueous surfaces.",
+    "attribute": "Can land: frigates and fighters only"
   },
   {
     "fittingName": "Auto-targeting system",
@@ -87,7 +93,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Installing an autonomic targeting system for a gun allows it to shoot at a +2 hit bonus without human assistance. Must be installed once for each gun to be self-manned."
+    "description": "Installing an autonomic targeting system for a gun allows it to shoot at a +2 hit bonus without human assistance. Must be installed once for each gun to be self-manned.",
+    "attribute": ""
   },
   {
     "fittingName": "Automation support",
@@ -100,7 +107,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Ship has been fitted to support non-sentient expert system robots in its operation. At least one human crew member is necessary. Bots cost 1,000 credits per crew member replaced."
+    "description": "Ship has been fitted to support non-sentient expert system robots in its operation. At least one human crew member is necessary. Bots cost 1,000 credits per crew member replaced.",
+    "attribute": ""
   },
   {
     "fittingName": "Boarding tubes",
@@ -113,7 +121,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Armored tubes equipped with laser cutter apertures can be used to forcibly invade a hostile ship, provided the target's engines have been disabled."
+    "description": "Armored tubes equipped with laser cutter apertures can be used to forcibly invade a hostile ship, provided the target's engines have been disabled.",
+    "attribute": ""
   },
   {
     "fittingName": "Cargo lighter",
@@ -126,7 +135,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Orbit-to-surface shuttle for cruisers and larger craft that can't land. Can carry up to 200 tons of cargo and passengers."
+    "description": "Orbit-to-surface shuttle for cruisers and larger craft that can't land. Can carry up to 200 tons of cargo and passengers.",
+    "attribute": ""
   },
   {
     "fittingName": "Cargo space",
@@ -139,7 +149,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Pressurized cargo space. One mass = 2 tons (fighter), 20 tons (frigate), 200 tons (cruiser), 2000 tons (capital)."
+    "description": "Pressurized cargo space. One mass = 2 tons (fighter), 20 tons (frigate), 200 tons (cruiser), 2000 tons (capital).",
+    "attribute": ""
   },
   {
     "fittingName": "Cold sleep pods",
@@ -152,7 +163,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Stasis pods that keep subjects alive for centuries. Each installation keeps a number of people equal to the ship's maximum crew in stasis indefinitely."
+    "description": "Stasis pods that keep subjects alive for centuries. Each installation keeps a number of people equal to the ship's maximum crew in stasis indefinitely.",
+    "attribute": ""
   },
   {
     "fittingName": "Colony core",
@@ -165,7 +177,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Ship can be deconstructed into a colony base supporting up to five times its maximum crew. Once activated, the ship ceases to be operational and the core cannot be re-packed."
+    "description": "Ship can be deconstructed into a colony base supporting up to five times its maximum crew. Once activated, the ship ceases to be operational and the core cannot be re-packed.",
+    "attribute": ""
   },
   {
     "fittingName": "Cryofuel bunker",
@@ -178,7 +191,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "A fuel bunker, but cryo-cooled. Prevents hydrogen and deuterium-helium-3 boil-off. Also necessary for long-term storage of nuclear saltwater."
+    "description": "A fuel bunker, but cryo-cooled. Prevents hydrogen and deuterium-helium-3 boil-off. Also necessary for long-term storage of nuclear saltwater.",
+    "attribute": ""
   },
   {
     "fittingName": "Drop pod",
@@ -191,7 +205,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Armored and stealthed cargo lighters, twice as fast, -3 penalty to tracking/targeting. Can carry up to one hundred troops."
+    "description": "Armored and stealthed cargo lighters, twice as fast, -3 penalty to tracking/targeting. Can carry up to one hundred troops.",
+    "attribute": ""
   },
   {
     "fittingName": "Emissions dampers",
@@ -204,7 +219,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Stealth systems that mask the ship's energy emissions. TWR cut in half when engaged, but +2 bonus to detection avoidance skill checks."
+    "description": "Stealth systems that mask the ship's energy emissions. TWR cut in half when engaged, but +2 bonus to detection avoidance skill checks.",
+    "attribute": ""
   },
   {
     "fittingName": "Exodus bay",
@@ -217,7 +233,8 @@
     "class": "Cruiser",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Compressed cold sleep pods for enormous numbers of colonists. Cruiser: 1,000 colonists, capital: 5,000. Each additional installation doubles the number."
+    "description": "Compressed cold sleep pods for enormous numbers of colonists. Cruiser: 1,000 colonists, capital: 5,000. Each additional installation doubles the number.",
+    "attribute": ""
   },
   {
     "fittingName": "Extended life support",
@@ -231,7 +248,8 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "maxCrewMultiplier": 1,
-    "description": "Each installation increases the maximum crew rating by 100% of its normal maximum."
+    "description": "Each installation increases the maximum crew rating by 100% of its normal maximum.",
+    "attribute": ""
   },
   {
     "fittingName": "Extended medbay",
@@ -244,7 +262,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Improved medical facilities allowing treatment of up to the ship's entire maximum crew at once, including critically wounded passengers."
+    "description": "Improved medical facilities allowing treatment of up to the ship's entire maximum crew at once, including critically wounded passengers.",
+    "attribute": ""
   },
   {
     "fittingName": "Extended stores",
@@ -257,7 +276,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Each selection doubles the maximum life support duration (normally two months for max crew)."
+    "description": "Each selection doubles the maximum life support duration (normally two months for max crew).",
+    "attribute": ""
   },
   {
     "fittingName": "Fuel bunker",
@@ -270,7 +290,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Stores 5 cells of a single fuel type. Fuel types cannot be mixed."
+    "description": "Stores 5 cells of a single fuel type. Fuel types cannot be mixed.",
+    "attribute": ""
   },
   {
     "fittingName": "Fuel scoops",
@@ -283,7 +304,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Allows atmospheric skimming of Argon or Hydrogen. Refuelling 1 cell takes one travel segment, plus a Piloting check (DC 12 for gas giants, DC 10 for planetary atmospheres)."
+    "description": "Allows atmospheric skimming of Argon or Hydrogen. Refuelling 1 cell takes one travel segment, plus a Piloting check (DC 12 for gas giants, DC 10 for planetary atmospheres).",
+    "attribute": ""
   },
   {
     "fittingName": "Hydroponic production",
@@ -296,7 +318,8 @@
     "class": "Cruiser",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Produces food and air supplies for a number of crewmen equal to the ship's maximum crew. Each additional selection doubles the supported population."
+    "description": "Produces food and air supplies for a number of crewmen equal to the ship's maximum crew. Each additional selection doubles the supported population.",
+    "attribute": ""
   },
   {
     "fittingName": "ISRU refinery",
@@ -309,7 +332,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Synthesises deuterium-helium-3 fuel cells. Produces 1 cell per week of continuous operation. Requires the ship to be stationary (or in a stable parking orbit) and a working Fuel Scoop."
+    "description": "Synthesises deuterium-helium-3 fuel cells. Produces 1 cell per week of continuous operation. Requires the ship to be stationary (or in a stable parking orbit) and a working Fuel Scoop.",
+    "attribute": ""
   },
   {
     "fittingName": "Lifeboats",
@@ -322,7 +346,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Single-use escape craft capable of reaching the nearest habitable planet or station. Provides lifeboats for a ship's maximum crew."
+    "description": "Single-use escape craft capable of reaching the nearest habitable planet or station. Provides lifeboats for a ship's maximum crew.",
+    "attribute": ""
   },
   {
     "fittingName": "Luxury cabins",
@@ -335,7 +360,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Each selection provides luxurious quarters for 10% of the ship's maximum crew."
+    "description": "Each selection provides luxurious quarters for 10% of the ship's maximum crew.",
+    "attribute": ""
   },
   {
     "fittingName": "Mobile extractor",
@@ -348,7 +374,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Automated mining and refinery equipment. Can refine one ton of materials per day worth ~500 credits. Requires at least five crew members to operate."
+    "description": "Automated mining and refinery equipment. Can refine one ton of materials per day worth ~500 credits. Requires at least five crew members to operate.",
+    "attribute": ""
   },
   {
     "fittingName": "Mobile factory",
@@ -361,7 +388,8 @@
     "class": "Cruiser",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Full-scale TL4 fabrication plant. Can stock raw materials at 5,000 credits per ton to pay ship repair/maintenance costs. Creates/repairs at 10,000 credits per day."
+    "description": "Full-scale TL4 fabrication plant. Can stock raw materials at 5,000 credits per ton to pay ship repair/maintenance costs. Creates/repairs at 10,000 credits per day.",
+    "attribute": ""
   },
   {
     "fittingName": "Pellet magazine",
@@ -374,7 +402,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Stores 5 cells of fission pellets. Shielded, reinforced, and stamped with a DAVE compliance serial number."
+    "description": "Stores 5 cells of fission pellets. Shielded, reinforced, and stamped with a DAVE compliance serial number.",
+    "attribute": ""
   },
   {
     "fittingName": "Sensor mask",
@@ -387,7 +416,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Disguise a ship's long-range sensor readings with the ID tags and hull type of another ship. Penetrated by Wis/Program vs difficulty 10 + comms officer's Program skill."
+    "description": "Disguise a ship's long-range sensor readings with the ID tags and hull type of another ship. Penetrated by Wis/Program vs difficulty 10 + comms officer's Program skill.",
+    "attribute": ""
   },
   {
     "fittingName": "Ship bay/fighter",
@@ -400,7 +430,8 @@
     "class": "Cruiser",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "A docking bay with all necessary tools and support for launching a fighter-class starship."
+    "description": "A docking bay with all necessary tools and support for launching a fighter-class starship.",
+    "attribute": ""
   },
   {
     "fittingName": "Ship bay/frigate",
@@ -413,7 +444,8 @@
     "class": "Capital",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "A docking bay with all necessary tools and support for launching a frigate-class starship."
+    "description": "A docking bay with all necessary tools and support for launching a frigate-class starship.",
+    "attribute": ""
   },
   {
     "fittingName": "Ship's locker",
@@ -426,7 +458,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "General supply of TL4 equipment likely useful to explorers and spacemen. Some basic guns and armor may be included."
+    "description": "General supply of TL4 equipment likely useful to explorers and spacemen. Some basic guns and armor may be included.",
+    "attribute": ""
   },
   {
     "fittingName": "Shiptender mount",
@@ -439,7 +472,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Allows one craft of a hull size smaller than the tender to link up for transit. Docking/releasing: 1 (fighter), 2 (frigate), 3 (cruiser) rounds, during which both vessels are immobile."
+    "description": "Allows one craft of a hull size smaller than the tender to link up for transit. Docking/releasing: 1 (fighter), 2 (frigate), 3 (cruiser) rounds, during which both vessels are immobile.",
+    "attribute": ""
   },
   {
     "fittingName": "Smuggler's hold",
@@ -452,7 +486,8 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Hidden cargo space: 200kg (fighter), 2 tons (frigate), 20 tons (cruiser), 200 tons (capital). Never found by standard customs inspection."
+    "description": "Hidden cargo space: 200kg (fighter), 2 tons (frigate), 20 tons (cruiser), 200 tons (capital). Never found by standard customs inspection.",
+    "attribute": ""
   },
   {
     "fittingName": "Survey sensor array",
@@ -465,7 +500,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Greatly enhanced sensor abilities for detailed mapping and broad-spectrum communications analysis. +2 to skill checks when scanning."
+    "description": "Greatly enhanced sensor abilities for detailed mapping and broad-spectrum communications analysis. +2 to skill checks when scanning.",
+    "attribute": ""
   },
   {
     "fittingName": "Tethered grapplers",
@@ -478,7 +514,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "A turreted electromagnetic tether system to push, pull, and slide objects no larger than a ship of one hull class smaller. Can move objects into cargo bays within three rounds."
+    "description": "A turreted electromagnetic tether system to push, pull, and slide objects no larger than a ship of one hull class smaller. Can move objects into cargo bays within three rounds.",
+    "attribute": ""
   },
   {
     "fittingName": "Vehicle transport fittings",
@@ -491,7 +528,8 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Specialized mounts, bunking, and cargo bays for vehicles. Carried vehicles count as only half their usual cargo tonnage."
+    "description": "Specialized mounts, bunking, and cargo bays for vehicles. Carried vehicles count as only half their usual cargo tonnage.",
+    "attribute": ""
   },
   {
     "fittingName": "Workshop",
@@ -504,6 +542,7 @@
     "class": "Frigate",
     "maxClass": "",
     "isStackable": "FALSE",
-    "description": "Automated tech workshops. Frigate-sized = personal gear modding, cruiser-sized = vehicle modding and ship maintenance, capital = build vehicles from scratch."
+    "description": "Automated tech workshops. Frigate-sized = personal gear modding, cruiser-sized = vehicle modding and ship maintenance, capital = build vehicles from scratch.",
+    "attribute": ""
   }
 ]
