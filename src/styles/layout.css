@@ -1,0 +1,22 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 2rem; /* Horizontal spacing */
+  align-items: start;
+}
+
+.col-left, .col-middle, .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Vertical spacing between blocks */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* This moves the header away from the grid automatically */
+  min-height: 100vh;
+  padding-top: 1rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
+}

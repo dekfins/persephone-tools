@@ -1,0 +1,74 @@
+[
+  {
+    "parentEngine": "Methalox Rocket",
+    "baseCost": 2000,
+    "basePower": 0,
+    "baseMass": 1,
+    "class": "Fighter",
+    "description": "Chemical brute-force thruster, commonly called the Matchstick. Burns methane and liquid oxygen for a brief, violent kick. High thrust, zero endurance - no one uses these for interplanetary work, but every shuttle, emergency pod, and surface lander relies on one."
+  },
+  {
+    "parentEngine": "Ion Cluster",
+    "baseCost": 5000,
+    "basePower": 1,
+    "baseMass": 1,
+    "class": "Fighter",
+    "description": "A cluster of gridded ion thrusters that sip argon so slowly you'll die of old age before the tank runs dry. Acceleration is measured in milligees, but fuel is cheap and the engine survives everything short of a direct missile hit."
+  },
+  {
+    "parentEngine": "VASIMR",
+    "baseCost": 15000,
+    "basePower": 2,
+    "baseMass": 1,
+    "class": "Fighter",
+    "description": "A variable-mode magnetoplasma rocket that can switch between high-efficiency cruise and high-thrust sprint. Respectable performance on argon, genuinely useful on hydrogen."
+  },
+  {
+    "parentEngine": "Nuclear Saltwater",
+    "baseCost": 10000,
+    "basePower": 1,
+    "baseMass": 2,
+    "class": "Fighter",
+    "description": "A continuous nuclear detonation magnetically channeled out the back. Acceleration is brutal, efficiency is mediocre, and every traffic control system in the system flags you as a war crime waiting to happen."
+  },
+  {
+    "parentEngine": "Fission Fragment",
+    "baseCost": 60000,
+    "basePower": 1,
+    "baseMass": 2,
+    "class": "Frigate",
+    "description": "A fission fragment rocket that can cruise almost forever on a single load of pellets, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable."
+  },
+  {
+    "parentEngine": "Tokamak",
+    "baseCost": 40000,
+    "basePower": 2,
+    "baseMass": 2,
+    "class": "Frigate",
+    "description": "The standard fusion drive of the 26th century. Burns deuterium-helium-3 cleanly enough to make atmospheric flight viable, though it drinks a full fuel cell per segment when doing so. Respectable thrust in space, impressive thrust in atmo, and a reliability record that spans a century."
+  },
+  {
+    "parentEngine": "Axial Flow Z-Pinch",
+    "baseCost": 120000,
+    "basePower": 3,
+    "baseMass": 4,
+    "class": "Cruiser",
+    "description": "A torch drive that made Hohmann transfers a historical footnote.The Z-pinch fusion pulse hurls a cruiser across the system at 0.8g with enough delta-V to chase down anything short of antimatter. Power and mass requirements restrict it to cruiser hulls or larger."
+  },
+  {
+    "parentEngine": "AM-Catalyzed Microfusion",
+    "baseCost": 80000,
+    "basePower": 2,
+    "baseMass": 2,
+    "class": "Frigate",
+    "description": "A few picograms of antimatter spark a deuterium-helium-3 burn far hotter than any pure fusion reactor can manage. Requires stabilized antimatter pellets from POS, so independence is an illusion."
+  },
+  {
+    "parentEngine": "Pure Antimatter",
+    "baseCost": 1500000,
+    "basePower": 4,
+    "baseMass": 4,
+    "class": "Cruiser",
+    "description": "A beam-core antimatter torch that annihilates matter itself for thrust. The fastest propulsion system ever built, period. The fuel is so dangerous it isn't sold, it's leased."
+  }
+]

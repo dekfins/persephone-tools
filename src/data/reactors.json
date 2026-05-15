@@ -1,0 +1,56 @@
+[
+  {
+    "reactorType": "Basic Fission",
+    "baseCost": 5000,
+    "reactorIntegrity": 4,
+    "basePower": 0,
+    "baseMass": 0,
+    "class": "Fighter",
+    "description": "Cheap, fragile, and utterly standard. Four failure points, no redundancy. The core SCRAMs before it melts, trading a reactor death for a slow freeze. Clean when healthy, unforgiving when pushed. Found in every budget freighter built this century because they can't afford better."
+  },
+  {
+    "reactorType": "Refurbished Fission",
+    "baseCost": 2000,
+    "reactorIntegrity": 6,
+    "basePower": 0,
+    "baseMass": 1,
+    "class": "Fighter",
+    "description": "A pre-24th-century relic overhauled just enough to run.' Six brittle subsystems that bleed radiation with every failure but refuse to die outright. Maintenance is a bloodsport. The Cherenkov glow is not a design feature."
+  },
+  {
+    "reactorType": "Reinforced Fission",
+    "baseCost": 15000,
+    "reactorIntegrity": 6,
+    "basePower": 0,
+    "baseMass": 1,
+    "class": "Fighter",
+    "description": "Basic Fission with extra shielding, better rods, and actual safety margins. Same six-point endurance as the old refurbished Volatile cores, without the chronic radiation sickness. The sensible upgrade for anyone tired of glowing in the dark."
+  },
+  {
+    "reactorType": "Standard Fusion",
+    "baseCost": 25000,
+    "reactorIntegrity": 6,
+    "basePower": 0,
+    "baseMass": 0,
+    "class": "Frigate",
+    "description": "D+He3 fusion. Clean, stable, profoundly boring. Six integrity, no leaks, no drama. Maintenance is routine. Failures are predictable. Engineers complain there's nothing left to fix. The default heart of the 26th century."
+  },
+  {
+    "reactorType": "Milspec Fusion",
+    "baseCost": 50000,
+    "reactorIntegrity": 8,
+    "basePower": 2,
+    "baseMass": 1,
+    "class": "Frigate",
+    "description": "Hardened combat fusion with eight integrity and surplus power for a full weapons grid. DAVE-regulated: no license means no sale. Every civilian-mounted Milspec was stolen, salvaged, or bought in a back room. Carrying one makes your ship a threat. The system will respond accordingly."
+  },
+  {
+    "reactorType": "Antimatter",
+    "baseCost": 500000,
+    "reactorIntegrity": 8,
+    "basePower": 4,
+    "baseMass": 2,
+    "class": "Cruiser",
+    "description": "Contained annihilation. Eight integrity, enormous power, and a bottle of antimatter suspended in a magnetic trap that must never lose power. Annual POS inspection is mandatory."
+  }
+]

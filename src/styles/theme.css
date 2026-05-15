@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  /* THE PALETTE */
+  color-scheme: dark;
+  
+  --bg-void: #0a0a0c;        /* Deepest background */
+  --bg-panel: #141417;       /* Slightly lighter for cards/sections */
+  --text-main: #d1d5db;      /* Muted light grey for readability */
+  --text-dim: #6b7280;       /* Darker grey for secondary info */
+  --accent-amber: #f59e0b;   /* The hero color from your wiki headers */
+  --accent-red: #ef4444;     /* For errors/overloads */
+  --fighter-green: #4ade80;
+  --frigate-blue: #60a5fa;
+  --cruiser-purple: #c084fc;
+  --capital-red: #f87171;
+  
+  /* BORDERS */
+  --border-subtle: 1px solid #27272a;
+  --border-focus: 1px solid var(--accent-amber);
+
+  /* TYPOGRAPHY */
+  --font-color: var(--text-main);
+  --font-terminal: 'Fira Code', 'Roboto Mono', monospace; /* Or whatever Google font you use */
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--text-main);
+  font-family: var(--font-terminal);
+  margin: 0;
+  padding: 2rem;
+}
+
+h1, h2, h3, h4 {
+  color: var(--accent-amber);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+hr {
+  border: 0;
+  border-top: 1px dashed var(--border-subtle);
+  width: 100%;
+  margin: 0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; 
+  }
+
+.terminal-card {
+  background-color: var(--bg-panel);
+  border: var(--border-subtle);
+  border-radius: 0;
+  padding: 1.5rem;
+  
+  /* --- ADD THESE THREE LINES --- */
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* This controls the vertical spacing between elements INSIDE the block */
+}
+
+

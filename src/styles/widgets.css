@@ -1,0 +1,44 @@
+.form-group {
+  width: 100%;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+input[type="text"], button {
+  font-family: var(--font-terminal);
+  text-transform: uppercase;
+  padding: 0.75rem;
+  border: var(--border-subtle);
+  background: var(--bg-void);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus {
+  border-color: var(--accent-amber);
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 191, 0, 0.3);
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent-amber);
+  color: var(--accent-amber);
+  background-color: rgba(245, 159, 11, 0.05);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.terminal-input {
+  width: 100%;
+  color: var(--accent-amber) !important;
+}

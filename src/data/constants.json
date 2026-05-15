@@ -1,0 +1,26 @@
+[
+  {
+    "hullClass": "Fighter",
+    "costMult": 1,
+    "massPowerMult": 1,
+    "classTier": 1
+  },
+  {
+    "hullClass": "Frigate",
+    "costMult": 10,
+    "massPowerMult": 2,
+    "classTier": 2
+  },
+  {
+    "hullClass": "Cruiser",
+    "costMult": 25,
+    "massPowerMult": 3,
+    "classTier": 3
+  },
+  {
+    "hullClass": "Capital",
+    "costMult": 100,
+    "massPowerMult": 4,
+    "classTier": 4
+  }
+]
