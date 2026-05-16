@@ -5,9 +5,6 @@
   import SystemsPanel from '../components/ship-condition/SystemsPanel.svelte';
   import ConditionsPanel from '../components/ship-condition/ConditionsPanel.svelte';
   import '../styles/layout.css'; 
-  
-  // Create a state variable to hold the exact pixel height
-  let leftHeight = $state(0); 
 </script>
 
 <div class="page-container">

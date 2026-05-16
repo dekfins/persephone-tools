@@ -147,7 +147,7 @@
   }
 
   .vital-value {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: bold;
     color: var(--text-main);
   }
