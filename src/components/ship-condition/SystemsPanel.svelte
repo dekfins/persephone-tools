@@ -132,6 +132,7 @@
               options={availableItems}
               bind:value={selectedItem}
               labelKey="displayName"
+              popupSide="left"
             />
           </div>
         </div>
@@ -274,7 +275,6 @@
   .status-damaged {
     color: var(--accent-amber);
     border-color: transparent;
-    background: rgba(245, 158, 11, 0.1);
   }
   .status-destroyed {
     color: var(--accent-red);
@@ -307,7 +307,7 @@
   .market-popup {
     margin-top: 0.5rem;
     padding: 1rem;
-    border: 1px dashed var(--accent-amber);
+    border: 1px solid var(--accent-amber);
     background: rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;

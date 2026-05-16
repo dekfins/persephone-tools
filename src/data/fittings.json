@@ -11,7 +11,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "A lab suitable for investigating alien xenolife, planetary geology, esoteric technology, and other mysteries. Skill rolls improved by +1 (frigate), +2 (cruiser), or +3 (capital).",
-    "attribute": "Skill bonus for analysis and research"
+    "attribute": "Skill bonus (1/2/3) for analysis and research"
   },
   {
     "fittingName": "Advanced nav computer",
@@ -92,9 +92,9 @@
     "hasScaleMass": "FALSE",
     "class": "Fighter",
     "maxClass": "",
-    "isStackable": "FALSE",
+    "isStackable": "TRUE",
     "description": "Installing an autonomic targeting system for a gun allows it to shoot at a +2 hit bonus without human assistance. Must be installed once for each gun to be self-manned.",
-    "attribute": ""
+    "attribute": "Fires one weapon system without a gunner"
   },
   {
     "fittingName": "Automation support",
@@ -108,7 +108,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Ship has been fitted to support non-sentient expert system robots in its operation. At least one human crew member is necessary. Bots cost 1,000 credits per crew member replaced.",
-    "attribute": ""
+    "attribute": "Ship can use simple robots as crew"
   },
   {
     "fittingName": "Boarding tubes",
@@ -122,7 +122,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Armored tubes equipped with laser cutter apertures can be used to forcibly invade a hostile ship, provided the target's engines have been disabled.",
-    "attribute": ""
+    "attribute": "Allows boarding of a hostile disabled ship"
   },
   {
     "fittingName": "Cargo lighter",
@@ -136,7 +136,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Orbit-to-surface shuttle for cruisers and larger craft that can't land. Can carry up to 200 tons of cargo and passengers.",
-    "attribute": ""
+    "attribute": "Orbit-to-surface cargo shuttle"
   },
   {
     "fittingName": "Cargo space",
@@ -150,7 +150,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Pressurized cargo space. One mass = 2 tons (fighter), 20 tons (frigate), 200 tons (cruiser), 2000 tons (capital).",
-    "attribute": ""
+    "attribute": "Pressurized cargo space"
   },
   {
     "fittingName": "Cold sleep pods",
@@ -164,7 +164,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Stasis pods that keep subjects alive for centuries. Each installation keeps a number of people equal to the ship's maximum crew in stasis indefinitely.",
-    "attribute": ""
+    "attribute": "Keeps occupants in stasis"
   },
   {
     "fittingName": "Colony core",
@@ -178,7 +178,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Ship can be deconstructed into a colony base supporting up to five times its maximum crew. Once activated, the ship ceases to be operational and the core cannot be re-packed.",
-    "attribute": ""
+    "attribute": "Ship can be deconstructed into a colony base"
   },
   {
     "fittingName": "Cryofuel bunker",
@@ -192,7 +192,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "A fuel bunker, but cryo-cooled. Prevents hydrogen and deuterium-helium-3 boil-off. Also necessary for long-term storage of nuclear saltwater.",
-    "attribute": ""
+    "attribute": "Can store all liquid fuels"
   },
   {
     "fittingName": "Drop pod",
@@ -206,7 +206,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Armored and stealthed cargo lighters, twice as fast, -3 penalty to tracking/targeting. Can carry up to one hundred troops.",
-    "attribute": ""
+    "attribute": "Stealthed landing pod for troops"
   },
   {
     "fittingName": "Emissions dampers",
@@ -220,7 +220,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Stealth systems that mask the ship's energy emissions. TWR cut in half when engaged, but +2 bonus to detection avoidance skill checks.",
-    "attribute": ""
+    "attribute": "+2 bonus to detection avoidance skill checks"
   },
   {
     "fittingName": "Exodus bay",
@@ -234,7 +234,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Compressed cold sleep pods for enormous numbers of colonists. Cruiser: 1,000 colonists, capital: 5,000. Each additional installation doubles the number.",
-    "attribute": ""
+    "attribute": "Houses (1000/5000) cold sleep passengers"
   },
   {
     "fittingName": "Extended life support",
@@ -249,7 +249,7 @@
     "isStackable": "TRUE",
     "maxCrewMultiplier": 1,
     "description": "Each installation increases the maximum crew rating by 100% of its normal maximum.",
-    "attribute": ""
+    "attribute": "+100% maximum crew size each"
   },
   {
     "fittingName": "Extended medbay",
@@ -263,7 +263,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Improved medical facilities allowing treatment of up to the ship's entire maximum crew at once, including critically wounded passengers.",
-    "attribute": ""
+    "attribute": "Can provide medical care to more patients"
   },
   {
     "fittingName": "Extended stores",
@@ -277,7 +277,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Each selection doubles the maximum life support duration (normally two months for max crew).",
-    "attribute": ""
+    "attribute": "+100% life support duration each"
   },
   {
     "fittingName": "Fissionables tank",
@@ -291,7 +291,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Stores 5 units of fissionable particles. Shielded, reinforced, and stamped with a DAVE compliance serial number.",
-    "attribute": ""
+    "attribute": "Stores 5 units of fissionable particles each"
   },
   {
     "fittingName": "Fuel bunker",
@@ -305,7 +305,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Stores 5 units of a single fuel type. Fuel types cannot be mixed.",
-    "attribute": ""
+    "attribute": "Stores 5 units of a single fuel type each"
   },
   {
     "fittingName": "Fuel scoops",
@@ -319,7 +319,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Allows atmospheric skimming of Argon or Hydrogen. Refuelling 1 cell takes one travel segment, plus a Piloting check (DC 12 for gas giants, DC 10 for planetary atmospheres).",
-    "attribute": ""
+    "attribute": "Allows atmospheric skimming of Argon or Hydrogen"
   },
   {
     "fittingName": "Hydroponic production",
@@ -333,7 +333,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "Produces food and air supplies for a number of crewmen equal to the ship's maximum crew. Each additional selection doubles the supported population.",
-    "attribute": ""
+    "attribute": "Ship produces life support resources"
   },
   {
     "fittingName": "ISRU refinery",
@@ -347,7 +347,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Synthesises deuterium-helium-3 fuel cells. Produces 1 cell per week of continuous operation. Requires the ship to be stationary (or in a stable parking orbit) and a working Fuel Scoop.",
-    "attribute": ""
+    "attribute": "Synthesises deuterium-helium-3 fuel cells"
   },
   {
     "fittingName": "Lifeboats",
@@ -361,7 +361,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Single-use escape craft capable of reaching the nearest habitable planet or station. Provides lifeboats for a ship's maximum crew.",
-    "attribute": ""
+    "attribute": "Emergency escape craft for a ship's crew"
   },
   {
     "fittingName": "Luxury cabins",
@@ -375,7 +375,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Each selection provides luxurious quarters for 10% of the ship's maximum crew.",
-    "attribute": ""
+    "attribute": "10% of the max crew get luxurious quarters each"
   },
   {
     "fittingName": "Mobile extractor",
@@ -389,7 +389,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Automated mining and refinery equipment. Can refine one ton of materials per day worth ~500 credits. Requires at least five crew members to operate.",
-    "attribute": ""
+    "attribute": "Space mining and refinery equipment"
   },
   {
     "fittingName": "Mobile factory",
@@ -403,7 +403,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Full-scale TL4 fabrication plant. Can stock raw materials at 5,000 credits per ton to pay ship repair/maintenance costs. Creates/repairs at 10,000 credits per day.",
-    "attribute": ""
+    "attribute": "Self-sustaining factory and repair facilities"
   },
   {
     "fittingName": "Sensor mask",
@@ -417,7 +417,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Disguise a ship's long-range sensor readings with the ID tags and hull type of another ship. Penetrated by Wis/Program vs difficulty 10 + comms officer's Program skill.",
-    "attribute": ""
+    "attribute": "At long distances, disguise ship as another"
   },
   {
     "fittingName": "Ship bay/fighter",
@@ -431,7 +431,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "A docking bay with all necessary tools and support for launching a fighter-class starship.",
-    "attribute": ""
+    "attribute": "Carrier housing for a fighter"
   },
   {
     "fittingName": "Ship bay/frigate",
@@ -445,7 +445,7 @@
     "maxClass": "",
     "isStackable": "TRUE",
     "description": "A docking bay with all necessary tools and support for launching a frigate-class starship.",
-    "attribute": ""
+    "attribute": "Carrier housing for a frigate"
   },
   {
     "fittingName": "Ship's locker",
@@ -459,7 +459,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "General supply of TL4 equipment likely useful to explorers and spacemen. Some basic guns and armor may be included.",
-    "attribute": ""
+    "attribute": "General equipment for the crew"
   },
   {
     "fittingName": "Shiptender mount",
@@ -473,7 +473,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Allows one craft of a hull size smaller than the tender to link up for transit. Docking/releasing: 1 (fighter), 2 (frigate), 3 (cruiser) rounds, during which both vessels are immobile.",
-    "attribute": ""
+    "attribute": "Allow a smaller ship to hitchhike"
   },
   {
     "fittingName": "Smuggler's hold",
@@ -487,7 +487,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Hidden cargo space: 200kg (fighter), 2 tons (frigate), 20 tons (cruiser), 200 tons (capital). Never found by standard customs inspection.",
-    "attribute": ""
+    "attribute": "(0.2/2/20/200) tons of well-hidden cargo space"
   },
   {
     "fittingName": "Survey sensor array",
@@ -501,7 +501,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Greatly enhanced sensor abilities for detailed mapping and broad-spectrum communications analysis. +2 to skill checks when scanning.",
-    "attribute": ""
+    "attribute": "Improved planetary sensory array"
   },
   {
     "fittingName": "Tethered grapplers",
@@ -515,7 +515,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "A turreted electromagnetic tether system to push, pull, and slide objects no larger than a ship of one hull class smaller. Can move objects into cargo bays within three rounds.",
-    "attribute": ""
+    "attribute": "Manipulate objects in space at a distance"
   },
   {
     "fittingName": "Vehicle transport fittings",
@@ -529,7 +529,7 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Specialized mounts, bunking, and cargo bays for vehicles. Carried vehicles count as only half their usual cargo tonnage.",
-    "attribute": ""
+    "attribute": "Halve tonnage space of carried vehicles"
   },
   {
     "fittingName": "Workshop",
@@ -543,6 +543,6 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Automated tech workshops. Frigate-sized = personal gear modding, cruiser-sized = vehicle modding and ship maintenance, capital = build vehicles from scratch.",
-    "attribute": ""
+    "attribute": "Automated tech workshops for maintenance"
   }
 ]

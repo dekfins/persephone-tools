@@ -11,7 +11,8 @@
     "healthBonus": 20,
     "armorClassBonus": 1,
     "speedBonus": "",
-    "description": "Complex system of ablative blast baffles that can absorb enormous damage. Grants +1 AC and 20 extra maximum hit points.\n\n+1 AC, +20 maximum hit points"
+    "description": "Complex system of ablative blast baffles that can absorb enormous damage. Grants +1 AC and 20 extra maximum hit points.\n\n+1 AC, +20 maximum hit points",
+    "attribute": "+1 AC, +20 HP"
   },
   {
     "defenseName": "Augmented Plating",
@@ -25,7 +26,8 @@
     "healthBonus": "",
     "armorClassBonus": 2,
     "speedBonus": -1,
-    "description": "Reinforced armor plating granting +2 AC bonus. Can decrease Speed below 0, applying as a penalty to all Pilot tests.\n\n+2 AC, -1 Speed"
+    "description": "Reinforced armor plating granting +2 AC bonus. Can decrease Speed below 0, applying as a penalty to all Pilot tests.\n\n+2 AC, -1 Speed",
+    "attribute": "+2 AC, -1 Speed"
   },
   {
     "defenseName": "Boarding Countermeasures",
@@ -39,7 +41,8 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "Hardened bulkheads, reinforced hatches, and automated kill corridors. Prevents entry without shipyard-grade tools or hull-melting weapons.\n\nMakes enemy boarding more difficult"
+    "description": "Hardened bulkheads, reinforced hatches, and automated kill corridors. Prevents entry without shipyard-grade tools or hull-melting weapons.\n\nMakes enemy boarding more difficult",
+    "attribute": "Makes enemy boarding more difficult"
   },
   {
     "defenseName": "Burst ECM Generator",
@@ -53,7 +56,8 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "High-powered microwave emitter that fries the guidance package of one incoming missile or torpedo. Negates one otherwise-successful hit per engagement. Can be activated after damage is rolled.\n\nNegate one successful hit"
+    "description": "High-powered microwave emitter that fries the guidance package of one incoming missile or torpedo. Negates one otherwise-successful hit per engagement. Can be activated after damage is rolled.\n\nNegate one successful hit",
+    "attribute": "Negate one successful hit"
   },
   {
     "defenseName": "Foxer Drones",
@@ -67,21 +71,8 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "Short-lived drones producing enormous energy signatures. Grant +2 AC until the ship's next turn. Cheaply constructed; limited only by storage space.\n\n+2 AC for one round when fired, Ammo 5"
-  },
-  {
-    "defenseName": "Turbulence Countermeasure Suite",
-    "baseCost": 50000,
-    "hasScaleCost": "TRUE",
-    "basePower": 5,
-    "hasScalePower": "FALSE",
-    "baseMass": 2,
-    "hasScaleMass": "TRUE",
-    "class": "Frigate",
-    "healthBonus": "",
-    "armorClassBonus": "",
-    "speedBonus": "",
-    "description": "A combination of thermal decoys, chaff launchers, and active radar spoofing, giving any hit a 1 in 6 chance of being negated entirely.\n\n1 in 6 chance of any given attack missing"
+    "description": "Short-lived drones producing enormous energy signatures. Grant +2 AC until the ship's next turn. Cheaply constructed; limited only by storage space.\n\n+2 AC for one round when fired, Ammo 5",
+    "attribute": "+2 AC for one round when fired, Ammo 5"
   },
   {
     "defenseName": "Hardened Polyceramic Overlay",
@@ -95,7 +86,8 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "Complex glazing process that hardens the ship's armor surface. Decreases the armor-piercing quality of any hit by 5.\n\nAP quality of attacking weapons reduced by 5"
+    "description": "Complex glazing process that hardens the ship's armor surface. Decreases the armor-piercing quality of any hit by 5.\n\nAP quality of attacking weapons reduced by 5",
+    "attribute": "AP quality of attacking weapons reduced by 5"
   },
   {
     "defenseName": "Planetary Defense Array",
@@ -109,7 +101,8 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "Brake cannons and neutralizing electromagnetic projectors. Useless in ship-to-ship combat but can deflect meteor impacts, penetrator rods, and prevent nuclear fission over a hemisphere.\n\nAnti-impact and anti-nuke surface defenses"
+    "description": "Brake cannons and neutralizing electromagnetic projectors. Useless in ship-to-ship combat but can deflect meteor impacts, penetrator rods, and prevent nuclear fission over a hemisphere.\n\nAnti-impact and anti-nuke surface defenses",
+    "attribute": "Anti-impact and anti-nuke surface defenses"
   },
   {
     "defenseName": "Point Defense Lasers",
@@ -123,6 +116,22 @@
     "healthBonus": "",
     "armorClassBonus": "",
     "speedBonus": "",
-    "description": "Small lasers that detonate or melt incoming munitions, improving defenses against torpedoes and other ammunition-based weapons.\n\n+2 AC versus weapons that use ammo"
+    "description": "Small lasers that detonate or melt incoming munitions, improving defenses against torpedoes and other ammunition-based weapons.\n\n+2 AC versus weapons that use ammo",
+    "attribute": "+2 AC versus weapons that use ammo"
+  },
+  {
+    "defenseName": "Turbulence Countermeasure Suite",
+    "baseCost": 50000,
+    "hasScaleCost": "TRUE",
+    "basePower": 5,
+    "hasScalePower": "FALSE",
+    "baseMass": 2,
+    "hasScaleMass": "TRUE",
+    "class": "Frigate",
+    "healthBonus": "",
+    "armorClassBonus": "",
+    "speedBonus": "",
+    "description": "A combination of thermal decoys, chaff launchers, and active radar spoofing, giving any hit a 1 in 6 chance of being negated entirely.\n\n1 in 6 chance of any given attack missing",
+    "attribute": "1 in 6 chance of any given attack missing"
   }
 ]

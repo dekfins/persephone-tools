@@ -14,7 +14,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Twin-linked assay and penetration beams with adaptive frequency modulation for superior armor spalling. Standard on fighters hunting frigates."
+    "description": "Twin-linked assay and penetration beams with adaptive frequency modulation for superior armor spalling. Standard on fighters hunting frigates.",
+    "attribute": "1d4 dmg, AP20"
   },
   {
     "weaponName": "Reaper Battery",
@@ -31,7 +32,8 @@
     "isCloud": "FALSE",
     "isClumsy": "TRUE",
     "isFlak": "FALSE",
-    "description": "Taps the reactor's plasma stream directly, spraying a torrent of charged ions that slag power conduits and sensor arrays. Useless against thick armor but devastating to small ships."
+    "description": "Taps the reactor's plasma stream directly, spraying a torrent of charged ions that slag power conduits and sensor arrays. Useless against thick armor but devastating to small ships.",
+    "attribute": "3d4 dmg, Clumsy"
   },
   {
     "weaponName": "Fractal Impact Charge",
@@ -48,7 +50,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "A spray of tungsten-carbide sabots using microscopically etched fractal heads to increase impact. Favored for bomber-class fighter hulls."
+    "description": "A spray of tungsten-carbide sabots using microscopically etched fractal heads to increase impact. Favored for bomber-class fighter hulls.",
+    "attribute": "2d6 dmg, AP 15, Ammo 4"
   },
   {
     "weaponName": "Polyspectral Beam",
@@ -65,7 +68,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Cycles through UV, x-ray, and gamma wavelengths in microsecond pulses. Can scratch even a battleship's hull."
+    "description": "Cycles through UV, x-ray, and gamma wavelengths in microsecond pulses. Can scratch even a battleship's hull.",
+    "attribute": "2d4 dmg, AP 25"
   },
   {
     "weaponName": "Sandthrower",
@@ -82,7 +86,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "TRUE",
-    "description": "A cloud of ceramic-coated iron filings accelerated to 15 km/s. Highly effective against lightly-armored fighters."
+    "description": "A cloud of ceramic-coated iron filings accelerated to 15 km/s. Highly effective against lightly-armored fighters.",
+    "attribute": "2d4 dmg, Flak"
   },
   {
     "weaponName": "Flak Emitter Battery",
@@ -99,7 +104,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "TRUE",
-    "description": "Baseline frigate anti-fighter system. Fires waves of lasers or charged particles to knock down small craft."
+    "description": "Baseline frigate anti-fighter system. Fires waves of lasers or charged particles to knock down small craft.",
+    "attribute": "2d6 dmg, AP 10, Flak"
   },
   {
     "weaponName": "Torpedo Launcher",
@@ -116,7 +122,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Capable of damaging even a battleship, torpedoes are cumbersome, expensive, and often the core of a line frigate’s armament."
+    "description": "Capable of damaging even a battleship, torpedoes are cumbersome, expensive, and often the core of a line frigate’s armament.",
+    "attribute": "3d8 dmg, AP 20, Ammo 4"
   },
   {
     "weaponName": "Charged Particle Caster",
@@ -133,7 +140,8 @@
     "isCloud": "FALSE",
     "isClumsy": "TRUE",
     "isFlak": "FALSE",
-    "description": "A focalized upgrade to the reaper battery with much better armor penetration."
+    "description": "A focalized upgrade to the reaper battery with much better armor penetration.",
+    "attribute": "3d6 dmg, AP 15, Clumsy"
   },
   {
     "weaponName": "Plasma Beam",
@@ -150,7 +158,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "MHD cannon that accelerates a lance of superheated plasma. Superior targeting and smaller energy drain than a CPC, but sacrifices some armor penetration."
+    "description": "MHD cannon that accelerates a lance of superheated plasma. Superior targeting and smaller energy drain than a CPC, but sacrifices some armor penetration.",
+    "attribute": "3d6 dmg, AP 10"
   },
   {
     "weaponName": "Mag Spike Array",
@@ -167,7 +176,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "TRUE",
-    "description": "Fires a volley of tungsten spikes the size of shipping containers. Almost guaranteed to eradicate any fighter-class craft it hits."
+    "description": "Fires a volley of tungsten spikes the size of shipping containers. Almost guaranteed to eradicate any fighter-class craft it hits.",
+    "attribute": "2d6+2 dmg, Flak, AP 10, Ammo 5"
   },
   {
     "weaponName": "Nuclear Missiles",
@@ -184,7 +194,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Useless against TL4 planets with working nuke snuffers. Against a colony with its snuffers down, they're extinction."
+    "description": "Useless against TL4 planets with working nuke snuffers. Against a colony with its snuffers down, they're extinction.",
+    "attribute": "Special, Ammo 5"
   },
   {
     "weaponName": "Spinal Beam Cannon",
@@ -201,7 +212,8 @@
     "isCloud": "FALSE",
     "isClumsy": "TRUE",
     "isFlak": "FALSE",
-    "description": "Briefly channels the full power of the ship into a charged beam. Lacks the power of a gravcannon but takes less power to mount."
+    "description": "Briefly channels the full power of the ship into a charged beam. Lacks the power of a gravcannon but takes less power to mount.",
+    "attribute": "3d10 dmg, AP 15, Clumsy"
   },
   {
     "weaponName": "Smart Cloud",
@@ -218,7 +230,8 @@
     "isCloud": "TRUE",
     "isClumsy": "TRUE",
     "isFlak": "FALSE",
-    "description": "A canister that deploys a swarm of fifty self-directed microdrones. Their integral beam weaponry can wipe out an attacking fighter wave."
+    "description": "A canister that deploys a swarm of fifty self-directed microdrones. Their integral beam weaponry can wipe out an attacking fighter wave.",
+    "attribute": "3d10 dmg, Cloud, Clumsy"
   },
   {
     "weaponName": "Gravcannon",
@@ -235,7 +248,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Same principles as the inertial dampers on a torchship, inverted and weaponized. Causes targets to fall apart in a welter of mutually-antagonistic gravitic fields."
+    "description": "Same principles as the inertial dampers on a torchship, inverted and weaponized. Causes targets to fall apart in a welter of mutually-antagonistic gravitic fields.",
+    "attribute": "4d6 dmg, AP 20"
   },
   {
     "weaponName": "Resonance Inversion Projector",
@@ -252,7 +266,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Weaponises the ship’s own engine with a superconductor, firing a phase‑shifted resonance lance. Ignores conventional armor and shielding before re‑coupling explosively inside the target."
+    "description": "Weaponises the ship's own engine with a superconductor, firing a phase-shifted resonance lance. Ignores conventional armor and shielding before re-coupling explosively inside the target.",
+    "attribute": "3d8 dmg ,AP 15"
   },
   {
     "weaponName": "Resonance Obliteration Driver",
@@ -269,7 +284,8 @@
     "isCloud": "FALSE",
     "isClumsy": "TRUE",
     "isFlak": "FALSE",
-    "description": "Capital-class model of the RIP. Can incapacitate a cruiser in two hits, but its bulk limits utility against fighters."
+    "description": "Capital-class model of the RIP. Can incapacitate a cruiser in two hits, but its bulk limits utility against fighters.",
+    "attribute": "3d20 dmg, AP 20, Clumsy"
   },
   {
     "weaponName": "Mass Cannon",
@@ -286,7 +302,8 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Fires projectiles almost as large as fighter-scale craft. Tremendous damage but serious ammunition limitations."
+    "description": "Fires projectiles almost as large as fighter-scale craft. Tremendous damage but serious ammunition limitations.",
+    "attribute": "2d20 dmg, AP 20, Ammo 4"
   },
   {
     "weaponName": "Lightning Charge Mantle",
@@ -303,7 +320,8 @@
     "isCloud": "TRUE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Shapes the drive plume's waste energy into a contained lightning field that clings to the hull like a star's corona. Anything small is instantly fried"
+    "description": "Shapes the drive plume's waste energy into a contained lightning field that clings to the hull like a star's corona. Anything small is instantly fried",
+    "attribute": "1d20, AP 5, Cloud"
   },
   {
     "weaponName": "Singularity Gun",
@@ -320,6 +338,7 @@
     "isCloud": "FALSE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Briefly creates a microscopic black hole inside the target. Its evaporation unleashes a point-blank gamma burst and gravitational shear. No armor stops it. "
+    "description": "Briefly creates a microscopic black hole inside the target. Its evaporation unleashes a point-blank gamma burst and gravitational shear. No armor stops it. ",
+    "attribute": "5d20, AP 25"
   }
 ]

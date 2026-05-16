@@ -260,7 +260,6 @@
   .stat-popup {
     position: absolute;
     top: 100%; 
-    /* left: calc(100% + 10px); <--- DELETE THIS LINE */
     width: 300px;
     background-color: var(--bg-panel);
     border: 1px solid var(--accent-amber);
@@ -271,11 +270,13 @@
   }
 
   .stat-popup.right {
-    left: calc(100% + 10px); 
+    left: calc(100% + 10px) !important;
+    right: auto !important;
   }
   
   .stat-popup.left {
-    right: calc(100% + 10px);
+    right: calc(100% + 10px) !important;
+    left: auto !important;
   }
 
   .stat-popup h4 {
