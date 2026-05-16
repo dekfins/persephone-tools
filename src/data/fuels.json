@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Methalox",
+    "costPerUnit": 25,
+    "baseHullCompatible": true,
+    "purchasable": true,
+    "description": "Widespread fuel type used for atmospheric flight. Made in bulk from many planets."
+  },
+  {
+    "name": "Argon",
+    "costPerUnit": 25,
+    "baseHullCompatible": true,
+    "purchasable": true,
+    "description": "Trivial. Scoopable from any atmosphere with the right gear."
+  },
+  {
+    "name": "Xenon",
+    "costPerUnit": 100,
+    "baseHullCompatible": true,
+    "purchasable": true,
+    "description": "Civilized stations only. More efficient than Ar."
+  },
+  {
+    "name": "LH2",
+    "costPerUnit": 250,
+    "baseHullCompatible": true,
+    "purchasable": true,
+    "description": "Gas giants, water-rich moons. Boils off when stored improperly."
+  },
+  {
+    "name": "NSW",
+    "costPerUnit": 1500,
+    "baseHullCompatible": true,
+    "purchasable": true,
+    "description": "Black market only. Price fluctuates."
+  },
+  {
+    "name": "D+He-3",
+    "costPerUnit": 5000,
+    "baseHullCompatible": false,
+    "purchasable": true,
+    "description": "Terragrow & POS subsidiaries. ISRU possible."
+  },
+  {
+    "name": "Pellets",
+    "costPerUnit": 0,
+    "baseHullCompatible": false,
+    "purchasable": false,
+    "description": "DAVE-regulated. Mission rewards or black market."
+  },
+  {
+    "name": "AM",
+    "costPerUnit": 0,
+    "baseHullCompatible": false,
+    "purchasable": false,
+    "description": "POS monopoly. No credit price. Faction leverage required."
+  }
+]

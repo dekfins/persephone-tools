@@ -26,13 +26,6 @@ input[type="text"]:focus {
   box-shadow: 0 0 5px rgba(255, 191, 0, 0.3);
 }
 
-button:hover:not(:disabled) {
-  border-color: var(--accent-amber);
-  color: var(--accent-amber);
-  background-color: rgba(245, 159, 11, 0.05);
-  cursor: pointer;
-}
-
 button:disabled {
   opacity: 0.3;
   cursor: not-allowed;

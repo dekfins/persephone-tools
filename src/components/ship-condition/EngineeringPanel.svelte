@@ -1,6 +1,8 @@
 <script lang="ts">
   import { shipState } from '../../lib/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import fuelsData from '../../data/fuels.json';
 
   function adjustHP(amount: number) {
     shipState.currentHealth = Math.min(shipState.totalHealth, Math.max(0, shipState.currentHealth + amount));
@@ -11,35 +13,103 @@
     shipState.currentRI = Math.min(maxRI, Math.max(0, shipState.currentRI + amount));
   }
 
-  // Auto-initialize dropdowns when a new engine is installed
-  $effect(() => {
-    if (shipState.engine) {
-      // DEFENSIVE FALLBACKS: If the engine is stale/old, treat it as an empty array
-      const fuels = shipState.engine.availableFuels || [];
-      const modes = shipState.engine.availableModes || [];
+  let fuelOptions = $derived((shipState.engine?.availableFuels || []).map(f => ({ name: f, class: "universal" })));
+  let modeOptions = $derived((shipState.engine?.availableModes || []).map(m => ({ name: m, class: "universal" })));
 
-      // Type cast 'as string' prevents TS from complaining if activeFuel is null
-      if (!fuels.includes(shipState.activeFuel as string)) {
-        shipState.activeFuel = fuels[0] || null;
+  // 1. DYNAMIC CONFIG LOOKUP
+  let activeConfig = $derived.by(() => {
+    if (!shipState.engine || !shipState.activeFuel || !shipState.activeMode) return null;
+    return shipState.engine.configs.find(
+      (c: any) => c.fuel === shipState.activeFuel && c.mode === shipState.activeMode
+    ) || null;
+  });
+
+  let activePropellants = $derived(activeConfig?.propellants || []);
+
+  // 2. THE MULTI-FUEL CAPACITY CALCULATOR
+  let fuelCapacities = $derived.by(() => {
+    let caps: Record<string, number> = {};
+    if (!activePropellants.length) return caps;
+
+    let bunkerCap = 0; let cryoCap = 0; let particleCap = 0; let amCap = 0;
+    
+    for (const comp of shipState.components) {
+      const name = (comp.item.fittingName || comp.item.name || "").toLowerCase();
+      const qty = comp.quantity;
+
+      if (name.includes("fuel bunker")) bunkerCap += 5 * qty;
+      if (name.includes("cryofuel bunker")) cryoCap += 5 * qty;
+      if (name.includes("fissionables tank") || name.includes("pellet")) particleCap += 5 * qty;
+      if (name.includes("antimatter bottle")) amCap += 1 * qty;
+    }
+
+    for (const prop of activePropellants) {
+      const f = prop.name;
+      const fuelInfo = fuelsData.find(x => x.name === f);
+      const baseCapacity = (fuelInfo && fuelInfo.baseHullCompatible) ? 1 : 0;
+      const getCap = (moduleCapacity: number) => moduleCapacity > 0 ? moduleCapacity : baseCapacity;
+
+      if (["Methalox", "Argon", "Xenon"].includes(f)) caps[f] = getCap(bunkerCap + cryoCap);
+      else if (["LH2", "H2", "NSW", "D+He-3"].includes(f)) caps[f] = getCap(cryoCap); 
+      else if (["Particles", "Pellets"].includes(f)) caps[f] = particleCap;
+      else if (f === "AM") caps[f] = amCap;
+      else caps[f] = 0;
+    }
+    
+    return caps;
+  });
+
+  // 3. AUTO-FILL AND HARD SAFETY CLAMP EFFECT
+  $effect(() => {
+    if (shipState.currentFuel === undefined || typeof shipState.currentFuel === 'number') {
+      shipState.currentFuel = {}; 
+    }
+    
+    for (const prop of activePropellants) {
+      const maxCap = fuelCapacities[prop.name] || 0;
+
+      // RULE 1: If coming from the builder/importing, fuel values are undefined.
+      // Automatically snap them up to their hardware max capacity!
+      if (shipState.currentFuel[prop.name] === undefined) {
+        shipState.currentFuel[prop.name] = maxCap;
       }
-      
-      if (!modes.includes(shipState.activeMode as string)) {
-        shipState.activeMode = modes[0] || null;
+
+      // RULE 2: Continuous Clamping Safety. If a user manually types past the max,
+      // or if your cargo capacity shrinks, immediately force it down to maxCap.
+      if (shipState.currentFuel[prop.name] > maxCap) {
+        shipState.currentFuel[prop.name] = maxCap;
       }
-    } else {
-      shipState.activeFuel = null;
-      shipState.activeMode = null;
+      if (shipState.currentFuel[prop.name] < 0) {
+        shipState.currentFuel[prop.name] = 0;
+      }
     }
   });
 
-  let maxFuelCells = $derived.by(() => {
-    let cells = 0;
-    for (const comp of shipState.components) {
-      const name = (comp.item.fittingName || "").toLowerCase();
-      if (name.includes("bunker") || name.includes("magazine")) cells += comp.quantity * 5;
-      else if (name.includes("bottle")) cells += comp.quantity * 1;
+  let selectedFuelObj = $state<{ name: string } | null>(null);
+  let selectedModeObj = $state<{ name: string } | null>(null);
+
+  $effect(() => {
+    const isValidFuel = fuelOptions.some(f => f.name === shipState.activeFuel);
+    
+    if (!isValidFuel && fuelOptions.length > 0) {
+      shipState.activeFuel = fuelOptions[0].name; 
     }
-    return cells;
+    
+    if (shipState.activeFuel) {
+      selectedFuelObj = { name: shipState.activeFuel };
+    }
+  });
+
+  $effect(() => {
+    const isValidMode = modeOptions.some(m => m.name === shipState.activeMode);
+    
+    if (!isValidMode && modeOptions.length > 0) {
+      shipState.activeMode = modeOptions[0].name; 
+    }
+
+    if (shipState.activeMode) {
+      selectedModeObj = { name: shipState.activeMode };
+    }
   });
 </script>
 
@@ -62,45 +132,47 @@
 
   <hr class="dim-divider" />
 
-  <div class="eng-row">
-    <span class="eng-label">FUEL TYPE:</span>
-    {#if shipState.engine?.availableFuels}
-      <select class="terminal-input" bind:value={shipState.activeFuel}>
-        {#each shipState.engine.availableFuels as fuel}
-          <option value={fuel}>{fuel}</option>
-        {/each}
-      </select>
-    {:else}
-      <span class="text-dim">N/A</span>
-    {/if}
-  </div>
-
-  <div class="eng-row">
-    <span class="eng-label">BURN MODE:</span>
-    {#if shipState.engine?.availableModes}
-      <select class="terminal-input" bind:value={shipState.activeMode}>
-        {#each shipState.engine.availableModes as mode}
-          <option value={mode}>{mode}</option>
-        {/each}
-      </select>
-    {:else}
-      <span class="text-dim">N/A</span>
-    {/if}
-  </div>
-
-  <div class="eng-row">
-    <div class="fuel-label-group">
-      <span class="eng-label">ACTIVE FUEL CELLS:</span>
-      <span class="text-dim" style="font-size: 0.75rem;">(MAX: {maxFuelCells})</span>
-    </div>
-    <input 
-      type="number" 
-      step="0.01" 
-      min="0" 
-      bind:value={shipState.currentFuel} 
-      class="terminal-input num-input" 
+  <div class="form-group">
+    <label for="fuel-select">Fuel Type:</label>
+    <TerminalSelect
+      id="fuel-select"
+      options={fuelOptions}
+      bind:value={selectedFuelObj}
+      labelKey="name"
+      onSelect={(item: any) => shipState.activeFuel = item.name}
     />
   </div>
+
+  <div class="form-group">
+    <label for="mode-select">Burn Mode:</label>
+    <TerminalSelect
+      id="mode-select"
+      options={modeOptions}
+      bind:value={selectedModeObj}
+      labelKey="name"
+      onSelect={(item: any) => shipState.activeMode = item.name}
+    />
+  </div>
+
+  <hr class="dim-divider" />
+
+  {#each activePropellants as prop}
+    <div class="eng-row">
+      <div class="fuel-label-group">
+        <span class="eng-label">{prop.name.toUpperCase()} CELLS:</span>
+        <span class="text-dim" style="font-size: 0.75rem;">(MAX: {fuelCapacities[prop.name] || 0})</span>
+      </div>
+      <input 
+        type="number" 
+        step="0.01" 
+        min="0" 
+        max={fuelCapacities[prop.name] || 0}
+        bind:value={shipState.currentFuel[prop.name]} 
+        class="terminal-input num-input" 
+      />
+    </div>
+  {/each}
+
 </TerminalPanel>
 
 <style>
@@ -108,7 +180,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.2rem;
   }
   .eng-label {
     color: var(--text-dim);

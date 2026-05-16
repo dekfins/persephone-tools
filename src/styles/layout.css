@@ -13,7 +13,7 @@
   padding: var(--page-padding-top) var(--page-padding-x) var(--page-padding-bottom);
   max-width: var(--max-width);
   margin: 0 auto;
-  min-height: auto; /* Fixes the 'big chin' by not forcing 100vh */
+  min-height: auto;
 }
 
 /* --- 3. THE GRID SYSTEM --- */

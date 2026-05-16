@@ -98,26 +98,26 @@ export interface ActiveCondition {
   segmentsActive: number;
 }
 
-export interface FuelMix {
-  type: string;
-  ratio: number;
+export interface Propellant {
+  name: string;
+  efficiency: number;
 }
 
 export interface EngineConfig {
   fuel: string;
   mode: string;
-  efficiency: number;
   twrG: number;
-  fuelMix: FuelMix[];
+  propellants: Propellant[];
 }
 
 export interface Engine {
   id: string;
-  engineName: string; // Note: We replaced 'parentEngine' with this cleaner name
+  engineName: string;
   class: string;
   baseCost: number;
   basePower: number;
   baseMass: number;
+  description: string;
   availableFuels: string[];
   availableModes: string[];
   configs: EngineConfig[];

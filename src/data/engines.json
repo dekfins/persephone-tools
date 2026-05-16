@@ -6,18 +6,16 @@
     "baseCost": 2000,
     "basePower": 0,
     "baseMass": 1,
-    "description": "Chemical full-flow staged combustion engine. Burns methane and liquid oxygen for a brief, violent kick. High thrust, zero endurance - no one uses these for interplanetary work, but every shuttle, emergency pod, and surface lander relies on one.",
+    "description": "Chemical full-flow staged combustion engine. Burns methane and liquid oxygen for a brief, violent kick. No one uses these for interplanetary work, but every shuttle, emergency pod, and surface lander relies on one.",
     "availableFuels": ["Methalox"],
     "availableModes": ["Standard"],
     "configs": [
       {
         "fuel": "Methalox",
         "mode": "Standard",
-        "efficiency": 10,
         "twrG": 5,
-        "fuelMix": [
-          { "type": "CH4", "ratio": 1 },
-          { "type": "LOX", "ratio": 1 }
+        "propellants": [
+          { "name": "Methalox", "efficiency": 10 }
         ]
       }
     ]
@@ -36,16 +34,18 @@
       {
         "fuel": "Argon",
         "mode": "Standard",
-        "efficiency": 100,
         "twrG": 0.05,
-        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Argon", "efficiency": 100 }
+        ]
       },
       {
         "fuel": "Xenon",
         "mode": "Standard",
-        "efficiency": 250,
         "twrG": 0.05,
-        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Xenon", "efficiency": 250 }
+        ]
       }
     ]
   },
@@ -63,44 +63,50 @@
       {
         "fuel": "Argon",
         "mode": "Mode 1 (Efficient)",
-        "efficiency": 100,
         "twrG": 0.1,
-        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Argon", "efficiency": 180 }
+        ]
       },
       {
         "fuel": "Argon",
         "mode": "Mode 2 (Afterburner)",
-        "efficiency": 180,
         "twrG": 0.25,
-        "fuelMix": [{ "type": "Argon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Argon", "efficiency": 100 }
+        ]
       },
       {
         "fuel": "Xenon",
         "mode": "Mode 1 (Efficient)",
-        "efficiency": 200,
         "twrG": 0.1,
-        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Xenon", "efficiency": 350 }
+        ]
       },
       {
         "fuel": "Xenon",
         "mode": "Mode 2 (Afterburner)",
-        "efficiency": 350,
         "twrG": 0.25,
-        "fuelMix": [{ "type": "Xenon", "ratio": 1 }]
+        "propellants": [
+          { "name": "Xenon", "efficiency": 200 }
+        ]
       },
       {
         "fuel": "LH2",
         "mode": "Mode 1 (Efficient)",
-        "efficiency": 300,
         "twrG": 0.1,
-        "fuelMix": [{ "type": "LH2", "ratio": 1 }]
+        "propellants": [
+          { "name": "LH2", "efficiency": 550 }
+        ]
       },
       {
         "fuel": "LH2",
         "mode": "Mode 2 (Afterburner)",
-        "efficiency": 550,
         "twrG": 0.25,
-        "fuelMix": [{ "type": "LH2", "ratio": 1 }]
+        "propellants": [
+          { "name": "LH2", "efficiency": 300 }
+        ]
       }
     ]
   },
@@ -118,9 +124,10 @@
       {
         "fuel": "NSW",
         "mode": "Standard",
-        "efficiency": 500,
         "twrG": 2,
-        "fuelMix": [{ "type": "NSW", "ratio": 1 }]
+        "propellants": [
+          { "name": "NSW", "efficiency": 500 }
+        ]
       }
     ]
   },
@@ -138,18 +145,18 @@
       {
         "fuel": "Pellets",
         "mode": "Mode 1 (Efficient)",
-        "efficiency": 11000,
         "twrG": 0.01,
-        "fuelMix": [{ "type": "Pellets", "ratio": 1 }]
+        "propellants": [
+          { "name": "Pellets", "efficiency": 11000 }
+        ]
       },
       {
         "fuel": "Pellets",
         "mode": "Mode 2 (Afterburner)",
-        "efficiency": 1000,
         "twrG": 0.15,
-        "fuelMix": [
-          { "type": "Pellets", "ratio": 1 },
-          { "type": "LH2", "ratio": 11 }
+        "propellants": [
+          { "name": "Pellets", "efficiency": 11000 },
+          { "name": "LH2", "efficiency": 1000 }
         ]
       }
     ]
@@ -168,9 +175,10 @@
       {
         "fuel": "D+He-3",
         "mode": "Standard",
-        "efficiency": 1000,
         "twrG": 0.5,
-        "fuelMix": [{ "type": "D+He-3", "ratio": 1 }]
+        "propellants": [
+          { "name": "D+He-3", "efficiency": 900 }
+        ]
       }
     ]
   },
@@ -188,9 +196,10 @@
       {
         "fuel": "D+He-3",
         "mode": "Standard",
-        "efficiency": 9000,
         "twrG": 0.8,
-        "fuelMix": [{ "type": "D+He-3", "ratio": 1 }]
+        "propellants": [
+          { "name": "D+He-3", "efficiency": 9000 }
+        ]
       }
     ]
   },
@@ -208,11 +217,10 @@
       {
         "fuel": "AM + D+He-3",
         "mode": "Standard",
-        "efficiency": 4000,
         "twrG": 0.5,
-        "fuelMix": [
-          { "type": "AM", "ratio": 1 },
-          { "type": "D+He-3", "ratio": 10 }
+        "propellants": [
+          { "name": "AM", "efficiency": 40000 },
+          { "name": "D+He-3", "efficiency": 4000 }
         ]
       }
     ]
@@ -231,11 +239,10 @@
       {
         "fuel": "AM + LH2",
         "mode": "Standard",
-        "efficiency": 65000,
         "twrG": 1,
-        "fuelMix": [
-          { "type": "AM", "ratio": 1 },
-          { "type": "LH2", "ratio": 1 }
+        "propellants": [
+          { "name": "AM", "efficiency": 65000 },
+          { "name": "LH2", "efficiency": 65000 }
         ]
       }
     ]

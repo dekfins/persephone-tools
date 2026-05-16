@@ -102,7 +102,7 @@
   .progress-header {
     display: flex;
     justify-content: flex;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.rem;
     font-size: 0.9rem;
   }
 

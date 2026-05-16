@@ -4,6 +4,7 @@
   import weapons from '../../data/weapons.json';
   import defenses from '../../data/defenses.json';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
 
   function cycleStatus(comp: any) {
     const currentStatus = comp.status || "Online"; 
@@ -21,10 +22,8 @@
   function getLiveAttribute(comp: any) {
     const masterList = [...fittings, ...weapons, ...defenses] as any[];
     
-    // 1. Get the specific name from the component snapshot
     const targetName = comp.item.fittingName || comp.item.weaponName || comp.item.defenseName;
 
-    // 2. Find the match in the master list by checking the same consolidated name
     const liveItem = masterList.find(i => {
       const masterName = i.fittingName || i.weaponName || i.defenseName;
       return masterName === targetName;
@@ -32,13 +31,46 @@
 
     return liveItem?.attribute || comp.item.attribute || "DATA LINK SEVERED";
   }
+
+  // --- MID-FLIGHT MARKET LOGIC ---
+  let isMarketOpen = $state(false);
+
+  const marketInventories = {
+    Fitting: fittings.map(f => ({ ...f, displayName: f.fittingName})),
+    Weapon: weapons.map(w => ({ ...w, displayName: w.weaponName})),
+    Defense: defenses.map(d => ({ ...d, displayName: d.defenseName}))
+  };
+
+  const categoryOptions = [
+    { label: 'FITTINGS', value: 'Fitting' },
+    { label: 'WEAPONS', value: 'Weapon' },
+    { label: 'DEFENSES', value: 'Defense' }
+  ];
+
+  let selectedCategoryObj = $state(categoryOptions[0]);
+  let selectedItem = $state<any>(null);
+
+  let availableItems = $derived.by(() => {
+    const rawList = marketInventories[selectedCategoryObj.value as keyof typeof marketInventories] || [];
+    const currentTier = shipState.multipliers.classTier;
+    return rawList.filter((item: any) => shipState.getTier(item.class) <= currentTier);
+  });
+
+  $effect(() => {
+    selectedCategoryObj; // Track dependency
+    selectedItem = null;
+  });
+
+  function handleAddItem() {
+    if (selectedItem) {
+      shipState.addComponent(selectedItem, selectedCategoryObj.value);
+      selectedItem = null;
+      isMarketOpen = false;
+    }
+  }
 </script>
 
 <TerminalPanel title="Internal Systems">
-  {#if shipState.components.length === 0}
-    <p class="text-dim">No components installed.</p>
-  {/if}
-  
   <div class="systems-list">
     {#each shipState.components as comp}
       <div class="system-row is-{comp.status?.toLowerCase() || 'online'}">
@@ -65,14 +97,63 @@
           >
             {(comp.status || 'Online').toUpperCase()}
           </button>
+          
+          <button 
+            class="btn-remove" 
+            onclick={() => shipState.removeComponent(comp.id)}
+            title="Remove Component"
+          >
+            X
+          </button>
         </div>
       </div>
     {/each}
+
+    <button class="btn-add-item" onclick={() => isMarketOpen = !isMarketOpen}>
+      {isMarketOpen ? "- Cancel installation..." : "+ Add item..."}
+    </button>
+
+    {#if isMarketOpen}
+      <div class="market-popup">
+        <div class="market-row">
+          <div class="market-field">
+            <label for="category">CATEGORY</label>
+            <TerminalSelect
+              id="market-cat-select"
+              options={categoryOptions}
+              bind:value={selectedCategoryObj}
+              labelKey="label"
+            />
+          </div>
+          <div class="market-field" style="flex: 2;">
+            <label for="available-components">AVAILABLE COMPONENTS</label>
+            <TerminalSelect
+              id="market-item-select"
+              options={availableItems}
+              bind:value={selectedItem}
+              labelKey="displayName"
+            />
+          </div>
+        </div>
+        
+        <button 
+          class="btn-install" 
+          disabled={!selectedItem}
+          onclick={handleAddItem}
+        >
+          INSTALL COMPONENT
+        </button>
+      </div>
+    {/if}
   </div>
 </TerminalPanel>
 
-
 <style>
+  /* PULLS THE LIST UP HIGHER */
+  .systems-list {
+    margin-top: -0.5rem; 
+  }
+
   .systems-list::-webkit-scrollbar {
     width: 6px;
   }
@@ -83,7 +164,7 @@
   }
 
   .systems-list::-webkit-scrollbar-thumb {
-    background: var(--ui-cyan, #00aacc); /* Uses your accent color */
+    background: var(--ui-cyan, #00aacc);
     border-radius: 2px;
   }
 
@@ -91,18 +172,40 @@
     background: var(--accent-amber, #ffb000);
   }
 
-  /* The new 3-Column Grid for the row */
   .system-row { 
-    display: grid; 
-    grid-template-columns: 2.5fr 3.5fr 100px; 
+    display: grid;
+    grid-template-columns: 2.5fr 3.5fr 120px; /* Changed from 100px */
     gap: 1.5rem; 
     align-items: center; 
     border-bottom: 1px dashed var(--border-subtle); 
-    padding: 0.6rem 0;
-    min-width: 0; 
+    padding: 0.2rem 0;
+    min-width: 0;
   }
 
-  /* Dim the entire row if the system is destroyed */
+  /* Align the buttons together */
+  .sys-action {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Style the new remove button */
+  .btn-remove {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 0.2rem;
+    transition: color 0.2s;
+  }
+
+  .btn-remove:hover {
+    color: var(--accent-red);
+  }
+
   .system-row.is-destroyed .sys-primary,
   .system-row.is-destroyed .sys-secondary {
     opacity: 0.3;
@@ -111,17 +214,16 @@
 
   .system-row.is-damaged .sys-secondary {
     opacity: 0.7;
-    color: var(
-      --accent-amber
-    ); /* Highlight the effect so the GM remembers it might be glitchy */
+    color: var(--accent-amber);
   }
 
   /* COLUMN 1 */
   .sys-primary { 
-    display: flex; 
+    display: flex;
     gap: 0.5rem; 
     align-items: baseline; 
     min-width: 0;
+    font-size: 0.8rem;
   }
   .cat-label {
     font-size: 0.8em;
@@ -142,11 +244,8 @@
   }
 
   .sys-secondary {
-    font-family: var(
-      --font-terminal,
-      monospace
-    ); /* Use standard text for readability */
-    font-size: 0.85rem;
+    font-family: var(--font-terminal, monospace);
+    font-size: 0.8rem;
     color: var(--text-main);
     line-height: 1.4;
   }
@@ -170,35 +269,88 @@
   }
   .status-online {
     color: var(--ui-cyan);
-    border-color: var(--ui-cyan);
+    border-color: transparent;
   }
   .status-damaged {
     color: var(--accent-amber);
-    border-color: var(--accent-amber);
+    border-color: transparent;
     background: rgba(245, 158, 11, 0.1);
   }
   .status-destroyed {
     color: var(--accent-red);
-    border-color: var(--accent-red);
-    background: rgba(239, 68, 68, 0.2);
+    border-color: transparent;
     text-decoration: line-through;
   }
 
-  .text-dim {
+  .item-label.fighter { color: var(--fighter-green); }
+  .item-label.frigate { color: var(--frigate-blue); }
+  .item-label.cruiser { color: var(--cruiser-purple); }
+  .item-label.capital { color: var(--capital-red); }
+
+  /* --- MID-FLIGHT MARKET STYLES --- */
+  .btn-add-item {
+    background: transparent;
+    border: none;
     color: var(--text-dim);
+    font-family: var(--font-terminal, monospace);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.8rem 0 0.2rem 0;
+    text-align: left;
+    width: 100%;
   }
 
-  .item-label.fighter {
-    color: var(--fighter-green);
-  }
-  .item-label.frigate {
-    color: var(--frigate-blue);
-  }
-  .item-label.cruiser {
-    color: var(--cruiser-purple);
-  }
-  .item-label.capital {
-    color: var(--capital-red);
+  .btn-add-item:hover {
+    color: var(--text-main);
   }
 
+  .market-popup {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: 1px dashed var(--accent-amber);
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .market-row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .market-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .market-field label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .btn-install {
+    background: transparent;
+    border: 1px solid var(--accent-amber);
+    color: var(--accent-amber);
+    padding: 0.6rem;
+    font-family: var(--font-terminal, monospace);
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+
+  .btn-install:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.15);
+  }
+
+  .btn-install:disabled {
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+    cursor: not-allowed;
+  }
 </style>

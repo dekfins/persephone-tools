@@ -66,11 +66,9 @@ ul {
   border: var(--border-subtle);
   border-radius: 0;
   padding: 1.5rem;
-  
-  /* --- ADD THESE THREE LINES --- */
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* This controls the vertical spacing between elements INSIDE the block */
+  gap: 1rem;
+  height: max-content;
 }
-
 

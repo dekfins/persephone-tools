@@ -23,7 +23,6 @@
 
 <style>
   .main-content {
-    /* Height of the navbar + extra breathing room */
     padding-top: 80px; 
     padding-left: 2rem;
     padding-right: 2rem;

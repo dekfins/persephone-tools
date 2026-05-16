@@ -31,14 +31,15 @@
     font-size: 1.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--text-dim);
     padding-bottom: 0.5rem;
   }
 
   :global(.terminal-alert) {
+    margin-top: 1rem;
     padding: 0.5rem;
     border: 1px solid var(--accent-amber);
     box-shadow: 0 0 5px rgba(255, 191, 0, 0.3);
+    background-color: var(--bg-void);
     color: var(--accent-amber);
     text-align: center;
     font-weight: bold;
@@ -58,6 +59,7 @@
     font-family: monospace;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
 
   :global(.btn-action:hover) {

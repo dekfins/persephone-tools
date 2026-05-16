@@ -280,6 +280,20 @@
     "attribute": ""
   },
   {
+    "fittingName": "Fissionables tank",
+    "baseCost": 20000,
+    "hasScaleCost": "TRUE",
+    "basePower": 0,
+    "hasScalePower": "FALSE",
+    "baseMass": 1,
+    "hasScaleMass": "FALSE",
+    "class": "Frigate",
+    "maxClass": "",
+    "isStackable": "FALSE",
+    "description": "Stores 5 units of fissionable particles. Shielded, reinforced, and stamped with a DAVE compliance serial number.",
+    "attribute": ""
+  },
+  {
     "fittingName": "Fuel bunker",
     "baseCost": 5000,
     "hasScaleCost": "TRUE",
@@ -290,7 +304,7 @@
     "class": "Fighter",
     "maxClass": "",
     "isStackable": "TRUE",
-    "description": "Stores 5 cells of a single fuel type. Fuel types cannot be mixed.",
+    "description": "Stores 5 units of a single fuel type. Fuel types cannot be mixed.",
     "attribute": ""
   },
   {
@@ -389,20 +403,6 @@
     "maxClass": "",
     "isStackable": "FALSE",
     "description": "Full-scale TL4 fabrication plant. Can stock raw materials at 5,000 credits per ton to pay ship repair/maintenance costs. Creates/repairs at 10,000 credits per day.",
-    "attribute": ""
-  },
-  {
-    "fittingName": "Pellet magazine",
-    "baseCost": 20000,
-    "hasScaleCost": "TRUE",
-    "basePower": 0,
-    "hasScalePower": "FALSE",
-    "baseMass": 1,
-    "hasScaleMass": "FALSE",
-    "class": "Frigate",
-    "maxClass": "",
-    "isStackable": "FALSE",
-    "description": "Stores 5 cells of fission pellets. Shielded, reinforced, and stamped with a DAVE compliance serial number.",
     "attribute": ""
   },
   {

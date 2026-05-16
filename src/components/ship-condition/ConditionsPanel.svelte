@@ -1,6 +1,7 @@
 <script lang="ts">
   import { shipState } from '../../lib/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
 
   const conditionTemplates = [
     { name: "Cracked Coolant Loop", fixDC: "10", effect: "-1 Reactor Maint. Crit: +1 Rad to engine crew. Untreated 3 segments = -1 RI." },
@@ -12,22 +13,27 @@
     { name: "Comms Array Damaged", fixDC: "10", effect: "Cannot send/receive long-range. Vega lost." },
     { name: "Weapon System Malfunction", fixDC: "12", effect: "One weapon becomes inoperable." },
     { name: "Strange Resonance", fixDC: "14", effect: "-1 Mental saves. May attract attention." }
-  ];
+  ].map(t => ({
+    ...t,
+    selectLabel: `${t.name} (DC ${t.fixDC})`
+  }));
 
   let selectedConditionTemplate = $state(conditionTemplates[0]);
 </script>
 
 <TerminalPanel title="Active Conditions (Travel)" extraClass="span-full">
   <div class="condition-controls">
-    <select class="terminal-input" bind:value={selectedConditionTemplate}>
-      {#each conditionTemplates as t}
-        <option value={t}>{t.name} (DC {t.fixDC})</option>
-      {/each}
-    </select>
-    <button class="btn-action" onclick={() => shipState.addCondition(selectedConditionTemplate)}>+ INFLICT</button>
-    <div style="flex-grow: 1;"></div>
-    <button class="btn-action pulse-amber" onclick={() => shipState.advanceTravelSegment()}>
-      ADVANCE 1 SEGMENT
+    
+    <TerminalSelect 
+      id="condition-inflict-select"
+      options={conditionTemplates}
+      bind:value={selectedConditionTemplate}
+      labelKey="selectLabel"
+    />
+
+    <button class="btn-action" onclick={() => shipState.addCondition(selectedConditionTemplate)}>INFLICT</button>
+    <button class="btn-action" onclick={() => shipState.advanceTravelSegment()}>
+      +1 SEGMENT
     </button>
   </div>
 
@@ -55,20 +61,6 @@
 </TerminalPanel>
 
 <style>
-  .terminal-input {
-    padding: 0.5rem;
-    background: var(--bg-void);
-    color: var(--ui-bright);
-    border: 1px solid var(--ui-cyan);
-
-    font-family: inherit;
-  }
-
-  .pulse-amber {
-    color: var(--accent-amber);
-    border-color: var(--accent-amber);
-  }
-
   .error {
     color: var(--accent-red);
   }
@@ -97,7 +89,6 @@
 
   .condition-card {
     padding: 1rem;
-
     background: rgba(255, 0, 0, 0.05);
     border: 1px solid var(--accent-red);
   }

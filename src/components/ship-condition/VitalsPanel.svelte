@@ -1,23 +1,41 @@
 <script lang="ts">
+  // 1. Import shipCodec alongside shipState
   import { shipState } from '../../lib/shipState.svelte';
+  import { shipCodec } from '../../lib/shipCodec'
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
-  // 1. The "Lookup" Logic
   let activeConfig = $derived.by(() => {
     if (!shipState.engine || !shipState.activeFuel || !shipState.activeMode) return null;
     
-    // Scan the hardware configurations for the exact match
     return shipState.engine.configs.find(
       (c: any) => c.fuel === shipState.activeFuel && c.mode === shipState.activeMode
     ) || null;
   });
 
-  // 2. The Derived Stats
   let twr = $derived(activeConfig?.twrG || 0);
   
-  let totalDV = $derived(
-    Math.round((activeConfig?.efficiency || 0) * (shipState.currentFuel || 0))
-  );
+  let totalDV = $derived.by(() => {
+    if (!activeConfig || !activeConfig.propellants || activeConfig.propellants.length === 0) return 0;
+
+    let potentialDVs = activeConfig.propellants.map((prop: any) => {
+      const loadedCells = shipState.currentFuel[prop.name] || 0;
+      return loadedCells * prop.efficiency;
+    });
+
+    return Math.round(Math.min(...potentialDVs));
+  });
+
+  // 2. File Import Handling
+  let fileInput: HTMLInputElement;
+
+  function handleFileUpload(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      shipCodec.importFromFile(target.files[0]);
+      // Reset the input so the same file can be uploaded again if needed
+      target.value = ''; 
+    }
+  }
 </script>
 
 <TerminalPanel title={shipState.name || "UNNAMED SHIP"} extraClass="vitals-panel">
@@ -66,6 +84,37 @@
       <span class="vital-label">DV</span>
       <span class="vital-value">{totalDV}</span>
     </div>
+
+    <div class="vital-cell">
+      <span class="vital-label">POWER</span>
+      <span class="vital-value {shipState.usedPower > shipState.totalPower ? 'error' : ''}">
+        {Math.round(shipState.usedPower * 10) / 10}/{Math.round(shipState.totalPower * 10) / 10}
+      </span>
+    </div>
+    <div class="vital-cell">
+      <span class="vital-label">MASS</span>
+      <span class="vital-value {shipState.usedMass > shipState.totalMass ? 'error' : ''}">
+        {Math.round(shipState.usedMass * 10) / 10}/{Math.round(shipState.totalMass * 10) / 10}
+      </span>
+    </div>
+    <div class="vital-cell">
+      <span class="vital-label">HPTS</span>
+      <span class="vital-value {shipState.usedHardpoints > shipState.totalHardpoints ? 'error' : ''}">
+        {shipState.usedHardpoints}/{shipState.totalHardpoints}
+      </span>
+    </div>
+</div>
+  <div class="io-controls">
+    <button class="btn-action" onclick={() => shipCodec.exportToFile()}>EXPORT SHIP</button>
+    <button class="btn-action" onclick={() => fileInput.click()}>IMPORT SHIP</button>
+    
+    <input 
+      type="file" 
+      accept=".deimos" 
+      bind:this={fileInput} 
+      onchange={handleFileUpload} 
+      style="display: none;" 
+    />
   </div>
 </TerminalPanel>
 
@@ -73,18 +122,19 @@
   /* --- 3x3 GRID LAYOUT --- */
   .vitals-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Forces exactly 3 equal columns */
+    grid-template-columns: repeat(3, 1fr);
     border: 1px solid var(--text-dim);
     background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem; /* Space before buttons */
   }
 
   .vital-cell {
     display: flex;
     flex-direction: column;
-    align-items: center;      /* Centers content horizontally */
-    justify-content: center;  /* Centers content vertically */
-    padding: 0.75rem 0.5rem;
-    border: 1px solid var(--text-dim); /* Internal grid lines */
+    align-items: center;      
+    justify-content: center;  
+    padding: 0.5rem 0.5rem;
+    border: 1px solid var(--text-dim); 
     text-align: center;
   }
 
@@ -115,5 +165,12 @@
     0% { opacity: 1; } 
     50% { opacity: 0.5; } 
     100% { opacity: 1; } 
+  }
+
+  /* --- I/O CONTROLS --- */
+  .io-controls {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
   }
 </style>

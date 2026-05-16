@@ -10,7 +10,8 @@
     labelKey = "label", 
     placeholder = "SELECT...", 
     id, 
-    onSelect = undefined 
+    onSelect = undefined,
+    popupSide = "right"
   } = $props();
 
   let hoveredOption = $state<any>(null);
@@ -55,7 +56,7 @@
     
     // Core systems (Reactors/Engines) ALWAYS scale. 
     // Others only scale if the JSON flag is TRUE.
-    const isCore = 'reactorType' in item || 'parentEngine' in item;
+    const isCore = 'reactorType' in item || 'engineName' in item;
     const scales = isCore || scaleFlag === "TRUE" || scaleFlag === true;
 
     const result = scales ? baseValue * shipState.multipliers.massPowerMult : baseValue;
@@ -117,9 +118,8 @@
     </ul>
 
     {#if hoveredOption}
-      <aside class="stat-popup">
+      <aside class="stat-popup {popupSide}"> 
         <h4>{hoveredOption[labelKey]}</h4>
-
         <div class="stat-row meta-row">
           <span class="class-tag {getClassTag(hoveredOption.class)}">
             {hoveredOption.class.toUpperCase()}
@@ -198,7 +198,7 @@
     color: var(--accent-amber);
     border: var(--border-subtle);
     padding: 0.75rem;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     cursor: pointer;
     text-align: left;
     text-transform: uppercase;
@@ -259,16 +259,23 @@
 
   .stat-popup {
     position: absolute;
-    /* Push it to the right of the dropdown, with a small gap */
     top: 100%; 
-    left: calc(100% + 10px); 
+    /* left: calc(100% + 10px); <--- DELETE THIS LINE */
     width: 300px;
     background-color: var(--bg-panel);
     border: 1px solid var(--accent-amber);
     box-shadow: 0 0 5px rgba(255, 191, 0, 0.3);
     padding: 1rem;
-    z-index: 1000; /* Ensure it's above everything */
-    pointer-events: none; /* Prevents the mouse from interacting with the popup itself */
+    z-index: 1000; 
+    pointer-events: none; 
+  }
+
+  .stat-popup.right {
+    left: calc(100% + 10px); 
+  }
+  
+  .stat-popup.left {
+    right: calc(100% + 10px);
   }
 
   .stat-popup h4 {
