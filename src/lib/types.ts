@@ -133,6 +133,8 @@ export interface FlightTelemetry {
   tCoast: number;
   sAccel: number;
   totalT: number;
+  relVel: number;
+  maxDv: number;
 }
 
 export interface ActiveMission {

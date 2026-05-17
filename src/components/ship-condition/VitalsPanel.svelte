@@ -1,39 +1,18 @@
 <script lang="ts">
-  // 1. Import shipCodec alongside shipState
   import { shipState } from '../../lib/shipState.svelte';
-  import { shipCodec } from '../../lib/shipCodec'
+  import { shipCodec } from '../../lib/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
-  let activeConfig = $derived.by(() => {
-    if (!shipState.engine || !shipState.activeFuel || !shipState.activeMode) return null;
-    
-    return shipState.engine.configs.find(
-      (c: any) => c.fuel === shipState.activeFuel && c.mode === shipState.activeMode
-    ) || null;
-  });
+  let twr = $derived(shipState.activeConfig?.twrG || 0);
+  let totalDV = $derived(shipState.totalDV);
 
-  let twr = $derived(activeConfig?.twrG || 0);
-  
-  let totalDV = $derived.by(() => {
-    if (!activeConfig || !activeConfig.propellants || activeConfig.propellants.length === 0) return 0;
-
-    let potentialDVs = activeConfig.propellants.map((prop: any) => {
-      const loadedCells = shipState.currentFuel[prop.name] || 0;
-      return loadedCells * prop.efficiency;
-    });
-
-    return Math.round(Math.min(...potentialDVs));
-  });
-
-  // 2. File Import Handling
   let fileInput: HTMLInputElement;
 
   function handleFileUpload(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files.length > 0) {
       shipCodec.importFromFile(target.files[0]);
-      // Reset the input so the same file can be uploaded again if needed
-      target.value = ''; 
+      target.value = '';
     }
   }
 </script>
@@ -82,7 +61,7 @@
     </div>
     <div class="vital-cell">
       <span class="vital-label">DV</span>
-      <span class="vital-value">{totalDV}</span>
+      <span class="vital-value">{Math.round(totalDV)}</span>
     </div>
 
     <div class="vital-cell">

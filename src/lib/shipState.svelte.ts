@@ -283,6 +283,41 @@ class ShipBuilderState {
     
     return baseHullCargo + (cargoModules * multiplier);
   }
+
+  // --- PROPULSION EXPORTS ---
+  // Helper to grab the currently active engine configuration profile
+  get activeConfig() {
+    if (!this.engine || !this.activeFuel || !this.activeMode) return null;
+    return this.engine.configs.find(
+      (c: any) => c.fuel === this.activeFuel && c.mode === this.activeMode
+    ) || null;
+  }
+
+  // Globally accessible Delta-V budget calculated from current fuel cells
+  get totalDV() {
+    const config = this.activeConfig;
+    if (!config || !config.propellants || config.propellants.length === 0) return 0;
+
+    let potentialDVs = config.propellants.map((prop: any) => {
+      const loadedCells = this.currentFuel[prop.name] || 0;
+      return loadedCells * prop.efficiency;
+    });
+
+    return Math.min(...potentialDVs);
+  }
+
+  // Action: Consume fuel for a confirmed flight
+  consumeDeltaV(dvSpent: number) {
+    const config = this.activeConfig;
+    if (!config || !config.propellants) return;
+
+    for (const prop of config.propellants) {
+      const unitsToBurn = dvSpent / prop.efficiency;
+      if (this.currentFuel[prop.name] !== undefined) {
+        this.currentFuel[prop.name] = Math.max(0, this.currentFuel[prop.name] - unitsToBurn);
+      }
+    }
+  }
 }
 
 export const shipState = new ShipBuilderState();
