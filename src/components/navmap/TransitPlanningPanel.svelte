@@ -1,5 +1,6 @@
 <script lang="ts">
   import { campaignState } from '../../lib/campaignState.svelte';
+  import { shipState } from '../../lib/shipState.svelte';
   import type { PlanetDef } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 

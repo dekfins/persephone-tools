@@ -34,16 +34,16 @@
     <circle 
       cx={0} cy={0} 
       r={planet.soiRadius} 
-      class="soi-ring {targetPlanet === planet.def ? 'soi-targeted' : ''}" 
+      class="soi-ring {targetPlanet?.name === planet.def.name ? 'soi-targeted' : ''}" 
     />
     <text x={planet.visualRadius + 6} y={4} class="planet-label">
       {planet.def.name.toUpperCase()}
     </text>
   {/if}
 
-  {#if planet.def === originPlanet}
+  {#if originPlanet?.name === planet.def.name}
     <circle cx={0} cy={0} r={planet.visualRadius + 5} class="planet-origin-ring" />
-  {:else if planet.def === targetPlanet}
+  {:else if targetPlanet?.name === planet.def.name}
     <circle cx={0} cy={0} r={planet.visualRadius + 5} class="planet-target-ring" />
   {/if}
 

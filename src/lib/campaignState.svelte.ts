@@ -1,9 +1,11 @@
 import type { ActiveMission, FlightTelemetry } from "./types";
+import { shipState } from './shipState.svelte';
+import { getTransitTelemetry } from './orbitalMath';
 
 interface HistorySnapshot {
   currentDay: number;
   daysElapsed: number;
-  fuelSnapshot: FlightTelemetry;
+  fuelSnapshot: Record<string, number>;
 }
 
 class CampaignStateManager {
@@ -44,8 +46,10 @@ class CampaignStateManager {
     this.#historyStack.push({
       currentDay: this.currentDay,
       daysElapsed: this.activeMission.daysElapsed,
-      fuelSnapshot: { ...this.activeMission.telemetry } // Placeholder, wired to engineering
+      fuelSnapshot: { ...shipState.currentFuel }
     });
+
+    const oldTelemetry = getTransitTelemetry(this.activeMission.daysElapsed, this.activeMission.telemetry);
 
     const remaining = this.activeMission.travelTime - this.activeMission.daysElapsed;
     if (remaining <= 5) {
@@ -55,6 +59,14 @@ class CampaignStateManager {
       this.currentDay += 5;
       this.activeMission.daysElapsed += 5;
     }
+    
+    const newTelemetry = getTransitTelemetry(this.activeMission.daysElapsed, this.activeMission.telemetry);
+    const dvUsed = oldTelemetry.remainingDvKM - newTelemetry.remainingDvKM;
+    if (dvUsed > 0) {
+      shipState.consumeDeltaV(dvUsed);
+    }
+    
+    shipState.advanceTravelSegment();
   }
 
   revertSegment() {
@@ -63,6 +75,11 @@ class CampaignStateManager {
     if (lastState) {
       this.currentDay = lastState.currentDay;
       this.activeMission.daysElapsed = lastState.daysElapsed;
+      shipState.currentFuel = lastState.fuelSnapshot;
+      
+      for (const cond of shipState.activeConditions) {
+        cond.segmentsActive = Math.max(0, cond.segmentsActive - 1);
+      }
     }
   }
 
