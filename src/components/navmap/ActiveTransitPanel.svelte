@@ -2,19 +2,30 @@
   import { campaignState } from '../../lib/campaignState.svelte';
   import { getTransitTelemetry } from '../../lib/orbitalMath';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import type { PoiDef } from '../../lib/types';
+  import poisData from '../../data/pois.json';
   
+  const pois = poisData as PoiDef[];
+
   let liveFlight = $derived(
     campaignState.activeMission 
       ? getTransitTelemetry(campaignState.animatedDaysElapsed, campaignState.activeMission.telemetry)
       : null
   );
+
+  // Cross-reference our active mission string ID with pois.json to get the clean metadata
+  let targetPoi = $derived.by(() => {
+    const mission = campaignState.activeMission;
+    if (!mission) return null;
+    return pois.find(p => p.id === mission.targetName);
+  });
 </script>
 
 {#if campaignState.activeMission && liveFlight}
   <TerminalPanel title="STATUS: IN TRANSIT">
     <div class="stat-row">
       <span>DESTINATION:</span>
-      <span>{campaignState.activeMission.targetName.toUpperCase()}</span>
+      <span>{targetPoi ? targetPoi.name.toUpperCase() : campaignState.activeMission.targetName.toUpperCase()}</span>
     </div>
     <div class="stat-row">
       <span>PROGRESS:</span>

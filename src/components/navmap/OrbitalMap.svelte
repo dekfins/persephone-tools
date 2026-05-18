@@ -234,7 +234,18 @@
       <TrajectoryOverlay {planets} {originPoi} {targetPoi} {activeTrajectory} zoom={zoom} />
 
       {#each mappedPlanets as planet}
-        <PlanetNode {planet} {originPlanet} {targetPlanet} zoom={zoom} onTarget={(def) => targetPlanet = def} />
+        <PlanetNode 
+          {planet} 
+          {originPlanet} 
+          {targetPlanet} 
+          zoom={zoom} 
+          onTarget={(def) => {
+            targetPlanet = def;
+            // FIX: Auto-select the first POI on this planet to fire up the Transit Panel
+            const firstPoi = pois.find(p => p.parentBody === def.name);
+            targetPoiId = firstPoi ? firstPoi.id : null;
+          }} 
+        />
       {/each}
     </g>
 
@@ -267,9 +278,19 @@
       {#if subFadeOpacity > 0}
         <circle 
           cx={mMoon.screenX} cy={mMoon.screenY} r={uiRadius} 
-          fill={mMoon.def.color || "#cbd5e1"} stroke="#000000" stroke-width="2px"
+          fill={mMoon.def.color || "#cbd5e1"} stroke="#000000" stroke-width="1.5px"
           opacity={subFadeOpacity}
-          class="planet-body" style="pointer-events: none;"
+          class="planet-body" 
+          style="pointer-events: auto; cursor: pointer;"
+          onclick={(e) => {
+            e.stopPropagation();
+            // FIX: Focus parent planet and select the first POI on this moon
+            const parentPl = planets.find(p => p.name === mMoon.def.parentPlanet);
+            if (parentPl) targetPlanet = parentPl;
+
+            const firstPoi = pois.find(p => p.parentBody === mMoon.def.name);
+            targetPoiId = firstPoi ? firstPoi.id : null;
+          }}
         />
       {/if}
     {/each}

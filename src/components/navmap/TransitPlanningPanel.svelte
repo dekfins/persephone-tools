@@ -19,7 +19,6 @@
     useMaxFuelLimit: boolean;
     userCustomDv: string;
   } = $props();
-
 </script>
 
 <TerminalPanel title="{originPoi.name.toUpperCase()} -> {targetPoi.name.toUpperCase()}">

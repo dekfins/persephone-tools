@@ -85,10 +85,25 @@
       style="transform: translate3d({item.screenX}px, {item.screenY}px, 0);"
     >
       
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
       {#if item.type !== 'moon'}
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div 
           class="poi-dot"
-          style="background-color: {item.color}; box-shadow: 0 0 6px {item.color};"
+          style="
+            background-color: {item.color}; 
+            box-shadow: 0 0 6px {item.color};
+            pointer-events: auto; 
+            cursor: pointer;
+          "
+          onclick={(e) => {
+            e.stopPropagation();
+            if (onPoiSelect) {
+              // In this block, item.type is never 'moon', so item.original is always a PoiDef.
+              onPoiSelect(item.original);
+            }
+          }}
         ></div>
       {/if}
 
@@ -104,18 +119,14 @@
         onclick={(e) => {
           e.stopPropagation();
           if (onPoiSelect) {
-            // Type assertions to satisfy the TypeScript compiler
-            const isMoon = item.type === 'moon';
-            const originalMoon = item.original as MoonDef;
-            const originalPoi = item.original as PoiDef;
-
-            // Normalize the parent property so OrbitalMap knows where to zoom
-            const targetData = {
-              ...item.original,
-              parentBody: isMoon ? originalMoon.parentPlanet : originalPoi.parentBody
-            };
-            
-            onPoiSelect(targetData);
+            if (item.type === 'moon') {
+              const moon = item.original as MoonDef;
+              // Create a synthetic object that has a `parentBody` property for consistency
+              onPoiSelect({ ...moon, parentBody: moon.parentPlanet });
+            } else {
+              // PoiDef already has a parentBody, so we can pass it directly
+              onPoiSelect(item.original);
+            }
           }
         }}
       >
