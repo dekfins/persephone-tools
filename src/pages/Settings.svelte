@@ -17,7 +17,7 @@
     <div class="setting-row">
       <div class="setting-info">
         <span class="setting-name">FACTORY RESET</span>
-        <span class="setting-desc">Purge all local browser memory and reset DEIMOS to factory defaults.</span>
+        <span class="setting-desc">Purge all local browser memory and reset website to factory defaults.</span>
       </div>
       
       <button class="btn-action btn-danger" onclick={factoryReset}>

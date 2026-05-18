@@ -1,0 +1,101 @@
+[
+  {
+    "id": "moon",
+    "name": "Moon",
+    "parentPlanet": "Earth",
+    "radius": 1737.4,
+    "color": "#cbd5e1",
+    "a": 3.84e8,
+    "e": 0.054,
+    "omega": 0,
+    "period": 2358720
+  },
+  {
+    "id": "phobos",
+    "name": "Phobos",
+    "parentPlanet": "Mars",
+    "radius": 11.2,
+    "color": "#8c7c6b",
+    "a": 9.3e6,
+    "e": 0.015,
+    "omega": 0,
+    "period": 26784
+  },
+  {
+    "id": "deimos",
+    "name": "Deimos",
+    "parentPlanet": "Mars",
+    "radius": 6.2,
+    "color": "#e3d1c1",
+    "a": 2.3e7,
+    "e": 0.0002,
+    "omega": 0,
+    "period": 108864
+  },
+  {
+    "id": "io",
+    "name": "Io",
+    "parentPlanet": "Jupiter",
+    "radius": 1821.6,
+    "color": "#cbd5e1",
+    "a": 4.21e8,
+    "e": 0.004,
+    "omega": 0,
+    "period": 152841.6
+  },
+  {
+    "id": "europa",
+    "name": "Europa",
+    "parentPlanet": "Jupiter",
+    "radius": 1560.8,
+    "color": "#e2e8f0",
+    "a": 6.71e8,
+    "e": 0.009,
+    "omega": 0,
+    "period": 306806.4
+  },
+  {
+    "id": "ganymede",
+    "name": "Ganymede",
+    "parentPlanet": "Jupiter",
+    "radius": 2634.1,
+    "color": "#94a3b8",
+    "a": 1.07e9,
+    "e": 0.001,
+    "omega": 0,
+    "period": 618105.6
+  },
+  {
+    "id": "callisto",
+    "name": "Callisto",
+    "parentPlanet": "Jupiter",
+    "radius": 2410.3,
+    "color": "#64748b",
+    "a": 1.88e9,
+    "e": 0.007,
+    "omega": 0,
+    "period": 1441929.6
+  },
+  {
+    "id": "titan",
+    "name": "Titan",
+    "parentPlanet": "Saturn",
+    "radius": 2574.7,
+    "color": "#f0d589",
+    "a": 1.22e9,
+    "e": 0.028,
+    "omega": 0,
+    "period": 1377648
+  },
+  {
+    "id": "iapetus",
+    "name": "Iapetus",
+    "parentPlanet": "Saturn",
+    "radius": 734.5,
+    "color": "#c7c1b1",
+    "a": 3.56e9,
+    "e": 0.028,
+    "omega": 0,
+    "period": 6853248
+  }
+]

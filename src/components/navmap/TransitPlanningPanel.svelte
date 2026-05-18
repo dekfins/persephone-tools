@@ -1,19 +1,19 @@
 <script lang="ts">
   import { campaignState } from '../../lib/campaignState.svelte';
   import { shipState } from '../../lib/shipState.svelte';
-  import type { PlanetDef } from '../../lib/types';
+  import type { PoiDef } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let {
-    originPlanet,
-    targetPlanet,
+    originPoi,
+    targetPoi,
     activeTrajectory,
     onConfirmLaunch,
     useMaxFuelLimit = $bindable(false),
     userCustomDv = $bindable("")
   }: {
-    originPlanet: PlanetDef;
-    targetPlanet: PlanetDef;
+    originPoi: PoiDef;
+    targetPoi: PoiDef;
     activeTrajectory: any;
     onConfirmLaunch: () => void;
     useMaxFuelLimit: boolean;
@@ -22,7 +22,7 @@
 
 </script>
 
-<TerminalPanel title="{originPlanet.name.toUpperCase()} -> {targetPlanet.name.toUpperCase()}">
+<TerminalPanel title="{originPoi.name.toUpperCase()} -> {targetPoi.name.toUpperCase()}">
   <div class="stat-row"><span>TRAVEL TIME:</span><span>{activeTrajectory.realisticTime.toFixed(2)} d</span></div>
   <div class="stat-row"><span>BURNOUT DV:</span><span>{activeTrajectory.maxDv.toFixed(2)} km/s</span></div>
 
@@ -48,7 +48,7 @@
 
     <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick={() => {
         campaignState.initiateTransit({
-          originName: originPlanet.name, targetName: targetPlanet.name, launchDay: campaignState.currentDay,
+          originName: originPoi.id, targetName: targetPoi.id, launchDay: campaignState.currentDay,
           travelTime: activeTrajectory.realisticTime, daysElapsed: 0, reqDv: activeTrajectory.maxDv,
           telemetry: activeTrajectory.telemetry 
         });

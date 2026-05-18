@@ -1,6 +1,7 @@
-import type { ActiveMission, FlightTelemetry } from "./types";
+import type { ActiveMission, FlightTelemetry, PoiDef } from "./types";
 import { shipState } from './shipState.svelte';
 import { getTransitTelemetry } from './orbitalMath';
+import poisData from '../data/pois.json';
 
 interface HistorySnapshot {
   currentDay: number;
@@ -8,9 +9,11 @@ interface HistorySnapshot {
   fuelSnapshot: Record<string, number>;
 }
 
+const pois = poisData as PoiDef[];
+
 class CampaignStateManager {
   currentDay = $state(34); 
-  shipLocation = $state("Mars"); 
+  shipLocation = $state("mars_orbit"); 
   activeMission = $state<ActiveMission | null>(null);
   animatedDaysElapsed = $state(0); 
   
@@ -22,15 +25,33 @@ class CampaignStateManager {
   simSpeed = $state(1.0);
 
   // MAP CONFIGURATORS (Default orbit spacing to 1.8x to resolve inner system clutter)
-  planetScaleMultiplier = $state(1.0); 
-  orbitScaleMultiplier = $state(1.8); 
-
+  planetScaleMultiplier = $state(1.0);
+  orbitScaleMultiplier = $state(1.0);
   #historyStack = $state<HistorySnapshot[]>([]);
 
   get formattedDate() {
     let d = new Date("2526-01-01T12:00:00Z");
     d.setDate(d.getDate() + Math.floor(this.currentDay));
     return d.toISOString().split('T')[0];
+  }
+
+  executeLocalHop(targetPoiId: string) {
+    const currentPoi = pois.find(p => p.id === this.shipLocation);
+    if (!currentPoi) return;
+    
+    if (currentPoi.connections.includes(targetPoiId)) {
+      this.currentDay += 0.25;
+      
+      // Deduct 0.5 fuel cells of the currently active fuel type
+      if (shipState.engine && shipState.activeFuel) {
+        const fuelKey = shipState.activeFuel;
+        if (shipState.currentFuel[fuelKey] !== undefined) {
+          shipState.currentFuel[fuelKey] = Math.max(0, shipState.currentFuel[fuelKey] - 0.5);
+        }
+      }
+      
+      this.shipLocation = targetPoiId;
+    }
   }
 
   initiateTransit(mission: ActiveMission) {

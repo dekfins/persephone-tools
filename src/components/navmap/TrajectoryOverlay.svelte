@@ -1,26 +1,38 @@
 <script lang="ts">
   import { campaignState } from '../../lib/campaignState.svelte';
-  import { getPlanetState, getTransitTelemetry, getVisualRadius } from '../../lib/orbitalMath';
-  import type { PlanetDef } from '../../lib/types';
+  import { getPoiState, getTransitTelemetry, getVisualRadius } from '../../lib/orbitalMath';
+  import type { PlanetDef, PoiDef, MoonDef } from '../../lib/types';
+  import poisData from '../../data/pois.json';
+  import moonsData from '../../data/moons.json';
+
+  const pois = poisData as PoiDef[];
+  const moons = moonsData as MoonDef[];
 
   let {
     planets,
-    originPlanet,
-    targetPlanet,
+    originPoi,
+    targetPoi,
     activeTrajectory,
     zoom
   }: {
     planets: PlanetDef[];
-    originPlanet: PlanetDef | null;
-    targetPlanet: PlanetDef | null;
+    originPoi: PoiDef | null;
+    targetPoi: PoiDef | null;
     activeTrajectory: any;
     zoom: number;
   } = $props();
+
+  // Helper to dynamically resolve the parent body (Planet or Moon) for visual offset scaling
+  function getParentBody(parentName: string) {
+    return planets.find(p => p.name === parentName) || 
+           moons.find(m => m.name === parentName) || 
+           { name: parentName, radius: 5000 };
+  }
 </script>
 
-{#if originPlanet && targetPlanet && activeTrajectory && !campaignState.activeMission}
-  {@const origState = getPlanetState(originPlanet, campaignState.currentDay * 86400)}
-  {@const targetState = getPlanetState(targetPlanet, (campaignState.currentDay + activeTrajectory.realisticTime) * 86400)}
+{#if originPoi && targetPoi && activeTrajectory && !campaignState.activeMission}
+  {@const origState = getPoiState(originPoi.id, campaignState.currentDay * 86400)}
+  {@const targetState = getPoiState(targetPoi.id, (campaignState.currentDay + activeTrajectory.realisticTime) * 86400)}
   
   {@const flightScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier}
   
@@ -29,8 +41,8 @@
   {@const cx2 = targetState.x * flightScale}
   {@const cy2 = -targetState.y * flightScale}
 
-  {@const originR = getVisualRadius(originPlanet.name, zoom, campaignState.planetScaleMultiplier)}
-  {@const targetR = getVisualRadius(targetPlanet.name, zoom, campaignState.planetScaleMultiplier)}
+  {@const originR = getVisualRadius(getParentBody(originPoi.parentBody), zoom, campaignState.planetScaleMultiplier)}
+  {@const targetR = getVisualRadius(getParentBody(targetPoi.parentBody), zoom, campaignState.planetScaleMultiplier)}
 
   {@const dx = cx2 - cx1}
   {@const dy = cy2 - cy1}
@@ -59,19 +71,19 @@
 
 {#if campaignState.activeMission}
   {@const m = campaignState.activeMission}
-  {@const originDef = planets.find(p => p.name === m.originName)}
-  {@const targetDef = planets.find(p => p.name === m.targetName)}
+  {@const originDef = pois.find(p => p.id === m.originName)}
+  {@const targetDef = pois.find(p => p.id === m.targetName)}
   
   {#if originDef && targetDef}
     {@const flightScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier}
     
-    {@const cx1 = getPlanetState(originDef, m.launchDay * 86400).x * flightScale}
-    {@const cy1 = -getPlanetState(originDef, m.launchDay * 86400).y * flightScale}
-    {@const cx2 = getPlanetState(targetDef, (m.launchDay + m.travelTime) * 86400).x * flightScale}
-    {@const cy2 = -getPlanetState(targetDef, (m.launchDay + m.travelTime) * 86400).y * flightScale}
+    {@const cx1 = getPoiState(originDef.id, m.launchDay * 86400).x * flightScale}
+    {@const cy1 = -getPoiState(originDef.id, m.launchDay * 86400).y * flightScale}
+    {@const cx2 = getPoiState(targetDef.id, (m.launchDay + m.travelTime) * 86400).x * flightScale}
+    {@const cy2 = -getPoiState(targetDef.id, (m.launchDay + m.travelTime) * 86400).y * flightScale}
 
-    {@const originR = getVisualRadius(originDef.name, zoom, campaignState.planetScaleMultiplier)}
-    {@const targetR = getVisualRadius(targetDef.name, zoom, campaignState.planetScaleMultiplier)}
+    {@const originR = getVisualRadius(getParentBody(originDef.parentBody), zoom, campaignState.planetScaleMultiplier)}
+    {@const targetR = getVisualRadius(getParentBody(targetDef.parentBody), zoom, campaignState.planetScaleMultiplier)}
 
     {@const dx = cx2 - cx1}
     {@const dy = cy2 - cy1}
@@ -96,8 +108,27 @@
 {/if}
 
 <style>
-  .trajectory-line { stroke: var(--accent-red, #ef4444); stroke-width: 2.5px; stroke-dasharray: 4, 4; }
-  .trajectory-line-active { stroke: var(--ui-cyan, #06b6d4); stroke-width: 1.5px; }
-  .target-future-ring { stroke: var(--accent-red, #ef4444); stroke-width: 2px; fill: none; }
-  .player-ship { fill: var(--ui-cyan, #06b6d4); stroke: #ffffff; stroke-width: 0.5px; }
+  .trajectory-line {
+    stroke: var(--accent-red, #ef4444);
+    stroke-width: 2.5px;
+    stroke-dasharray: 4, 4;
+    pointer-events: none;
+  }
+  .trajectory-line-active {
+    stroke: var(--ui-cyan, #06b6d4);
+    stroke-width: 1.5px;
+    pointer-events: none;
+  }
+  .target-future-ring {
+    stroke: var(--accent-red, #ef4444);
+    stroke-width: 2px;
+    fill: none;
+    pointer-events: none;
+  }
+  .player-ship {
+    fill: var(--ui-cyan, #06b6d4);
+    stroke: #ffffff;
+    stroke-width: 0.5px;
+    pointer-events: none;
+  }
 </style>

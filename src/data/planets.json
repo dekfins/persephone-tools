@@ -5,68 +5,75 @@
     "period": 0,
     "theta0": 0,
     "color": "yellow",
-    "size": 10,
     "e": 0,
-    "omega": 0
+    "omega": 0,
+    "radius": 696340,
+    "mass": 1.989e30
   },
   {
     "name": "Earth",
     "a": 150000000000,
-    "period": "31558196.02",
+    "period": 31558196.02,
     "theta0": 6.083428,
     "color": "#6DB2FF",
-    "size": 3,
     "e": 0.01651,
-    "omega": 1.826445
+    "omega": 1.826445,
+    "radius": 6371,
+    "mass": 5.972e24
   },
   {
     "name": "Mars",
     "a": 228000000000,
-    "period": "59353338.23",
+    "period": 59353338.23,
     "theta0": 4.409972,
     "color": "#FA6762",
-    "size": 2,
     "e": 0.094038,
-    "omega": 5.905817
+    "omega": 5.905817,
+    "radius": 3389,
+    "mass": 6.417e23
   },
   {
     "name": "Belt (Ceres)",
     "a": 414000000000,
-    "period": "145418675.89",
+    "period": 145418675.89,
     "theta0": 3.279808,
     "color": "#515768",
-    "size": 1,
     "e": 0.076,
-    "omega": 1.279326
+    "omega": 1.279326,
+    "radius": 473,
+    "mass": 9.393e20
   },
   {
     "name": "Jupiter",
     "a": 778000000000,
-    "period": "374574609.08",
+    "period": 374574609.08,
     "theta0": 2.476788,
     "color": "#F39C69",
-    "size": 6,
     "e": 0.047715,
-    "omega": 0.277014
+    "omega": 0.277014,
+    "radius": 69911,
+    "mass": 1.898e27
   },
   {
     "name": "Saturn",
     "a": 1430000000000,
-    "period": "929468034.14",
+    "period": 929468034.14,
     "theta0": 4.669076,
     "color": "#C9A766",
-    "size": 5,
     "e": 0.052217,
-    "omega": 1.574779
+    "omega": 1.574779,
+    "radius": 58232,
+    "mass": 5.683e26
   },
   {
     "name": "Persephone",
     "a": 5000000000000,
-    "period": "1000000000.00",
+    "period": 1000000000.00,
     "theta0": 6,
     "color": "#FF00FF",
-    "size": 4,
     "e": 0.95,
-    "omega": -6
+    "omega": -6,
+    "radius": 1188,
+    "mass": 1.3e22
   }
 ]

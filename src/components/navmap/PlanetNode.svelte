@@ -1,124 +1,78 @@
 <script lang="ts">
-  import { campaignState } from '../../lib/campaignState.svelte';
   import type { PlanetDef } from '../../lib/types';
-
-  let {
-    planet,
-    originPlanet,
-    targetPlanet,
-    zoom,
-    onTarget
-  }: {
-    planet: any; // The mapped planet object containing x, y, visualRadius, etc.
+  
+  interface Props {
+    planet: any; // Using your existing mapped planet object
     originPlanet: PlanetDef | null;
     targetPlanet: PlanetDef | null;
     zoom: number;
-    onTarget: (def: PlanetDef | null) => void;
-  } = $props();
+    onTarget: (def: PlanetDef) => void;
+  }
+  
+  let { planet, originPlanet, targetPlanet, zoom, onTarget }: Props = $props();
 
-  let isSun = $derived(planet.def.name === 'Sun');
+  // 1. Decouple the SOI logic: Calculate if it's wider than the screen
+  let isSoiCulled = $derived(planet.soiRadius > 1500);
+
+  // 2. Decouple the Label logic: Culls at a higher zoom threshold than the SOI
+  // It completely unmounts when the SOI would theoretically be 3000 pixels wide.
+  let isLabelCulled = $derived(planet.soiRadius > 3000);
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<g 
-  transform="translate({planet.x}, {planet.y})" 
-  class="planet-group"
-  onclick={(e) => {
-    e.stopPropagation();
-    if (planet.def.name !== campaignState.shipLocation) onTarget(planet.def);
-    else onTarget(null);
-  }}
->
-  {#if !isSun}
+<g class="planet-node-group" transform="translate({planet.x}, {planet.y})">
+  
+  {#if !isSoiCulled}
     <circle 
-      cx={0} cy={0} 
+      class="planet-soi" 
       r={planet.soiRadius} 
-      class="soi-ring {targetPlanet?.name === planet.def.name ? 'soi-targeted' : ''}" 
+      style="pointer-events: none;" 
     />
-    <text x={planet.visualRadius + 6} y={4} class="planet-label">
-      {planet.def.name.toUpperCase()}
+  {/if}
+
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <circle 
+    class="planet-body" 
+    r={Math.max(2, planet.visualRadius)}
+    fill={planet.def.color} onclick={(e) => {
+      e.stopPropagation(); 
+      onTarget(planet.def);
+    }}
+    style="cursor: pointer; pointer-events: auto;"
+  />
+
+  {#if !isLabelCulled}
+    {@const labelOpacity = Math.max(0, 1 - (planet.soiRadius - 2000) / 1000)}
+    <text 
+      class="planet-label" 
+      x={Math.max(2, planet.visualRadius) + 8} 
+      y="4"
+      fill-opacity={labelOpacity}
+    >
+      {planet.def.name}
     </text>
-  {/if}
-
-  {#if originPlanet?.name === planet.def.name}
-    <circle cx={0} cy={0} r={planet.visualRadius + 5} class="planet-origin-ring" />
-  {:else if targetPlanet?.name === planet.def.name}
-    <circle cx={0} cy={0} r={planet.visualRadius + 5} class="planet-target-ring" />
-  {/if}
-
-  <circle cx={0} cy={0} r={planet.visualRadius} fill={isSun ? '#f59e0b' : planet.def.color} />
-
-  {#if zoom > 1.8 && !isSun}
-    {#if campaignState.shipLocation === planet.def.name && !campaignState.activeMission}
-      <g class="player-parked-beacon">
-        <circle cx={0} cy={0} r={planet.visualRadius + 4} class="beacon-pulse" />
-        <polygon 
-          points="5,0 -4,3 -4,-3" 
-          transform="translate(0, -{planet.visualRadius + 6}) rotate(-90)" 
-          class="player-ship" 
-        />
-      </g>
-    {/if}
   {/if}
 </g>
 
 <style>
-  .player-ship {
-    fill: var(--ui-cyan, #06b6d4);
-    stroke: #ffffff;
-    stroke-width: 0.5px;
+  .planet-soi {
+    fill: rgba(6, 182, 212, 0.05); /* Very faint background */
+    stroke: rgba(6, 182, 212, 0.2);
+    stroke-width: 1px;
+    /* Do NOT use hover states here, it kills the CPU on large radii */
   }
-  .planet-group {
-    cursor: pointer;
+  .planet-body {
+    transition: filter 0.2s;
   }
+  .planet-body:hover {
+    filter: brightness(1.5);
+  }
+
   .planet-label {
-    fill: rgba(255, 255, 255, 0.7);
-    font-size: 10px;
+    font-size: 0.8rem;
+    fill: var(--text-main, #eee);
     font-family: var(--font-terminal, monospace);
-    pointer-events: none;
-  }
-  .planet-origin-ring {
-    fill: none;
-    stroke: var(--ui-cyan, #06b6d4);
-    stroke-width: 2px;
-  }
-  .planet-target-ring {
-    fill: none;
-    stroke: var(--accent-red, #ef4444);
-    stroke-width: 2px;
-  }
-
-  .soi-ring {
-    fill: rgba(6, 182, 212, 0.02);
-    stroke: rgba(6, 182, 212, 0.15);
-    stroke-width: 1px;
-    stroke-dasharray: 3 3;
-    transition: all 0.2s;
-  }
-  .planet-group:hover .soi-ring {
-    fill: rgba(239, 68, 68, 0.08);
-    stroke: var(--accent-red, #ef4444);
-  }
-  .soi-targeted {
-    fill: rgba(239, 68, 68, 0.08);
-    stroke: var(--accent-red, #ef4444);
-  }
-
-  .beacon-pulse {
-    fill: none;
-    stroke: var(--ui-cyan, #06b6d4);
-    stroke-width: 1px;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0% {
-      r: 5px;
-      opacity: 1;
-    }
-    100% {
-      r: 25px;
-      opacity: 0;
-    }
+    text-transform: uppercase;
+    pointer-events: none; /* Allows clicks to pass through to the circle */
   }
 </style>
