@@ -14,7 +14,7 @@
     width: 100vw;
     height: 100vh;
     z-index: 10; /* High enough to cover the background, low enough to stay under the navbar */
-    background: var(--bg-dark, #0b0e14);
+    background: var(--bg-void);
     margin: 0;
     padding: 0;
     overflow: hidden;

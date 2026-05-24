@@ -13,17 +13,6 @@
 
 <div class="settings-container">
   <TerminalPanel title="System Configuration">
-    
-    <div class="setting-row">
-      <div class="setting-info">
-        <span class="setting-name">FACTORY RESET</span>
-        <span class="setting-desc">Purge all local browser memory and reset website to factory defaults.</span>
-      </div>
-      
-      <button class="btn-action btn-danger" onclick={factoryReset}>
-        WIPE MEMORY
-      </button>
-    </div>
 
     <div class="setting-row">
       <div class="setting-info" style="width: 100%;">
@@ -57,6 +46,36 @@
       </div>
     </div>
 
+    <div class="setting-row">
+      <div class="setting-info" style="width: 100%;">
+        <label for="orbit-tail-opacity" class="setting-name">ORBIT TRAIL OPACITY: {campaignState.orbitTrailOpacity.toFixed(1)}</label>
+        <span class="setting-desc">Adjusts the opacity of the orbit trails. Set to 0 to disable trails entirely.</span>
+        <input 
+          id="orbit-tail-opacity"
+          type="range" 
+          min="0" 
+          max="1" 
+          step="0.1" 
+          bind:value={campaignState.orbitTrailOpacity} 
+          style="width: 100%; cursor: pointer; margin-top: 10px;"
+        />
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info" style="align-items: flex-start;">
+        <label class="setting-name" for="factory-reset">FACTORY RESET</label>
+        <span class="setting-desc">Purge all local browser memory and reset website to factory defaults.</span>
+        <button class="btn-action btn-danger btn-compact" style="margin-top: 15px;" onclick={factoryReset}>
+          WIPE MEMORY
+        </button>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center; color: var(--text-dim, #888); font-size: 0.85rem;">
+      Made with ❤️ by dekfins. <a href="https://github.com/dekfins/ship-builder" target="_blank" style="color: var(--accent-blue, #3b82f6); text-decoration: underline;">Source code on GitHub</a>.
+    </div>
+
   </TerminalPanel>
 </div>
 
@@ -78,12 +97,13 @@
   .setting-info {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.25rem;
   }
 
   .setting-name {
     color: var(--text-main, #eee);
     font-weight: bold;
+    font-size: 1rem;
     font-family: var(--font-terminal, monospace);
     letter-spacing: 0.05em;
   }

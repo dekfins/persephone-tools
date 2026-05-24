@@ -7,11 +7,20 @@
   
   const pois = poisData as PoiDef[];
 
-  let liveFlight = $derived(
-    campaignState.activeMission 
-      ? getTransitTelemetry(campaignState.animatedDaysElapsed, campaignState.activeMission.telemetry)
-      : null
-  );
+  let liveFlight = $derived.by(() => {
+    if (!campaignState.activeMission) return null;
+    
+    const telemetry = campaignState.activeMission.telemetry;
+    const elapsed = campaignState.animatedDaysElapsed || 0; // Fallback to 0 instantly on launch
+    
+    // Safe fallback if telemetry is missing/broken due to solver bugs
+    if (!telemetry) {
+      return { currentVelocityKM: 0, remainingDvKM: 0, fraction: 0 };
+    }
+    
+    const result = getTransitTelemetry(elapsed, telemetry);
+    return result || { currentVelocityKM: 0, remainingDvKM: 0, fraction: 0 };
+  });
 
   // Cross-reference our active mission string ID with pois.json to get the clean metadata
   let targetPoi = $derived.by(() => {
@@ -54,7 +63,7 @@
         {(campaignState.activeMission.travelTime - campaignState.activeMission.daysElapsed) <= 5 ? 'ARRIVE' : 'ADVANCE SEGMENT'}
       </button>
       {#if campaignState.hasUndoBackup}
-        <button class="btn-action btn-revert" style="flex: 1; background: #475569;" onclick={() => campaignState.revertSegment()}>
+        <button class="btn-action btn-revert" style="flex: 1;" onclick={() => campaignState.revertSegment()}>
           UNDO
         </button>
       {/if}
@@ -71,8 +80,13 @@
     color: var(--ui-cyan);
     font-family: var(--font-terminal, monospace);
   }
+  .btn-revert {
+    background-color: transparent; /* slate-600 */
+    border-color: var(--accent-red, #ef4444);
+    color: var(--accent-red, #ef4444);
+  }
   .btn-revert:hover {
-    background: #ef4444 !important;
+    background: var(--accent-red, #ef4444) !important;
     color: #fff;
   }
 </style>

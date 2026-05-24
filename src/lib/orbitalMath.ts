@@ -96,7 +96,14 @@ export function getMoonState(moonId: string, elapsedSeconds: number) {
 
 export function getPoiState(poiId: string, elapsedSeconds: number) {
   const poi = pois.find(p => p.id === poiId);
-  if (!poi) return { x: 0, y: 0, vx: 0, vy: 0 };
+  if (!poi) {
+    const planet = planets.find(p => p.name === poiId);
+    if (planet) return getPlanetState(planet.name, elapsedSeconds);
+    const moon = moons.find(m => m.id === poiId);
+    if (moon) return getMoonState(moon.id, elapsedSeconds);
+    
+    return { x: 0, y: 0, vx: 0, vy: 0 };
+  }
 
   let parentX = 0, parentY = 0, parentVx = 0, parentVy = 0, parentRadius = 5000;
 
@@ -151,8 +158,8 @@ export function solveTrajectory(p1: PoiDef, p2: PoiDef, day: number, accel: numb
     dist = Math.sqrt(Math.pow(s2_f.x - s1.x, 2) + Math.pow(s2_f.y - s1.y, 2));
   }
 
-  const s2_f = getPoiState(p2.id, startSec + tSec);
-  const relVel = Math.sqrt(Math.pow(s2_f.vx - s1.vx, 2) + Math.pow(s2_f.vy - s1.vy, 2));
+  let s2_f = getPoiState(p2.id, startSec + tSec);
+  let relVel = Math.sqrt(Math.pow(s2_f.vx - s1.vx, 2) + Math.pow(s2_f.vy - s1.vy, 2));
   
   let vMax = accel * (tSec / 2); 
   let tAccel = tSec / 2;
@@ -164,27 +171,41 @@ export function solveTrajectory(p1: PoiDef, p2: PoiDef, day: number, accel: numb
   let actualTripDv = totalDV;
   let realisticT = tSec;
 
-  if (limitDV > 0 && limitDV < totalDV) {
-    let transitDv = (limitDV * 1000) - relVel;
-    if (transitDv < 10) transitDv = 10; 
+  if (limitDV !== undefined && limitDV >= 0 && limitDV < totalDV) {
+    for (let i = 0; i < 8; i++) {
+      s2_f = getPoiState(p2.id, startSec + realisticT);
+      dist = Math.sqrt(Math.pow(s2_f.x - s1.x, 2) + Math.pow(s2_f.y - s1.y, 2));
+      relVel = Math.sqrt(Math.pow(s2_f.vx - s1.vx, 2) + Math.pow(s2_f.vy - s1.vy, 2));
+      
+      let transitDv = (limitDV * 1000) - relVel;
+      // If we don't have enough dV to even match velocity, we don't fail by returning null.
+      // We let actualTripDv remain at totalDV so the UI correctly reports INSUFFICIENT DELTA-V.
+      if (transitDv > 0) {
+        if (transitDv < 10) transitDv = 10; 
 
-    vMax = transitDv / 2;
-    tAccel = vMax / accel;
-    dAccel = 0.5 * accel * Math.pow(tAccel, 2);
-    tCoast = (dist - (2 * dAccel)) / vMax;
-    if (tCoast < 0) tCoast = 0;
-    
-    realisticT = (2 * tAccel) + tCoast;
-    actualTripDv = limitDV;
+        vMax = transitDv / 2;
+        tAccel = vMax / accel;
+        dAccel = 0.5 * accel * Math.pow(tAccel, 2);
+        tCoast = (dist - (2 * dAccel)) / vMax;
+        if (tCoast < 0) tCoast = 0;
+        
+        realisticT = (2 * tAccel) + tCoast;
+        actualTripDv = limitDV;
+      } else {
+        actualTripDv = totalDV;
+        break;
+      }
+    }
   }
 
   return { 
     realisticTime: realisticT / 86400, 
-    minTotalTime: tSec / 86400, 
+    minTotalTime: tSec / 86400,
+    idealDv: totalDV,
     maxDv: actualTripDv,
     telemetry: {
       startPos: { x: s1.x, y: s1.y }, endPos: { x: s2_f.x, y: s2_f.y },
-      dist, accel, vMax, tAccel, tCoast, sAccel: dAccel, totalT: realisticT, relVel, maxDv: actualTripDv 
+      dist, accel, vMax, tAccel, tCoast, sAccel: dAccel, totalT: realisticT, relVel, maxDv: actualTripDv
     }
   };
 }

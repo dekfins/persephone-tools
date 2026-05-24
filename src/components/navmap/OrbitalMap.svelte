@@ -1,192 +1,293 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { Application, Container, Graphics, Text } from 'pixi.js';
+  
   import { campaignState } from '../../lib/campaignState.svelte';
   import { shipState } from '../../lib/shipState.svelte';
-  import { getPlanetState, getMoonState, getPoiState, solveTrajectory, getVisualRadius, getSoiRadius } from '../../lib/orbitalMath';
+  import { solveTrajectory, getPoiState } from '../../lib/orbitalMath';
   import type { PlanetDef, MoonDef, PoiDef } from '../../lib/types';
   
   import planetsData from '../../data/planets.json';
   import moonsData from '../../data/moons.json';
   import poisData from '../../data/pois.json';
-  
-  import PlanetNode from './PlanetNode.svelte';
-  import TrajectoryOverlay from './TrajectoryOverlay.svelte';
-  import PoiOverlay from './PoiOverlay.svelte';
+
   import ActiveTransitPanel from './ActiveTransitPanel.svelte';
-  import TransitPlanningPanel from './TransitPlanningPanel.svelte'; 
-  
+  import TransitPlanningPanel from './TransitPlanningPanel.svelte';
+
+  import { mapPlanets, mapMoons, mapPoiOrbits } from './mapDataHelpers';
+  import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from './mapRenderers';
+
   const planets = planetsData as PlanetDef[];
   const moons = moonsData as MoonDef[];
   const pois = poisData as PoiDef[];
 
-  // --- VIEWPORT CONFIGURATION ---
+  // --- PIXI ENGINE REFERENCES ---
+  let canvasContainer: HTMLDivElement;
+  let pixiApp: Application | null = null;
+  let worldContainer: Container | null = null;
+
+  // --- VIEWPORT STATE ---
   let zoom = $state(1.0);
   let offsetX = $state(0);
   let offsetY = $state(0);
   let isDragging = $state(false);
   let containerWidth = $state(0);
   let containerHeight = $state(0);
-
   let targetPlanet = $state<PlanetDef | null>(null);
+  let targetPoiId = $state<string | null>(null);
+  let hoveredBody = $state<PlanetDef | MoonDef | null>(null);
   let useMaxFuelLimit = $state(false); 
-  let userCustomDv = $state<string>(""); 
+  let userCustomDv = $state<string>("");
 
-  // --- ORIGIN & TARGET RESOLUTION ---
+  // --- DATA RESOLVERS ---
   let originPoi = $derived(pois.find(p => p.id === campaignState.shipLocation) || null);
+  let targetPoi = $derived(targetPoiId ? (pois.find(p => p.id === targetPoiId) || null) : null);
   
-  let originPlanet = $derived.by(() => {
-    if (!originPoi) return null;
-    const p = planets.find(pl => pl.name === originPoi.parentBody);
-    if (p) return p;
-    const m = moons.find(mo => mo.name === originPoi.parentBody);
-    if (m) return planets.find(pl => pl.name === m.parentPlanet) || null;
+  // NEW HELPER: Finds the top-level system planet (e.g. returns "Jupiter" for a station orbiting Callisto)
+  function getSystemPlanetName(poiId: string) {
+    const poi = pois.find(p => p.id === poiId);
+    if (!poi) return null;
+    const moon = moons.find(m => m.name === poi.parentBody);
+    if (moon) return moon.parentPlanet;
+    const planet = planets.find(p => p.name === poi.parentBody);
+    if (planet) return planet.name;
+    return null; 
+  }
+
+  // Casts a Planet into a mathematical POI object so the solver uses true planetary orbits
+  function getPlanetAsPoi(planetName: string | null): any {
+    if (!planetName) return null;
+    const p = planets.find(pl => pl.name === planetName);
+    if (!p) return null;
+    
+    return {
+      id: p.name,
+      name: p.name,
+      parentBody: "Sun",
+      type: "planet",
+      a: p.a, 
+      e: p.e, 
+      omega: p.omega, 
+      theta0: p.theta0,
+      period: p.period,
+      color: p.color
+    };
+  }
+
+  let transitRefBody = $derived.by(() => {
+    let oId = null, tId = null;
+    if (campaignState.activeMission) {
+      oId = campaignState.activeMission.originName;
+      tId = campaignState.activeMission.targetName;
+    } else if (originPoi && targetPoi) {
+      oId = originPoi.id;
+      tId = targetPoi.id;
+    }
+
+    if (oId && tId) {
+      const p1 = getSystemPlanetName(oId);
+      const p2 = getSystemPlanetName(tId);
+      if (p1 && p2 && p1 === p2) return p1; // Returns "Jupiter", "Mars", etc.
+    }
     return null;
   });
-
-  let targetPoiId = $state<string | null>(null);
-  let targetPoi = $derived(targetPoiId ? (pois.find(p => p.id === targetPoiId) || null) : null);
-
-  let lastFrameTime = $state(performance.now());
-
-  $effect(() => {
-    let animationFrameId: number;
-    function loop(ts: number) {
-      let dt = (ts - lastFrameTime) / 1000;
-      if (dt > 0.1) dt = 0.1; 
-      lastFrameTime = ts;
-
-      if (campaignState.isPreviewing) {
-        campaignState.previewElapsed += (dt * 4); 
-        if (campaignState.previewElapsed >= campaignState.previewTravelTime) {
-          campaignState.isPreviewing = false; 
-        }
-      }
-      campaignState.updateAnimationEasing(dt);
-      animationFrameId = requestAnimationFrame(loop);
-    }
-    animationFrameId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animationFrameId);
-  });
-
-  let displayDay = $derived(
-    campaignState.activeMission 
-      ? campaignState.activeMission.launchDay + campaignState.animatedDaysElapsed
-      : campaignState.currentDay + (campaignState.isPreviewing ? campaignState.previewElapsed : 0)
-  );
-
-  let elapsedSeconds = $derived(displayDay * 86400);
-  const RADIUS_CULL_MAX = 25000;
-
-  // --- 1. PLANETARY LAYER ---
-  let mappedPlanets = $derived(
-    planets.map(p => {
-      const state = getPlanetState(p.name, elapsedSeconds);
-      const currentScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier; 
-      const b = p.a * Math.sqrt(1 - p.e * p.e);
-      const focusDist = p.a * p.e;
-      
-      const visualRadius = getVisualRadius(p, zoom, campaignState.planetScaleMultiplier);
-      const soiRadius = getSoiRadius(p, zoom, campaignState.planetScaleMultiplier);
-
-      const cx = -(focusDist * Math.cos(p.omega)) * currentScale;
-      const cy = (focusDist * Math.sin(p.omega)) * currentScale;
-      const x = state.x * currentScale;
-      const y = -state.y * currentScale;
-      const rot = -p.omega * (180 / Math.PI);
-
-      // Angle from ellipse center to planet, converted to CSS rotation, canceling out the ellipse's transform
-      const dx = x - cx;
-      const dy = y - cy;
-      const maskAngle = (Math.atan2(dy, dx) * (180 / Math.PI)) + 90 - rot;
-
-      return {
-        def: p, x, y, visualRadius, soiRadius,
-        orbit: { cx, cy, rx: p.a * currentScale, ry: b * currentScale, rot, maskAngle }
-      };
-    })
-  );
-
-  // --- 2. MOON LAYER (Screen Space) ---
-  let mappedMoons = $derived(
-    moons.map(m => {
-      const state = getMoonState(m.id, elapsedSeconds);
-      const currentScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier;
-
-      const parentPlanet = mappedPlanets.find(p => p.def.name === m.parentPlanet);
-      const parentX = parentPlanet ? parentPlanet.x : 0;
-      const parentY = parentPlanet ? parentPlanet.y : 0;
-
-      const localX = state.x * currentScale;
-      const localY = -state.y * currentScale;
-      
-      const b = m.a * Math.sqrt(1 - m.e * m.e);
-      const focusDist = m.a * m.e;
-      const rot = -m.omega * (180 / Math.PI);
-
-      const screenCx = parentX - (focusDist * Math.cos(m.omega)) * currentScale + offsetX + (containerWidth / 2);
-      const screenCy = parentY + (focusDist * Math.sin(m.omega)) * currentScale + offsetY + (containerHeight / 2);
-      const screenX = localX + offsetX + (containerWidth / 2);
-      const screenY = localY + offsetY + (containerHeight / 2);
-
-      const dx = screenX - screenCx;
-      const dy = screenY - screenCy;
-      const maskAngle = (Math.atan2(dy, dx) * (180 / Math.PI)) + 90 - rot;
-
-      return {
-        def: m, screenX, screenY,
-        orbit: { screenCx, screenCy, rx: m.a * currentScale, ry: b * currentScale, rot, maxRadius: m.a * currentScale, maskAngle }
-      };
-    })
-  );
-
-  // --- 3. POI ORBIT RINGS (Screen Space) ---
-  let mappedPoiOrbits = $derived(
-    pois.filter(p => p.a > 0).map(poi => {
-      const state = getPoiState(poi.id, elapsedSeconds);
-      const currentScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier;
-
-      let parentX = 0, parentY = 0;
-      const parentPlanet = mappedPlanets.find(p => p.def.name === poi.parentBody);
-      
-      if (parentPlanet) {
-        parentX = parentPlanet.x;
-        parentY = parentPlanet.y;
-      } else {
-        const parentMoon = moons.find(m => m.name === poi.parentBody);
-        if (parentMoon) {
-          const mState = getMoonState(parentMoon.id, elapsedSeconds);
-          parentX = mState.x * currentScale;
-          parentY = -mState.y * currentScale;
-        }
-      }
-
-      const b = poi.a * Math.sqrt(1 - poi.e * poi.e);
-      const focusDist = poi.a * poi.e;
-      const rot = -poi.omega * (180 / Math.PI);
-
-      const screenCx = parentX - (focusDist * Math.cos(poi.omega)) * currentScale + offsetX + (containerWidth / 2);
-      const screenCy = parentY + (focusDist * Math.sin(poi.omega)) * currentScale + offsetY + (containerHeight / 2);
-      const screenX = state.x * currentScale + offsetX + (containerWidth / 2);
-      const screenY = -state.y * currentScale + offsetY + (containerHeight / 2);
-
-      const dx = screenX - screenCx;
-      const dy = screenY - screenCy;
-      const maskAngle = (Math.atan2(dy, dx) * (180 / Math.PI)) + 90 - rot;
-
-      return {
-        def: poi,
-        orbit: { screenCx, screenCy, rx: poi.a * currentScale, ry: b * currentScale, rot, maxRadius: poi.a * currentScale, maskAngle }
-      };
-    })
-  );
 
   let activeTrajectory = $derived.by(() => {
     if (!originPoi || !targetPoi || !shipState.engine) return null;
     const activeModeName = shipState.activeMode || shipState.engine.availableModes[0];
     const currentConfig = shipState.engine.configs.find(c => c.mode === activeModeName) || shipState.engine.configs[0]; 
     const accel = (Number(currentConfig?.twrG) || 0.05) * 9.81; 
-    const maxTripDv = solveTrajectory(originPoi, targetPoi, campaignState.currentDay, accel, 0)?.maxDv || 0;
-    const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : 0;
-    return solveTrajectory(originPoi, targetPoi, campaignState.currentDay, accel, limitValue);
+
+    let solverOrigin = originPoi;
+    let solverTarget = targetPoi;
+
+    // THE SOLVER ALIASING FIX: Substitute true planetary orbits for interplanetary transfers
+    if (!transitRefBody) {
+      const oPlanetName = getSystemPlanetName(originPoi.id);
+      const tPlanetName = getSystemPlanetName(targetPoi.id);
+      
+      solverOrigin = getPlanetAsPoi(oPlanetName) || originPoi;
+      solverTarget = getPlanetAsPoi(tPlanetName) || targetPoi;
+    }
+
+    const maxTripDv = solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, 0)?.maxDv || 0;
+    const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : shipState.totalDV;
+    return solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, limitValue);
+  });
+
+  // --- PIXI ENGINE TICKER ---
+  onMount(() => {
+    let isDestroyed = false;
+
+    const planetGraphics = new Map<string, { body: Graphics; orbit: Graphics; soi: Graphics; label: Text; hitbox: Graphics }>();
+    const moonGraphics = new Map<string, { body: Graphics; orbit: Graphics; label: Text; soi: Graphics; hitbox: Graphics }>();
+    const poiGraphics = new Map<string, { orbit: Graphics; body: Graphics; label: Text }>();
+    let trajectoryGraphics: Graphics;
+
+    async function initPixi() {
+      const app = new Application();
+      await app.init({
+        resizeTo: canvasContainer,
+        background: '#0a0a0c',
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true,
+        antialias: true 
+      });
+
+      if (isDestroyed) { app.destroy({ removeView: true }); return; }
+      pixiApp = app;
+      canvasContainer.appendChild(app.canvas);
+      
+      app.canvas.style.position = 'absolute';
+      app.canvas.style.top = '0';
+      app.canvas.style.left = '0';
+      app.canvas.style.width = '100%';
+      app.canvas.style.height = '100%';
+      app.canvas.style.zIndex = '0';
+
+      worldContainer = new Container();
+      app.stage.addChild(worldContainer);
+
+      const orbitLayer = new Container();
+      const trajectoryLayer = new Container();
+      const bodyLayer = new Container();
+      worldContainer.addChild(orbitLayer);
+      worldContainer.addChild(trajectoryLayer);
+      worldContainer.addChild(bodyLayer);
+
+      // Make the stage interactive to detect background clicks
+      app.stage.eventMode = 'static';
+      app.stage.hitArea = app.screen;
+      app.stage.on('pointerdown', () => {
+        targetPlanet = null;
+        targetPoiId = null;
+      });
+
+      trajectoryGraphics = new Graphics();
+      trajectoryLayer.addChild(trajectoryGraphics);
+
+      // THE CORE RENDER LOOP
+      app.ticker.add((ticker) => {
+        campaignState.updateAnimationEasing(ticker.deltaTime / 60);
+        
+        const currentDisplayDay = campaignState.activeMission 
+          ? campaignState.activeMission.launchDay + campaignState.animatedDaysElapsed
+          : campaignState.currentDay + (campaignState.isPreviewing ? campaignState.previewElapsed : 0);
+        const frameElapsedSeconds = currentDisplayDay * 86400;
+
+        const currentMappedPlanets = mapPlanets(planets, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier, campaignState.planetScaleMultiplier);
+        const currentMappedMoons = mapMoons(moons, currentMappedPlanets, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier);
+        const currentMappedPoiOrbits = mapPoiOrbits(pois, currentMappedPlanets, moons, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier);
+
+        // --- CAMERA TRACKING ---
+        let camTargetX = 0;
+        let camTargetY = 0;
+        let isTracking = false;
+
+        // 1. Target clicked planet
+        if (targetPlanet) {
+          const targetPlanetName = targetPlanet.name;
+          const p = currentMappedPlanets.find(pl => pl.def.name === targetPlanetName);
+          if (p) { camTargetX = -p.x; camTargetY = -p.y; isTracking = true; }
+        } 
+        // 2. Fallback: Auto-track the system center during active transfers!
+        else if (transitRefBody && (campaignState.activeMission || activeTrajectory)) {
+          const p = currentMappedPlanets.find(pl => pl.def.name === transitRefBody);
+          if (p) { camTargetX = -p.x; camTargetY = -p.y; isTracking = true; }
+        }
+
+        if (isTracking && !isDragging) {
+          offsetX += (camTargetX - offsetX) * 0.1; // Smooth glide factor
+          offsetY += (camTargetY - offsetY) * 0.1;
+        }
+
+        if (worldContainer) {
+          worldContainer.x = offsetX + containerWidth / 2;
+          worldContainer.y = offsetY + containerHeight / 2;
+        }
+
+        trajectoryGraphics.clear();
+
+        renderPlanets(
+          currentMappedPlanets, 
+          planetGraphics, 
+          orbitLayer,
+          bodyLayer, 
+          containerWidth, 
+          containerHeight, 
+          targetPlanet?.name || null,
+          hoveredBody,
+          campaignState.orbitTrailOpacity,
+          (def) => {
+            targetPlanet = def;
+            const firstPoi = pois.find(p => p.parentBody === def.name);
+            targetPoiId = firstPoi ? firstPoi.id : null;
+          },
+          (def) => {
+            hoveredBody = def;
+          }
+        );
+
+        renderMoons(
+          currentMappedMoons, 
+          moonGraphics, 
+          orbitLayer, 
+          bodyLayer, 
+          zoom, 
+          campaignState.orbitScaleMultiplier, 
+          targetPoiId,
+          hoveredBody,
+          campaignState.orbitTrailOpacity,
+          (moonDef) => {
+            // Find the first POI on the clicked moon to set as a valid target
+            const firstPoi = pois.find(p => p.parentBody === moonDef.name);
+            targetPoiId = firstPoi ? firstPoi.id : null;
+            targetPlanet = planets.find(pl => pl.name === moonDef.parentPlanet) || null;
+          },
+          (moonDef) => {
+            hoveredBody = moonDef;
+          }
+        );
+
+        renderPoiOrbits(
+          currentMappedPoiOrbits, 
+          currentMappedPlanets,
+          currentMappedMoons,
+          poiGraphics, 
+          orbitLayer, 
+          bodyLayer,
+          campaignState.orbitTrailOpacity, 
+          zoom,
+          campaignState.orbitScaleMultiplier,
+          (poiDef) => {
+            targetPoiId = poiDef.id;
+            const p = planets.find(pl => pl.name === poiDef.parentBody);
+            if (p) targetPlanet = p;
+            const m = moons.find(mo => mo.name === poiDef.parentBody);
+            if (m) targetPlanet = planets.find(pl => pl.name === m.parentPlanet) || null;
+          }
+        );
+
+        renderTransitPipeline(
+          originPoi, targetPoi, activeTrajectory, campaignState.activeMission, 
+          campaignState.currentDay, zoom, campaignState.orbitScaleMultiplier, 
+          trajectoryGraphics, getPoiState,
+          transitRefBody,
+          campaignState.isPreviewing, campaignState.previewElapsed, campaignState.animatedDaysElapsed,
+          planets,
+          campaignState.planetScaleMultiplier
+        );
+      });
+    }
+
+    initPixi();
+    return () => {
+      isDestroyed = true;
+      if (pixiApp) {
+        pixiApp.destroy({ removeView: true });
+        pixiApp = null;
+      }
+    };
   });
 
   function handleWheel(e: WheelEvent) {
@@ -202,6 +303,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div 
   class="navmap-container"
+  bind:this={canvasContainer}
   bind:clientWidth={containerWidth}
   bind:clientHeight={containerHeight}
   onmousedown={() => isDragging = true}
@@ -210,132 +312,7 @@
   onmousemove={(e) => { if (isDragging) { offsetX += e.movementX; offsetY += e.movementY; } }}
   onwheel={handleWheel}
   oncontextmenu={(e) => e.preventDefault()}
-  onclick={(e) => { if (e.target === e.currentTarget || (e.target as Element).tagName === 'svg') targetPlanet = null; }}
 >
-  <svg class="navmap-svg">
-    <g transform="translate({offsetX + containerWidth / 2}, {offsetY + containerHeight / 2})">
-      {#each mappedPlanets as planet}
-        {#if planet.def.a > 0 && planet.orbit.rx < 12000}
-          {@const fadeOpacity = Math.max(0, 1 - ((planet.orbit.rx - 4000) / 6000))}
-          <ellipse 
-            cx={planet.orbit.cx} cy={planet.orbit.cy} rx={planet.orbit.rx} ry={planet.orbit.ry} 
-            transform="rotate({planet.orbit.rot} {planet.orbit.cx} {planet.orbit.cy})"
-            stroke={planet.def.color || '#ffffff'}
-            class="orbit-line {planet.def.name === 'Persephone' ? 'orbit-anomaly' : ''}"
-            style="
-              stroke-opacity: {fadeOpacity};
-              -webkit-mask-image: conic-gradient(from {planet.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-              mask-image: conic-gradient(from {planet.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-            "
-          />
-        {/if}
-      {/each}
-
-      <TrajectoryOverlay {planets} {originPoi} {targetPoi} {activeTrajectory} zoom={zoom} />
-
-      {#each mappedPlanets as planet}
-        <PlanetNode 
-          {planet} 
-          {originPlanet} 
-          {targetPlanet} 
-          zoom={zoom} 
-          onTarget={(def) => {
-            targetPlanet = def;
-            // FIX: Auto-select the first POI on this planet to fire up the Transit Panel
-            const firstPoi = pois.find(p => p.parentBody === def.name);
-            targetPoiId = firstPoi ? firstPoi.id : null;
-          }} 
-        />
-      {/each}
-    </g>
-
-    {#each mappedMoons as mMoon}
-      {@const subFadeOpacity = Math.min(1, Math.max(0, (mMoon.orbit.maxRadius - 3) / 7))}
-      
-      {#if subFadeOpacity > 0 && mMoon.orbit.maxRadius < RADIUS_CULL_MAX}
-        {@const maxFadeOpacity = Math.max(0, 1 - ((mMoon.orbit.maxRadius - 15000) / 10000))}
-        {@const finalOpacity = Math.min(subFadeOpacity, maxFadeOpacity)}
-
-        {#if finalOpacity > 0}
-          <ellipse 
-            cx={mMoon.orbit.screenCx} cy={mMoon.orbit.screenCy} 
-            rx={mMoon.orbit.rx} ry={mMoon.orbit.ry}
-            transform="rotate({mMoon.orbit.rot} {mMoon.orbit.screenCx} {mMoon.orbit.screenCy})"
-            stroke={mMoon.def.color || '#cbd5e1'}
-            class="orbit-line sub-orbit"
-            style="
-              stroke-opacity: {finalOpacity};
-              -webkit-mask-image: conic-gradient(from {mMoon.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-              mask-image: conic-gradient(from {mMoon.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-            "
-          />
-        {/if}
-      {/if}
-
-      {@const currentScale = (250 / 1.5e12) * zoom * campaignState.orbitScaleMultiplier}
-      {@const uiRadius = Math.min(15000, Math.max(4, mMoon.def.radius * 1000 * currentScale))}
-      
-      {#if subFadeOpacity > 0}
-        <circle 
-          cx={mMoon.screenX} cy={mMoon.screenY} r={uiRadius} 
-          fill={mMoon.def.color || "#cbd5e1"} stroke="#000000" stroke-width="1.5px"
-          opacity={subFadeOpacity}
-          class="planet-body" 
-          style="pointer-events: auto; cursor: pointer;"
-          onclick={(e) => {
-            e.stopPropagation();
-            // FIX: Focus parent planet and select the first POI on this moon
-            const parentPl = planets.find(p => p.name === mMoon.def.parentPlanet);
-            if (parentPl) targetPlanet = parentPl;
-
-            const firstPoi = pois.find(p => p.parentBody === mMoon.def.name);
-            targetPoiId = firstPoi ? firstPoi.id : null;
-          }}
-        />
-      {/if}
-    {/each}
-
-    {#each mappedPoiOrbits as mPoi}
-      {@const subFadeOpacity = Math.min(1, Math.max(0, (mPoi.orbit.maxRadius - 3) / 7))}
-      {#if subFadeOpacity > 0 && mPoi.orbit.maxRadius < RADIUS_CULL_MAX}
-        {@const maxFadeOpacity = Math.max(0, 1 - ((mPoi.orbit.maxRadius - 15000) / 10000))}
-        {@const finalOpacity = Math.min(subFadeOpacity, maxFadeOpacity)}
-
-        {#if finalOpacity > 0}
-          <ellipse 
-            cx={mPoi.orbit.screenCx} cy={mPoi.orbit.screenCy} 
-            rx={mPoi.orbit.rx} ry={mPoi.orbit.ry}
-            transform="rotate({mPoi.orbit.rot} {mPoi.orbit.screenCx} {mPoi.orbit.screenCy})"
-            stroke={mPoi.def.uiColor || '#06b6d4'}
-            class="orbit-line sub-orbit"
-            style="
-              stroke-opacity: {finalOpacity};
-              -webkit-mask-image: conic-gradient(from {mPoi.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-              mask-image: conic-gradient(from {mPoi.orbit.maskAngle}deg at 50% 50%, rgba(0,0,0,1) 0deg, rgba(0,0,0,0.5) 360deg);
-            "
-          />
-        {/if}
-      {/if}
-    {/each}
-  </svg>
-
-  <PoiOverlay 
-    {zoom} 
-    panX={offsetX + containerWidth / 2} 
-    panY={offsetY + containerHeight / 2} 
-    timelineSnapshot={elapsedSeconds} 
-    {targetPlanet} 
-    onPoiSelect={(poi) => {
-      // Find the absolute root planet to focus the camera
-      const parentPlanet = planets.find(p => p.name === poi.parentBody) || 
-                           planets.find(p => p.name === moons.find(m => m.name === poi.parentBody)?.parentPlanet);
-      if (parentPlanet) targetPlanet = parentPlanet;
-      
-      targetPoiId = poi.id;
-      console.log("Selected destination:", poi.name);
-    }}
-  />
-
   <div class="hud-top-left">
     DATE: {campaignState.formattedDate}<br/>
     DAY: {Math.floor(campaignState.currentDay)}
@@ -351,51 +328,15 @@
         {activeTrajectory} 
         bind:useMaxFuelLimit 
         bind:userCustomDv 
-        onConfirmLaunch={() => { targetPlanet = null; }} 
+        onConfirmLaunch={() => { targetPlanet = null; targetPoiId = null; }} 
       />
     {/if}
   </div>
 </div>
 
 <style>
-.navmap-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 600px;
-  background-color: #000000;
-  overflow: hidden;
-  cursor: grab;
-}
-.navmap-container:active {
-  cursor: grabbing;
-}
-.navmap-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-.orbit-line {
-  fill: none;
-  stroke-width: 1.5px;
-  pointer-events: none;
-}
-.sub-orbit {
-  stroke-width: 1px;
-}
-.hud-top-left {
-  position: absolute;
-  top: 100px;
-  left: 20px;
-  color: var(--ui-cyan, #06b6d4);
-  font-family: var(--font-terminal, monospace);
-  pointer-events: none;
-}
-.floating-panel-wrapper {
-  position: absolute;
-  top: 100px;
-  right: 20px;
-  width: 300px;
-  z-index: 100;
-}
+  .navmap-container { position: relative; width: 100%; height: 100%; min-height: 600px; background-color: #0a0a0c; overflow: hidden; cursor: grab; }
+  .navmap-container:active { cursor: grabbing; }
+  .hud-top-left { position: absolute; top: 100px; left: 20px; color: var(--ui-cyan, #06b6d4); font-family: var(--font-terminal, monospace); pointer-events: none; z-index: 100; }
+  .floating-panel-wrapper { position: absolute; top: 100px; right: 20px; width: 300px; z-index: 100; }
 </style>

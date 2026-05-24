@@ -293,7 +293,7 @@
     border: none;
     color: var(--text-dim);
     font-family: var(--font-terminal, monospace);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     cursor: pointer;
     padding: 0.8rem 0 0.2rem 0;
     text-align: left;

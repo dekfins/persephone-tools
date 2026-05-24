@@ -27,6 +27,8 @@ class CampaignStateManager {
   // MAP CONFIGURATORS (Default orbit spacing to 1.8x to resolve inner system clutter)
   planetScaleMultiplier = $state(1.0);
   orbitScaleMultiplier = $state(1.0);
+  orbitTrailOpacity = $state(0.5);
+
   #historyStack = $state<HistorySnapshot[]>([]);
 
   get formattedDate() {
@@ -109,6 +111,14 @@ class CampaignStateManager {
   }
 
   updateAnimationEasing(dt: number) {
+    if (this.isPreviewing) {
+      this.previewElapsed += dt * 6; // Fast-forward preview
+      if (this.previewElapsed >= this.previewTravelTime) {
+        this.isPreviewing = false;
+        this.previewElapsed = 0;
+      }
+    }
+
     if (!this.activeMission) return;
     const target = this.activeMission.daysElapsed;
     const diff = target - this.animatedDaysElapsed;

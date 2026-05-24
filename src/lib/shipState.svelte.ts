@@ -314,7 +314,11 @@ class ShipBuilderState {
     for (const prop of config.propellants) {
       const unitsToBurn = dvSpent / prop.efficiency;
       if (this.currentFuel[prop.name] !== undefined) {
-        this.currentFuel[prop.name] = Math.max(0, this.currentFuel[prop.name] - unitsToBurn);
+        // Calculate the raw subtraction
+        const rawFuel = Math.max(0, this.currentFuel[prop.name] - unitsToBurn);
+        
+        // Round to exactly 2 decimal places to prevent floating-point bleed in the UI
+        this.currentFuel[prop.name] = Math.round(rawFuel * 100) / 100;
       }
     }
   }
