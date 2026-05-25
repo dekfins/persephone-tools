@@ -6,7 +6,7 @@ instead of adapting, I wrote my own thing like a normal and well-adjusted indivi
 
 ![relevant gif](https://media1.tenor.com/m/vCqpL7x4sPUAAAAd/thanos-fine-ill-do-it-myself.gif)
 
-Runs on Svelte + TypeScript, and sheer spite. Deployed at [ship-builder.vercel.app](https://ship-builder.vercel.app).
+Runs on Svelte, TypeScript, and sheer spite. Deployed [here](https://persephone-tools.vercel.app/).
 
 ## What it does:
 

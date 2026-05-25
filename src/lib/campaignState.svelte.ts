@@ -1,4 +1,4 @@
-import type { ActiveMission, FlightTelemetry, PoiDef } from "./types";
+import type { ActiveMission, PoiDef } from "./types";
 import { shipState } from './shipState.svelte';
 import { getTransitTelemetry } from './orbitalMath';
 import poisData from '../data/pois.json';
