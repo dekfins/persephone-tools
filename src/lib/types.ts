@@ -184,3 +184,20 @@ export interface PoiDef {
   period: number;
   connections: string[];
 }
+
+export interface GeneratedMission {
+  id: string;
+  targetPoiId: string;
+  originPoiId: string;
+  difficulty: number;
+  client: string;
+  objective: string;
+  adversary: string;
+  twist: string;
+  travelTimeDays: number;
+  reqDv: number;
+  payoutString: string;
+  payoutCredits: number;
+  lootRarity?: string;
+  lootItem?: string;
+}

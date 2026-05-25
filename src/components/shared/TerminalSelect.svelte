@@ -11,7 +11,8 @@
     placeholder = "SELECT...", 
     id, 
     onSelect = undefined,
-    popupSide = "right"
+    popupSide = "right",
+    showPopup = true
   } = $props();
 
   let hoveredOption = $state<any>(null);
@@ -117,7 +118,7 @@
       {/each}
     </ul>
 
-    {#if hoveredOption}
+    {#if hoveredOption && showPopup}
       <aside class="stat-popup {popupSide}"> 
         <h4>{hoveredOption[labelKey]}</h4>
         <div class="stat-row meta-row">

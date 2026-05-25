@@ -1,5 +1,5 @@
-import { getPlanetState, getMoonState, getPoiState, getVisualRadius, getSoiRadius } from '../../lib/orbitalMath';
-import type { PlanetDef, MoonDef, PoiDef } from '../../lib/types';
+import { getPlanetState, getMoonState, getPoiState, getVisualRadius, getSoiRadius, getMoonSoiRadius } from './orbitalMath';
+import type { PlanetDef, MoonDef, PoiDef } from './types';
 
 export interface MappedPlanet {
   def: PlanetDef;
@@ -52,6 +52,7 @@ export interface MappedMoon {
   def: MoonDef;
   worldX: number;
   worldY: number;
+  soiRadius: number;
   orbit: {
     worldCx: number;
     worldCy: number;
@@ -75,11 +76,13 @@ export function mapMoons(
     const parentPlanet = mappedPlanets.find(p => p.def.name === m.parentPlanet);
     const b = m.a * Math.sqrt(1 - m.e * m.e);
     const focusDist = m.a * m.e;
+    const soiRadius = getMoonSoiRadius(m, zoom, orbitScaleMultiplier);
 
     return {
       def: m,
       worldX: state.x * currentScale,
       worldY: -state.y * currentScale,
+      soiRadius,
       orbit: {
         worldCx: (parentPlanet ? parentPlanet.x : 0) - (focusDist * Math.cos(m.omega)) * currentScale,
         worldCy: (parentPlanet ? parentPlanet.y : 0) + (focusDist * Math.sin(m.omega)) * currentScale,

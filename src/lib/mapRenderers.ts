@@ -1,7 +1,6 @@
 import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 import { mapPlanets } from './mapDataHelpers';
-import type { MappedPlanet, MappedMoon, MappedPoi } from './mapDataHelpers';
-import { getTransitTelemetry } from '../../lib/orbitalMath';
+import { getTransitTelemetry } from './orbitalMath';
 
 const RADIUS_CULL_MAX = 5000;
 const hexToNum = (hex: string) => parseInt(hex.replace(/^#/, ''), 16) || 0xffffff;
@@ -23,9 +22,12 @@ export function renderPlanets(
   targetPlanetName: string | null,
   hoveredBody: any | null,
   trailOpacity: number,
+  trailThickness: number,
   onPlanetClick: (planetDef: any) => void,
   onPlanetHover: (planetDef: any | null) => void
 ) {
+  const maxDrawableRadius = Math.max(containerWidth, containerHeight);
+
   mappedPlanets.forEach(p => {
     // --- 1. INITIALIZATION ---
     if (!planetGraphics.has(p.def.name)) {
@@ -71,32 +73,39 @@ export function renderPlanets(
       const finalAlpha = trailOpacity * subFadeOpacity;
       
       g.orbit.ellipse(0, 0, p.orbit.rx, p.orbit.ry);
-      g.orbit.stroke({ color: hexToNum(p.def.color), width: 1.5, alpha: finalAlpha });
+      g.orbit.stroke({ color: hexToNum(p.def.color), width: trailThickness, alpha: finalAlpha });
     }
 
     // --- 3. RENDER SOI ---
     g.soi.clear();
     const screenSoi = p.soiRadius;
-    if (screenSoi < Math.max(containerWidth, containerHeight)) {
+    // Culling: Don't draw the SOI ring if it's already larger than the screen.
+    // A more aggressive culling threshold is used to prevent rendering artifacts on the GPU
+    // when trying to draw extremely large, thin circles. The ring will also fade out as it approaches this limit.
+    if (screenSoi < 3000) {
+      const soiFade = Math.max(0, Math.min(1, 1 - (screenSoi - 2000) / 1000));
       const isTargeted = targetPlanetName === p.def.name;      
       const isHovered = hoveredBody?.name === p.def.name || (hoveredBody && 'parentPlanet' in hoveredBody && hoveredBody.parentPlanet === p.def.name);
       if (isTargeted || isHovered) {
         g.soi.circle(p.x, p.y, screenSoi);
-        g.soi.stroke({ color: 0x06b6d4, width: 1.5, alpha: 0.8 });
+        g.soi.stroke({ color: 0x06b6d4, width: 1.5, alpha: 0.8 * soiFade });
       } else {
         g.soi.circle(p.x, p.y, screenSoi);
-        g.soi.stroke({ color: 0x334155, width: 1, alpha: 0.3 });
+        g.soi.stroke({ color: 0x334155, width: 1, alpha: 0.3 * soiFade });
       }
     }
 
     // --- 4. RENDER BODY & HITBOX ---
     g.body.clear();
-    g.body.circle(0, 0, Math.max(4, p.visualRadius));
+    // FIX: Cap the visual radius to prevent drawing circles far larger than the screen, which is a major performance hit.
+    const cappedVisualRadius = Math.min(p.visualRadius, maxDrawableRadius * 1.5);
+    g.body.circle(0, 0, Math.max(4, cappedVisualRadius));
     g.body.fill({ color: hexToNum(p.def.color), alpha: 1 });
     g.body.position.set(p.x, p.y); 
 
-    const hitboxRadius = Math.max(15, screenSoi);
-    g.hitbox.circle(p.x, p.y, hitboxRadius);
+    // FIX: Cap the hitbox radius. An invisible circle thousands of pixels wide is very slow for the GPU to process.
+    const cappedHitboxRadius = Math.min(Math.max(15, screenSoi), maxDrawableRadius * 2);
+    g.hitbox.circle(p.x, p.y, cappedHitboxRadius);
     g.hitbox.fill({ alpha: 0 });
 
     // --- 5. RENDER LABEL ---
@@ -116,14 +125,20 @@ export function renderMoons(
   moonGraphics: Map<string, { body: Graphics; orbit: Graphics; label: Text; soi: Graphics; hitbox: Graphics }>,
   orbitLayer: Container,
   bodyLayer: Container,
+  containerWidth: number,
+  containerHeight: number,
   zoom: number,
   orbitScaleMultiplier: number,
   targetPoiId: string | null,
   hoveredBody: any | null,
   trailOpacity: number,
+  trailThickness: number,
   onMoonClick: (moonDef: any) => void,
   onMoonHover: (moonDef: any | null) => void
 ) {
+  // By using the actual container dimensions, we can more accurately cull oversized shapes.
+  const maxDrawableRadius = Math.max(containerWidth, containerHeight);
+
   mappedMoons.forEach(m => {
     // --- 1. INITIALIZATION ---
     if (!moonGraphics.has(m.def.id)) {
@@ -159,25 +174,33 @@ export function renderMoons(
     // --- 2. RENDER MOON BODY & SOI ---
     if (subFadeOpacity > 0) {
       const currentScale = (250 / 1.5e12) * zoom * orbitScaleMultiplier;
-      const uiRadius = Math.min(15000, Math.max(4, m.def.radius * 1000 * currentScale));
+      // FIX: Cap the visual radius to prevent extreme performance loss on zoom.
+      const visualRadius = Math.max(4, m.def.radius * 1000 * currentScale);
+      const uiRadius = Math.min(visualRadius, maxDrawableRadius * 1.5);
       
-      const screenSoi = m.soiRadius || (uiRadius * 4); 
+      const screenSoi = m.soiRadius; 
       const isHovered = hoveredBody?.id === m.def.id;
       const isTargeted = targetPoiId === m.def.id;
 
-      if (isHovered || isTargeted) {
-        g.soi.circle(m.worldX, m.worldY, screenSoi);
-        g.soi.stroke({ color: 0x06b6d4, width: 1.5, alpha: 0.8 * subFadeOpacity });
-      } else {
-        g.soi.circle(m.worldX, m.worldY, screenSoi);
-        g.soi.stroke({ color: 0x334155, width: 1, alpha: 0.3 * subFadeOpacity });
+      // Culling: Don't draw the SOI ring if it's already larger than the screen.
+      // This prevents PixiJS from trying to render massive stroked circles, which causes graphical artifacts.
+      // The ring also fades out as it approaches the culling limit.
+      if (screenSoi < 3000) {
+        const soiFade = Math.max(0, Math.min(1, 1 - (screenSoi - 2000) / 1000));
+        if (isHovered || isTargeted) {
+          g.soi.circle(m.worldX, m.worldY, screenSoi);
+          g.soi.stroke({ color: 0x06b6d4, width: 1.5, alpha: 0.8 * subFadeOpacity * soiFade });
+        } else {
+          g.soi.circle(m.worldX, m.worldY, screenSoi);
+          g.soi.stroke({ color: 0x334155, width: 1, alpha: 0.3 * subFadeOpacity * soiFade });
+        }
       }
 
       g.body.position.set(m.worldX, m.worldY);
       g.body.circle(0, 0, uiRadius);
       g.body.fill({ color: hexToNum(m.def.color), alpha: subFadeOpacity });
-      const hitboxRadius = Math.max(15, screenSoi);
-      g.hitbox.circle(m.worldX, m.worldY, hitboxRadius);
+      const cappedHitboxRadius = Math.min(Math.max(15, screenSoi), maxDrawableRadius * 1.5);
+      g.hitbox.circle(m.worldX, m.worldY, cappedHitboxRadius);
       g.hitbox.fill({ alpha: 0 });
 
       g.label.visible = true;
@@ -196,7 +219,7 @@ export function renderMoons(
       const finalAlpha = trailOpacity * subFadeOpacity;
       
       g.orbit.ellipse(0, 0, m.orbit.rx, m.orbit.ry);
-      g.orbit.stroke({ color: hexToNum(m.def.color), width: 1.5, alpha: finalAlpha });
+      g.orbit.stroke({ color: hexToNum(m.def.color), width: trailThickness, alpha: finalAlpha });
     }
   });
 }
@@ -207,13 +230,19 @@ export function renderPoiOrbits(
   mappedMoons: any[],   
   poiGraphics: Map<string, { orbit: Graphics; body: Graphics; label: Text }>,
   orbitLayer: Container,
-  bodyLayer: Container, 
-  tailOpacity: number,
+  bodyLayer: Container,
+  trailOpacity: number,
+  trailThickness: number,
   zoom: number,                
   orbitScaleMultiplier: number,
   onPoiClick: (poiDef: any) => void
 ) {
   const solarScale = (250 / 1.5e12) * zoom * orbitScaleMultiplier;
+
+  // Optimization: Create maps for faster parent lookups inside the hot loop.
+  // This prevents O(N*M) complexity where N is POIs and M is planets/moons.
+  const planetMap = new Map(mappedPlanets.map(p => [p.def.name, p]));
+  const moonMap = new Map(mappedMoons.map(m => [m.def.name, m]));
 
   mappedPoiOrbits.forEach(poi => {
     
@@ -248,8 +277,8 @@ export function renderPoiOrbits(
     let poiFade = 1.0;
 
     // Find parent properties safely
-    const parentMoon = mappedMoons.find(m => m.def.name === poi.def.parentBody);
-    const parentPlanet = mappedPlanets.find(p => p.def.name === poi.def.parentBody);
+    const parentMoon = moonMap.get(poi.def.parentBody);
+    const parentPlanet = planetMap.get(poi.def.parentBody);
 
     if (parentMoon) {
       // POIs orbiting moons should fade in much later than the moon itself.
@@ -302,10 +331,10 @@ export function renderPoiOrbits(
         
         // For orbital POIs, their orbit line should also fade with them.
         // For surface POIs, this block is skipped anyway (rx=0), but we use poiFade for consistency.
-        const finalAlpha = tailOpacity * poiFade;
+        const finalAlpha = trailOpacity * poiFade;
         
         g.orbit.ellipse(0, 0, poi.orbit.rx, poi.orbit.ry);
-        g.orbit.stroke({ color: hexToNum(poi.def.uiColor || '#06b6d4'), width: 1.5, alpha: finalAlpha });
+        g.orbit.stroke({ color: hexToNum(poi.def.uiColor || '#06b6d4'), width: trailThickness, alpha: finalAlpha });
       }
     }
   });
@@ -399,9 +428,12 @@ export function renderTransitPipeline(
       trajectoryGraphics.stroke({ color: 0x06b6d4, width: 1.5 });
     } else {
       trajectoryGraphics.stroke({ color: 0xef4444, width: 2, alpha: 0.8 });
-      const targetArrival = calcScreenPos(1);
-      trajectoryGraphics.circle(targetArrival.x, targetArrival.y, 15);
-      trajectoryGraphics.stroke({ color: 0xef4444, width: 1.5, alpha: 0.5 });
+      // Only draw the target ring for non-surface destinations
+      if (targetPoi.type !== 'surface') {
+        const targetArrival = calcScreenPos(1);
+        trajectoryGraphics.circle(targetArrival.x, targetArrival.y, 15);
+        trajectoryGraphics.stroke({ color: 0xef4444, width: 1.5, alpha: 0.5 });
+      }
     }
 
     if (isMission || isPreviewing) {

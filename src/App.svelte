@@ -7,6 +7,7 @@
   import ShipBuilder from './pages/ShipBuilder.svelte';
   import ShipCondition from './pages/ShipCondition.svelte';
   import Navmap from './pages/NavmapPage.svelte';
+  import Missions from './pages/Missions.svelte';
   import Settings from './pages/Settings.svelte'
   
   import { onMount } from 'svelte';
@@ -92,6 +93,10 @@
 
   <Route path="/navmap">
     <Navmap />
+  </Route>
+
+  <Route path="/missions">
+    <Missions />
   </Route>
 
   <Route path="/settings">

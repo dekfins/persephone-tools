@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Application, Container, Graphics, Text } from 'pixi.js';
+  import { Application, Container, Graphics, Text } from 'pixi.js'; // PIXI.js library for 2D rendering
   
   import { campaignState } from '../../lib/campaignState.svelte';
   import { shipState } from '../../lib/shipState.svelte';
@@ -11,118 +11,78 @@
   import moonsData from '../../data/moons.json';
   import poisData from '../../data/pois.json';
 
-  import ActiveTransitPanel from './ActiveTransitPanel.svelte';
-  import TransitPlanningPanel from './TransitPlanningPanel.svelte';
+  import ActiveTransitPanel from './ActiveTransitPanel.svelte'; // Panel to display active transit information
+  import TransitPlanningPanel from './TransitPlanningPanel.svelte'; // Panel for planning new transits
 
-  import { mapPlanets, mapMoons, mapPoiOrbits } from './mapDataHelpers';
-  import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from './mapRenderers';
+  // Helper functions to transform raw celestial body data into renderable coordinates
+  import { mapPlanets, mapMoons, mapPoiOrbits } from '../../lib/mapDataHelpers'; 
+  // Helper functions to draw celestial bodies, orbits, and trajectories on the PIXI canvas
+  import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from '../../lib/mapRenderers';
+  // Helper functions to calculate derived state for the map
+  import { calculateActiveTrajectory, calculateTransitRefBody } from '../../lib/mapStateHelpers';
 
+  // Load static data for celestial bodies and points of interest
   const planets = planetsData as PlanetDef[];
   const moons = moonsData as MoonDef[];
   const pois = poisData as PoiDef[];
 
   // --- PIXI ENGINE REFERENCES ---
-  let canvasContainer: HTMLDivElement;
-  let pixiApp: Application | null = null;
-  let worldContainer: Container | null = null;
+  let canvasContainer: HTMLDivElement; // Reference to the DOM element that will host the PIXI canvas
+  let pixiApp: Application | null = null; // The main PIXI.js application instance
+  let worldContainer: Container | null = null; // Main container for all celestial bodies and orbits, allowing for camera movement
 
   // --- VIEWPORT STATE ---
-  let zoom = $state(1.0);
-  let offsetX = $state(0);
-  let offsetY = $state(0);
-  let isDragging = $state(false);
-  let containerWidth = $state(0);
-  let containerHeight = $state(0);
-  let targetPlanet = $state<PlanetDef | null>(null);
-  let targetPoiId = $state<string | null>(null);
-  let hoveredBody = $state<PlanetDef | MoonDef | null>(null);
-  let useMaxFuelLimit = $state(false); 
-  let userCustomDv = $state<string>("");
+  let zoom = $state(1.0); // Current zoom level of the map
+  let offsetX = $state(0); // X-offset for camera panning
+  let offsetY = $state(0); // Y-offset for camera panning
+  let isDragging = $state(false); // Flag to indicate if the map is currently being dragged
+  let containerWidth = $state(0); // Width of the canvas container
+  let containerHeight = $state(0); // Height of the canvas container
+  let targetPlanet = $state<PlanetDef | null>(null); // The planet currently targeted by the camera (e.g., clicked by user)
+  let targetPoiId = $state<string | null>(null); // The ID of the POI selected as the destination for transit planning
+  let hoveredBody = $state<PlanetDef | MoonDef | null>(null); // The celestial body currently hovered over by the mouse
+  let useMaxFuelLimit = $state(false); // Flag for transit planning: whether to constrain DV by max fuel
+  let userCustomDv = $state<string>(""); // User-defined custom DV for transit planning
 
   // --- DATA RESOLVERS ---
+  // Derived state for the current origin and target POIs based on campaign state and user selection
   let originPoi = $derived(pois.find(p => p.id === campaignState.shipLocation) || null);
   let targetPoi = $derived(targetPoiId ? (pois.find(p => p.id === targetPoiId) || null) : null);
   
-  // NEW HELPER: Finds the top-level system planet (e.g. returns "Jupiter" for a station orbiting Callisto)
-  function getSystemPlanetName(poiId: string) {
-    const poi = pois.find(p => p.id === poiId);
-    if (!poi) return null;
-    const moon = moons.find(m => m.name === poi.parentBody);
-    if (moon) return moon.parentPlanet;
-    const planet = planets.find(p => p.name === poi.parentBody);
-    if (planet) return planet.name;
-    return null; 
-  }
+  // Determines the common reference body (e.g., "Jupiter") for intra-system transfers, or null for interplanetary
+  let transitRefBody = $derived(calculateTransitRefBody(
+    campaignState, 
+    originPoi, 
+    targetPoi, 
+    pois, 
+    moons, 
+    planets
+  ));
 
-  // Casts a Planet into a mathematical POI object so the solver uses true planetary orbits
-  function getPlanetAsPoi(planetName: string | null): any {
-    if (!planetName) return null;
-    const p = planets.find(pl => pl.name === planetName);
-    if (!p) return null;
-    
-    return {
-      id: p.name,
-      name: p.name,
-      parentBody: "Sun",
-      type: "planet",
-      a: p.a, 
-      e: p.e, 
-      omega: p.omega, 
-      theta0: p.theta0,
-      period: p.period,
-      color: p.color
-    };
-  }
-
-  let transitRefBody = $derived.by(() => {
-    let oId = null, tId = null;
-    if (campaignState.activeMission) {
-      oId = campaignState.activeMission.originName;
-      tId = campaignState.activeMission.targetName;
-    } else if (originPoi && targetPoi) {
-      oId = originPoi.id;
-      tId = targetPoi.id;
-    }
-
-    if (oId && tId) {
-      const p1 = getSystemPlanetName(oId);
-      const p2 = getSystemPlanetName(tId);
-      if (p1 && p2 && p1 === p2) return p1; // Returns "Jupiter", "Mars", etc.
-    }
-    return null;
-  });
-
-  let activeTrajectory = $derived.by(() => {
-    if (!originPoi || !targetPoi || !shipState.engine) return null;
-    const activeModeName = shipState.activeMode || shipState.engine.availableModes[0];
-    const currentConfig = shipState.engine.configs.find(c => c.mode === activeModeName) || shipState.engine.configs[0]; 
-    const accel = (Number(currentConfig?.twrG) || 0.05) * 9.81; 
-
-    let solverOrigin = originPoi;
-    let solverTarget = targetPoi;
-
-    // THE SOLVER ALIASING FIX: Substitute true planetary orbits for interplanetary transfers
-    if (!transitRefBody) {
-      const oPlanetName = getSystemPlanetName(originPoi.id);
-      const tPlanetName = getSystemPlanetName(targetPoi.id);
-      
-      solverOrigin = getPlanetAsPoi(oPlanetName) || originPoi;
-      solverTarget = getPlanetAsPoi(tPlanetName) || targetPoi;
-    }
-
-    const maxTripDv = solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, 0)?.maxDv || 0;
-    const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : shipState.totalDV;
-    return solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, limitValue);
-  });
+  // Calculates the active trajectory using the orbital solver based on origin, target, and ship's engine
+  let activeTrajectory = $derived(calculateActiveTrajectory({
+    originPoi,
+    targetPoi,
+    shipState,
+    campaignState,
+    transitRefBody,
+    useMaxFuelLimit,
+    userCustomDv,
+    pois,
+    moons,
+    planets
+  }));
 
   // --- PIXI ENGINE TICKER ---
+  // Svelte's onMount lifecycle hook for PIXI initialization and cleanup
   onMount(() => {
-    let isDestroyed = false;
+    let isDestroyed = false; // Flag to prevent PIXI from initializing if component is unmounted quickly
 
+    // Maps to store PIXI Graphics objects for celestial bodies, allowing efficient updates
     const planetGraphics = new Map<string, { body: Graphics; orbit: Graphics; soi: Graphics; label: Text; hitbox: Graphics }>();
     const moonGraphics = new Map<string, { body: Graphics; orbit: Graphics; label: Text; soi: Graphics; hitbox: Graphics }>();
     const poiGraphics = new Map<string, { orbit: Graphics; body: Graphics; label: Text }>();
-    let trajectoryGraphics: Graphics;
+    let trajectoryGraphics: Graphics; // PIXI Graphics object for drawing the transit trajectory
 
     async function initPixi() {
       const app = new Application();
@@ -134,27 +94,31 @@
         antialias: true 
       });
 
+      // If component was destroyed before PIXI finished initializing, clean up
       if (isDestroyed) { app.destroy({ removeView: true }); return; }
       pixiApp = app;
       canvasContainer.appendChild(app.canvas);
       
+      // Apply CSS styles to make the canvas fill its container
       app.canvas.style.position = 'absolute';
       app.canvas.style.top = '0';
       app.canvas.style.left = '0';
       app.canvas.style.width = '100%';
       app.canvas.style.height = '100%';
       app.canvas.style.zIndex = '0';
-
+      
+      // Setup PIXI display hierarchy for proper rendering order (e.g., orbits behind bodies)
       worldContainer = new Container();
       app.stage.addChild(worldContainer);
 
       const orbitLayer = new Container();
       const trajectoryLayer = new Container();
       const bodyLayer = new Container();
+      // Add layers in drawing order (orbits first, then trajectory, then bodies on top)
       worldContainer.addChild(orbitLayer);
       worldContainer.addChild(trajectoryLayer);
       worldContainer.addChild(bodyLayer);
-
+      
       // Make the stage interactive to detect background clicks
       app.stage.eventMode = 'static';
       app.stage.hitArea = app.screen;
@@ -189,25 +153,29 @@
           const targetPlanetName = targetPlanet.name;
           const p = currentMappedPlanets.find(pl => pl.def.name === targetPlanetName);
           if (p) { camTargetX = -p.x; camTargetY = -p.y; isTracking = true; }
-        } 
+        }
         // 2. Fallback: Auto-track the system center during active transfers!
         else if (transitRefBody && (campaignState.activeMission || activeTrajectory)) {
           const p = currentMappedPlanets.find(pl => pl.def.name === transitRefBody);
           if (p) { camTargetX = -p.x; camTargetY = -p.y; isTracking = true; }
         }
-
+        
+        // Smoothly interpolate camera offset towards the target if tracking and not dragging
         if (isTracking && !isDragging) {
           offsetX += (camTargetX - offsetX) * 0.1; // Smooth glide factor
           offsetY += (camTargetY - offsetY) * 0.1;
         }
-
+        
+        // Apply the calculated camera offset to the world container
         if (worldContainer) {
           worldContainer.x = offsetX + containerWidth / 2;
           worldContainer.y = offsetY + containerHeight / 2;
         }
-
+        
+        // Clear previous trajectory drawing before redrawing for the current frame
         trajectoryGraphics.clear();
-
+        
+        // Render planets, moons, POI orbits, and the transit pipeline using dedicated renderer functions
         renderPlanets(
           currentMappedPlanets, 
           planetGraphics, 
@@ -218,6 +186,7 @@
           targetPlanet?.name || null,
           hoveredBody,
           campaignState.orbitTrailOpacity,
+          campaignState.orbitTrailThickness,
           (def) => {
             targetPlanet = def;
             const firstPoi = pois.find(p => p.parentBody === def.name);
@@ -227,28 +196,31 @@
             hoveredBody = def;
           }
         );
-
+        
         renderMoons(
           currentMappedMoons, 
           moonGraphics, 
           orbitLayer, 
           bodyLayer, 
+          containerWidth,
+          containerHeight,
           zoom, 
           campaignState.orbitScaleMultiplier, 
           targetPoiId,
           hoveredBody,
           campaignState.orbitTrailOpacity,
-          (moonDef) => {
+          campaignState.orbitTrailThickness,
+          (moonDef: MoonDef) => {
             // Find the first POI on the clicked moon to set as a valid target
             const firstPoi = pois.find(p => p.parentBody === moonDef.name);
             targetPoiId = firstPoi ? firstPoi.id : null;
             targetPlanet = planets.find(pl => pl.name === moonDef.parentPlanet) || null;
           },
-          (moonDef) => {
+          (moonDef: MoonDef | null) => {
             hoveredBody = moonDef;
           }
         );
-
+        
         renderPoiOrbits(
           currentMappedPoiOrbits, 
           currentMappedPlanets,
@@ -256,7 +228,8 @@
           poiGraphics, 
           orbitLayer, 
           bodyLayer,
-          campaignState.orbitTrailOpacity, 
+          campaignState.orbitTrailOpacity,
+          campaignState.orbitTrailThickness,
           zoom,
           campaignState.orbitScaleMultiplier,
           (poiDef) => {
@@ -267,7 +240,7 @@
             if (m) targetPlanet = planets.find(pl => pl.name === m.parentPlanet) || null;
           }
         );
-
+        
         renderTransitPipeline(
           originPoi, targetPoi, activeTrajectory, campaignState.activeMission, 
           campaignState.currentDay, zoom, campaignState.orbitScaleMultiplier, 
@@ -280,6 +253,7 @@
       });
     }
 
+    // Initialize PIXI and set up cleanup function for component unmount
     initPixi();
     return () => {
       isDestroyed = true;
@@ -312,28 +286,35 @@
   onmousemove={(e) => { if (isDragging) { offsetX += e.movementX; offsetY += e.movementY; } }}
   onwheel={handleWheel}
   oncontextmenu={(e) => e.preventDefault()}
->
+> 
+  <!-- Heads-Up Display (HUD) for current date and day -->
   <div class="hud-top-left">
     DATE: {campaignState.formattedDate}<br/>
     DAY: {Math.floor(campaignState.currentDay)}
   </div>
-
-  <div class="floating-panel-wrapper">
-    {#if campaignState.activeMission}
-      <ActiveTransitPanel />
-    {:else if activeTrajectory && originPoi && targetPoi}
-      <TransitPlanningPanel 
-        {originPoi} 
-        {targetPoi} 
-        {activeTrajectory} 
-        bind:useMaxFuelLimit 
-        bind:userCustomDv 
-        onConfirmLaunch={() => { targetPlanet = null; targetPoiId = null; }} 
-      />
-    {/if}
+  
+  <!-- Floating panel for transit information (active mission or planning) -->
+    <div 
+      class="floating-panel-wrapper"
+      onwheel={(e) => e.stopPropagation()}
+      onmousedown={(e) => e.stopPropagation()}
+    >
+      {#if campaignState.activeMission}
+        <ActiveTransitPanel />
+      {:else if originPoi}
+        <TransitPlanningPanel 
+          {originPoi} 
+          {targetPoi} 
+          {activeTrajectory} 
+          bind:useMaxFuelLimit 
+          bind:userCustomDv 
+          bind:targetPoiId 
+          onConfirmLaunch={() => { targetPlanet = null; targetPoiId = null; }} 
+        />
+      {/if}
+    </div>
   </div>
-</div>
-
+  
 <style>
   .navmap-container { position: relative; width: 100%; height: 100%; min-height: 600px; background-color: #0a0a0c; overflow: hidden; cursor: grab; }
   .navmap-container:active { cursor: grabbing; }

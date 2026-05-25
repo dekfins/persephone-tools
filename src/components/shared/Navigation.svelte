@@ -10,6 +10,7 @@
       <a href="/" class="nav-link" exact use:active>SHIP BUILDER</a>
       <a href="/condition" class="nav-link" use:active>SHIP CONDITION</a>
       <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
+      <a href="/missions" class="nav-link" use:active>J*B BOARD</a>
       <a href="/settings" class="nav-link" use:active>SETTINGS</a>
     </nav>
   </div>

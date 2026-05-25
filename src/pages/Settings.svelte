@@ -63,6 +63,22 @@
     </div>
 
     <div class="setting-row">
+      <div class="setting-info" style="width: 100%;">
+        <label for="orbit-thickness" class="setting-name">ORBIT TRAIL THICKNESS: {campaignState.orbitTrailThickness.toFixed(1)}px</label>
+        <span class="setting-desc">Adjusts the thickness of the orbit trails.</span>
+        <input 
+          id="orbit-thickness"
+          type="range" 
+          min="1" 
+          max="4" 
+          step="0.1" 
+          bind:value={campaignState.orbitTrailThickness} 
+          style="width: 100%; cursor: pointer; margin-top: 10px;"
+        />
+      </div>
+    </div>
+
+    <div class="setting-row">
       <div class="setting-info" style="align-items: flex-start;">
         <label class="setting-name" for="factory-reset">FACTORY RESET</label>
         <span class="setting-desc">Purge all local browser memory and reset website to factory defaults.</span>

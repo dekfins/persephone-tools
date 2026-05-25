@@ -149,10 +149,10 @@
     "parentBody": "Jupiter",
     "type": "station",
     "uiColor": "#aaaaaa",
-    "a": 1.5e8,
-    "e": 0,
-    "omega": 0,
-    "period": 69120,
+    "a": 3e8,
+    "e": 0.75,
+    "omega": 4.71239,
+    "period": 64800,
     "connections": ["jupiter_atmosphere", "io_surface", "europa_surface", "cleopatra_station", "callisto_surface"]
   },
   {
@@ -221,9 +221,9 @@
     "parentBody": "Saturn",
     "type": "surface",
     "uiColor": "#ead6b8",
-    "a": 6.0e7,
+    "a": 0,
     "e": 0,
-    "omega": 0,
+    "omega": 4.71239,
     "period": 38016,
     "connections": ["saturn_low_orbit"]
   },
@@ -233,10 +233,10 @@
     "parentBody": "Saturn",
     "type": "station",
     "uiColor": "#aaaaaa",
-    "a": 1.5e8,
-    "e": 0,
+    "a": 2.8e8,
+    "e": 0.78,
     "omega": 0,
-    "period": 86400,
+    "period": 75600,
     "connections": ["saturn_atmosphere", "titan_surface", "iapetus_surface"]
   },
   {

@@ -28,6 +28,7 @@ class CampaignStateManager {
   planetScaleMultiplier = $state(1.0);
   orbitScaleMultiplier = $state(1.0);
   orbitTrailOpacity = $state(0.5);
+  orbitTrailThickness = $state(1.5);
 
   #historyStack = $state<HistorySnapshot[]>([]);
 

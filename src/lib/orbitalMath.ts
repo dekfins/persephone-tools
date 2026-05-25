@@ -270,3 +270,19 @@ export function getSoiRadius(planet: PlanetDef, zoom: number, scaleMultiplier: n
   const rawSoiPx = soiRealMeters * (250 / 1.5e12) * zoom * scaleMultiplier;
   return Math.max(6, rawSoiPx);
 }
+
+export function getMoonSoiRadius(moon: MoonDef, zoom: number, scaleMultiplier: number): number {
+  const mMoon = REAL_MASS_KG[moon.name];
+  const mPlanet = REAL_MASS_KG[moon.parentPlanet];
+
+  if (!mMoon || !mPlanet) {
+    // Fallback for moons without mass data, though this should be avoided.
+    const visualRadius = getVisualRadius(moon, zoom, scaleMultiplier);
+    return visualRadius * 4;
+  }
+
+  // SOI formula: a * (m_secondary / m_primary)^(2/5)
+  const soiRealMeters = Number(moon.a) * Math.pow(mMoon / mPlanet, 0.4);
+  const rawSoiPx = soiRealMeters * (250 / 1.5e12) * zoom * scaleMultiplier;
+  return Math.max(4, rawSoiPx); // Use a slightly smaller minimum radius for moons
+}

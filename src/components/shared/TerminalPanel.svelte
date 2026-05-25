@@ -21,10 +21,6 @@
 </div>
 
 <style>
-  /* If you want the .btn-action and .terminal-alert classes to be available 
-    inside ANY TerminalPanel across the whole app, you can declare them globally here.
-  */
-  /* In TerminalPanel.svelte */
   h3 {
     margin: 0 0 1rem 0; /* Add a little space below the title */
     color: var(--accent-amber);
