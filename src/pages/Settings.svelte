@@ -16,38 +16,6 @@
 
     <div class="setting-row">
       <div class="setting-info" style="width: 100%;">
-        <label for="planet-scale" class="setting-name">PLANET VISUAL SCALE: {campaignState.planetScaleMultiplier.toFixed(1)}x</label>
-        <span class="setting-desc">Adjusts celestial body size for readability. Does not affect physics.</span>
-        <input 
-          id="planet-scale"
-          type="range" 
-          min="0.1" 
-          max="10" 
-          step="0.1" 
-          bind:value={campaignState.planetScaleMultiplier} 
-          style="width: 100%; cursor: pointer; margin-top: 10px;"
-        />
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info" style="width: 100%;">
-        <label for="orbit-scale" class="setting-name">ORBIT SPACING: {campaignState.orbitScaleMultiplier.toFixed(1)}x</label>
-        <span class="setting-desc">Expands or compresses the distances between planetary orbits.</span>
-        <input 
-          id="orbit-scale"
-          type="range" 
-          min="0.1" 
-          max="10" 
-          step="0.1" 
-          bind:value={campaignState.orbitScaleMultiplier} 
-          style="width: 100%; cursor: pointer; margin-top: 10px;"
-        />
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info" style="width: 100%;">
         <label for="orbit-tail-opacity" class="setting-name">ORBIT TRAIL OPACITY: {campaignState.orbitTrailOpacity.toFixed(1)}</label>
         <span class="setting-desc">Adjusts the opacity of the orbit trails. Set to 0 to disable trails entirely.</span>
         <input 

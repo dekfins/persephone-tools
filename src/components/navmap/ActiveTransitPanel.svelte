@@ -1,5 +1,6 @@
 <script lang="ts">
   import { campaignState } from '../../lib/campaignState.svelte';
+  import { dbState } from '../../lib/dbState.svelte';
   import { getTransitTelemetry } from '../../lib/orbitalMath';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import type { PoiDef } from '../../lib/types';
@@ -59,11 +60,20 @@
     </div>
     
     <div style="display: flex; gap: 8px; margin-top: 1rem;">
-      <button class="btn-action" style="flex: 2;" onclick={() => campaignState.advanceSegment()}>
+      <button class="btn-action" style="flex: 2;" onclick={async () => {
+        campaignState.advanceSegment();
+        // Advance segment alters TIME, FUEL, and CONDITIONS, so we must sync BOTH!
+        await dbState.syncTimelineToCloud();
+        await dbState.syncShipStateToCloud();
+      }}>
         {(campaignState.activeMission.travelTime - campaignState.activeMission.daysElapsed) <= 5 ? 'ARRIVE' : 'ADVANCE SEGMENT'}
       </button>
       {#if campaignState.hasUndoBackup}
-        <button class="btn-action btn-revert" style="flex: 1;" onclick={() => campaignState.revertSegment()}>
+        <button class="btn-action btn-revert" style="flex: 1;" onclick={async () => {
+          await dbState.syncTimelineToCloud();
+          await dbState.syncShipStateToCloud();
+          campaignState.revertSegment();
+        }}>
           UNDO
         </button>
       {/if}

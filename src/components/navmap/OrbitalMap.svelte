@@ -139,9 +139,9 @@
           : campaignState.currentDay + (campaignState.isPreviewing ? campaignState.previewElapsed : 0);
         const frameElapsedSeconds = currentDisplayDay * 86400;
 
-        const currentMappedPlanets = mapPlanets(planets, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier, campaignState.planetScaleMultiplier);
-        const currentMappedMoons = mapMoons(moons, currentMappedPlanets, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier);
-        const currentMappedPoiOrbits = mapPoiOrbits(pois, currentMappedPlanets, moons, frameElapsedSeconds, zoom, campaignState.orbitScaleMultiplier);
+        const currentMappedPlanets = mapPlanets(planets, frameElapsedSeconds, zoom, 1.0, 1.0);
+        const currentMappedMoons = mapMoons(moons, currentMappedPlanets, frameElapsedSeconds, zoom, 1.0);
+        const currentMappedPoiOrbits = mapPoiOrbits(pois, currentMappedPlanets, moons, frameElapsedSeconds, zoom, 1.0);
 
         // --- CAMERA TRACKING ---
         let camTargetX = 0;
@@ -205,7 +205,7 @@
           containerWidth,
           containerHeight,
           zoom, 
-          campaignState.orbitScaleMultiplier, 
+          1.0, 
           targetPoiId,
           hoveredBody,
           campaignState.orbitTrailOpacity,
@@ -231,7 +231,7 @@
           campaignState.orbitTrailOpacity,
           campaignState.orbitTrailThickness,
           zoom,
-          campaignState.orbitScaleMultiplier,
+          1.0,
           (poiDef) => {
             targetPoiId = poiDef.id;
             const p = planets.find(pl => pl.name === poiDef.parentBody);
@@ -243,12 +243,12 @@
         
         renderTransitPipeline(
           originPoi, targetPoi, activeTrajectory, campaignState.activeMission, 
-          campaignState.currentDay, zoom, campaignState.orbitScaleMultiplier, 
+          campaignState.currentDay, zoom, 1.0, 
           trajectoryGraphics, getPoiState,
           transitRefBody,
           campaignState.isPreviewing, campaignState.previewElapsed, campaignState.animatedDaysElapsed,
           planets,
-          campaignState.planetScaleMultiplier
+          1.0
         );
       });
     }

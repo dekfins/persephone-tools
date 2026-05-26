@@ -138,24 +138,24 @@
     "baseCost": 60000,
     "basePower": 1,
     "baseMass": 2,
-    "description": "A fission fragment rocket that can cruise almost forever on a single load of pellets, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable.",
-    "availableFuels": ["Pellets"],
+    "description": "A fission fragment rocket that can cruise almost forever on a single load of fissionables, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable.",
+    "availableFuels": ["Fissionables"],
     "availableModes": ["Mode 1 (Efficient)", "Mode 2 (Afterburner)"],
     "configs": [
       {
-        "fuel": "Pellets",
+        "fuel": "Fissionables",
         "mode": "Mode 1 (Efficient)",
         "twrG": 0.01,
         "propellants": [
-          { "name": "Pellets", "efficiency": 11000 }
+          { "name": "Fissionables", "efficiency": 11000 }
         ]
       },
       {
-        "fuel": "Pellets",
+        "fuel": "Fissionables",
         "mode": "Mode 2 (Afterburner)",
         "twrG": 0.15,
         "propellants": [
-          { "name": "Pellets", "efficiency": 11000 },
+          { "name": "Fissionables", "efficiency": 11000 },
           { "name": "LH2", "efficiency": 1000 }
         ]
       }
@@ -210,7 +210,7 @@
     "baseCost": 80000,
     "basePower": 2,
     "baseMass": 2,
-    "description": "A few picograms of antimatter spark a deuterium-helium-3 burn far hotter than any pure fusion reactor can manage. Requires stabilized antimatter pellets from POS, so independence is an illusion.",
+    "description": "A few picograms of antimatter spark a deuterium-helium-3 burn far hotter than any pure fusion reactor can manage. Requires stabilized antimatter particles from POS, so independence is an illusion.",
     "availableFuels": ["AM + D+He-3"],
     "availableModes": ["Standard"],
     "configs": [

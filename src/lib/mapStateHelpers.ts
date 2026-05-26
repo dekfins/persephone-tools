@@ -101,11 +101,11 @@ export function calculateTransitRefBody(
  * @returns The calculated trajectory object, or null if inputs are invalid.
  */
 export function calculateActiveTrajectory({ originPoi, targetPoi, shipState, campaignState, transitRefBody, useMaxFuelLimit, userCustomDv, pois, moons, planets }: { originPoi: PoiDef | null; targetPoi: PoiDef | null; shipState: ShipState; campaignState: CampaignState; transitRefBody: string | null; useMaxFuelLimit: boolean; userCustomDv: string; pois: PoiDef[]; moons: MoonDef[]; planets: PlanetDef[]; }) {
-  if (!originPoi || !targetPoi || !shipState.engine) return null;
+  if (!originPoi || !targetPoi || !shipState.blueprint.engine) return null;
 
   // Determine the ship's current engine configuration for acceleration
-  const activeModeName = shipState.activeMode || shipState.engine.availableModes[0];
-  const currentConfig = shipState.engine.configs.find((c: any) => c.mode === activeModeName) || shipState.engine.configs[0];
+  const activeModeName = shipState.propulsion.activeMode || shipState.blueprint.engine.availableModes[0];
+  const currentConfig = shipState.blueprint.engine.configs.find((c: any) => c.mode === activeModeName) || shipState.blueprint.engine.configs[0];
   const accel = (Number(currentConfig?.twrG) || 0.05) * 9.81;
 
   let solverOrigin: PoiDef | null = originPoi;
@@ -119,6 +119,6 @@ export function calculateActiveTrajectory({ originPoi, targetPoi, shipState, cam
   }
 
   const maxTripDv = solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, 0)?.maxDv || 0;
-  const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : shipState.totalDV;
+  const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : shipState.propulsion.totalDV;
   return solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, limitValue);
 }

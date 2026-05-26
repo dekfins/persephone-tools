@@ -42,15 +42,15 @@
     "description": "Terragrow & POS subsidiaries. ISRU possible."
   },
   {
-    "name": "Pellets",
-    "costPerUnit": 0,
+    "name": "Fissionables",
+    "costPerUnit": 10000,
     "baseHullCompatible": false,
     "purchasable": false,
     "description": "DAVE-regulated. Mission rewards or black market."
   },
   {
     "name": "AM",
-    "costPerUnit": 0,
+    "costPerUnit": 100000,
     "baseHullCompatible": false,
     "purchasable": false,
     "description": "POS monopoly. No credit price. Faction leverage required."

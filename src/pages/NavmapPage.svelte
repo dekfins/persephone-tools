@@ -1,13 +1,17 @@
 <script lang="ts">
   import OrbitalMap from '../components/navmap/OrbitalMap.svelte';
+  import DebriefPanel from '../components/missions/DebriefPanel.svelte';
 </script>
 
-<div class="navmap-page">
+<div class="page-container">
   <OrbitalMap />
+  <DebriefPanel />
 </div>
 
+
+
 <style>
-  .navmap-page {
+  .page-container {
     position: fixed; /* Detaches from normal page layout */
     top: 0;
     left: 0;

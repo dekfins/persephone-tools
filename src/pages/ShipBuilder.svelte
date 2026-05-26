@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CoreSystems from '../components/ship-builder/CoreSystems.svelte';
-  import ComponentCart from '../components/ship-builder/ComponentCart.svelte';
-  import ShipStats from '../components/ship-builder/ShipStats.svelte';
+  import CoreSystems from '../components/ship-builder/CoreSystemsPanel.svelte';
+  import ComponentCart from '../components/ship-builder/ComponentsPanel.svelte';
+  import ShipStats from '../components/ship-builder/ShipStatsPanel.svelte';
 </script>
 
 <div class="page-container">

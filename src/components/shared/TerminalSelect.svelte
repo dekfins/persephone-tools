@@ -4,6 +4,7 @@
 
 <script lang="ts">
   import { shipState } from '../../lib/shipState.svelte';
+  import constants from '../../data/constants.json';
   let { 
     options, 
     value = $bindable(), 
@@ -52,15 +53,27 @@
     return metaString ? `${metaString}` : "";
   }
 
+  function getTooltipCost(item: any) {
+    if (!item) return 0;
+    const rawValue = item.cost ?? item.baseCost ?? item.weaponCost ?? 0;
+    const baseItemCost = typeof rawValue === 'string' ? parseInt(rawValue.replace(/,/g, '')) : rawValue;
+    
+    const isCore = 'reactorType' in item || 'engineName' in item || 'parentEngine' in item;
+    const scales = isCore || item.hasScaleCost === "TRUE" || item.hasScaleCost === true;
+
+    // Strictly use the ACTIVE SHIP's multiplier (No more item.class overrides!)
+    return scales ? baseItemCost * shipState.blueprint.multipliers.costMult : baseItemCost;
+  }
+
   function getScaledValue(baseValue: number | undefined, scaleFlag: any, item: any) {
     if (baseValue === undefined) return 0;
     
-    // Core systems (Reactors/Engines) ALWAYS scale. 
-    // Others only scale if the JSON flag is TRUE.
-    const isCore = 'reactorType' in item || 'engineName' in item;
+    const isCore = 'reactorType' in item || 'engineName' in item || 'parentEngine' in item;
     const scales = isCore || scaleFlag === "TRUE" || scaleFlag === true;
 
-    const result = scales ? baseValue * shipState.multipliers.massPowerMult : baseValue;
+    // Strictly use the ACTIVE SHIP's multiplier (No more item.class overrides!)
+    const mult = shipState.blueprint.multipliers.massPowerMult;
+    const result = scales ? baseValue * mult : baseValue;
     
     // Round to 1 decimal place to keep the "DEIMOS" UI clean
     return Math.round(result * 10) / 10;
@@ -122,9 +135,11 @@
       <aside class="stat-popup {popupSide}"> 
         <h4>{hoveredOption[labelKey]}</h4>
         <div class="stat-row meta-row">
-          <span class="class-tag {getClassTag(hoveredOption.class)}">
-            {hoveredOption.class.toUpperCase()}
-          </span>
+          {#if hoveredOption.class}
+            <span class="class-tag {getClassTag(hoveredOption.class)}">
+              {hoveredOption.class.toUpperCase()}
+            </span>
+          {/if}
           
           <span class="tags-tl">
             {getMetadataLine(hoveredOption)}
@@ -141,7 +156,7 @@
         <div class="stat-row">
           <span>COST:</span>
           <span>
-            {shipState.calculateItemCost(hoveredOption).toLocaleString()} CR
+            {getTooltipCost(hoveredOption).toLocaleString()} CR
           </span>
         </div>
 

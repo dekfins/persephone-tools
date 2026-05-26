@@ -3,8 +3,8 @@
   import { shipCodec } from '../../lib/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
-  let twr = $derived(shipState.activeConfig?.twrG || 0);
-  let totalDV = $derived(shipState.totalDV);
+  let twr = $derived(shipState.propulsion.activeConfig?.twrG || 0);
+  let totalDV = $derived(shipState.propulsion.totalDV);
 
   let fileInput: HTMLInputElement;
 
@@ -17,43 +17,43 @@
   }
 </script>
 
-<TerminalPanel title={shipState.name || "UNNAMED SHIP"} extraClass="vitals-panel">
+<TerminalPanel title={shipState.blueprint.name || "UNNAMED SHIP"} extraClass="vitals-panel">
   <div class="vitals-grid">
     <div class="vital-cell">
       <span class="vital-label">HP</span>
-      <span class="vital-value accent {shipState.currentHealth <= (shipState.totalHealth / 4) ? 'error' : ''}">
-        {shipState.currentHealth}/{shipState.totalHealth}
+      <span class="vital-value accent {shipState.vitals.currentHealth <= (shipState.blueprint.totalHealth / 4) ? 'error' : ''}">
+        {shipState.vitals.currentHealth}/{shipState.blueprint.totalHealth}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">RI</span>
-      <span class="vital-value accent {shipState.currentRI <= 2 ? 'error' : ''}">
-        {shipState.currentRI}/{shipState.reactor?.reactorIntegrity || 6}
+      <span class="vital-value accent {shipState.vitals.currentRI <= 2 ? 'error' : ''}">
+        {shipState.vitals.currentRI}/{shipState.blueprint.reactor?.reactorIntegrity || 6}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">ARMOR</span>
-      <span class="vital-value">{shipState.totalArmor}</span>
+      <span class="vital-value">{shipState.blueprint.totalArmor}</span>
     </div>
 
     <div class="vital-cell">
       <span class="vital-label">AC</span>
-      <span class="vital-value">{shipState.totalArmorClass}</span>
+      <span class="vital-value">{shipState.blueprint.totalArmorClass}</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">CARGO</span>
-      <span class="vital-value">{shipState.totalCargo}t</span>
+      <span class="vital-value">{shipState.blueprint.totalCargo}t</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">CREW</span>
       <span class="vital-value">
-        {shipState.currentMinCrew === shipState.currentMaxCrew ? shipState.currentMinCrew : `${shipState.currentMinCrew}/${shipState.currentMaxCrew}`}
+        {shipState.blueprint.currentMinCrew === shipState.blueprint.currentMaxCrew ? shipState.blueprint.currentMinCrew : `${shipState.blueprint.currentMinCrew}/${shipState.blueprint.currentMaxCrew}`}
       </span>
     </div>
 
     <div class="vital-cell">
       <span class="vital-label">SPEED</span>
-      <span class="vital-value">{shipState.totalSpeed}</span>
+      <span class="vital-value">{shipState.blueprint.totalSpeed}</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">TWR</span>
@@ -66,20 +66,20 @@
 
     <div class="vital-cell">
       <span class="vital-label">POWER</span>
-      <span class="vital-value {shipState.usedPower > shipState.totalPower ? 'error' : ''}">
-        {Math.round(shipState.usedPower * 10) / 10}/{Math.round(shipState.totalPower * 10) / 10}
+      <span class="vital-value {shipState.blueprint.usedPower > shipState.blueprint.totalPower ? 'error' : ''}">
+        {Math.round(shipState.blueprint.usedPower * 10) / 10}/{Math.round(shipState.blueprint.totalPower * 10) / 10}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">MASS</span>
-      <span class="vital-value {shipState.usedMass > shipState.totalMass ? 'error' : ''}">
-        {Math.round(shipState.usedMass * 10) / 10}/{Math.round(shipState.totalMass * 10) / 10}
+      <span class="vital-value {shipState.blueprint.usedMass > shipState.blueprint.totalMass ? 'error' : ''}">
+        {Math.round(shipState.blueprint.usedMass * 10) / 10}/{Math.round(shipState.blueprint.totalMass * 10) / 10}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">HPTS</span>
-      <span class="vital-value {shipState.usedHardpoints > shipState.totalHardpoints ? 'error' : ''}">
-        {shipState.usedHardpoints}/{shipState.totalHardpoints}
+      <span class="vital-value {shipState.blueprint.usedHardpoints > shipState.blueprint.totalHardpoints ? 'error' : ''}">
+        {shipState.blueprint.usedHardpoints}/{shipState.blueprint.totalHardpoints}
       </span>
     </div>
 </div>

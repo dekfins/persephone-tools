@@ -4,13 +4,9 @@
 </script>
 
 <div class="page-container">
-  
   <div class="layout-grid">
-    
     <div class="col-stack" style="grid-column: 1 / -1;">
       <JobBoardPanel />
     </div>
-    
   </div>
-
 </div>

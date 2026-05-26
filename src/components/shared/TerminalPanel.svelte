@@ -22,12 +22,10 @@
 
 <style>
   h3 {
-    margin: 0 0 1rem 0; /* Add a little space below the title */
     color: var(--accent-amber);
     font-size: 1.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding-bottom: 0.5rem;
   }
 
   :global(.terminal-alert) {

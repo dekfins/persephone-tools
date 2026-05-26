@@ -30,7 +30,8 @@ export interface Defense extends ScalingComponent {
 
 // CoreSystems don't scale dynamically via TRUE/FALSE flags in JSON
 export interface CoreSystem extends ShipItem {
-  parentEngine?: string;     // For engines
+  engineName?: string;     // For engines
+  parentEngine?: string;   // For sub-engines
   reactorType?: string;      // For reactors
   reactorIntegrity?: number; // Only reactors have this
 }
@@ -113,6 +114,7 @@ export interface EngineConfig {
 export interface Engine {
   id: string;
   engineName: string;
+  parentEngine?: string;
   class: string;
   baseCost: number;
   basePower: number;
@@ -145,6 +147,9 @@ export interface ActiveMission {
   daysElapsed: number; // How far along the route the ship currently is
   reqDv: number;
   telemetry: FlightTelemetry; 
+  payoutCredits?: number;
+  lootItem?: string;
+  lootRarity?: string;
 }
 
 // Physical celestial bodies (Planets & Moons)
@@ -200,4 +205,23 @@ export interface GeneratedMission {
   payoutCredits: number;
   lootRarity?: string;
   lootItem?: string;
+  telemetry: any;
+}
+
+export interface CharacterRecord {
+  id: string;
+  name: string;
+  role: 'PLAYER' | 'GM';
+  personal_credits: number;
+  rads: number;
+}
+
+export interface ItemRecord {
+  id: string;
+  owner_id: string; 
+  name: string;
+  category: string;
+  rarity: string;
+  quantity: number;
+  mass: number;
 }

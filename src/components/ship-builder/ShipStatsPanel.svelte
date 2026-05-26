@@ -4,9 +4,9 @@
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   const shipyardStats = $derived([
-    { label: 'POWER', used: shipState.usedPower, total: shipState.totalPower, id: 'power-grid' },
-    { label: 'MASS', used: shipState.usedMass, total: shipState.totalMass, id: 'mass-grid' },
-    { label: 'HARDPOINTS', used: shipState.usedHardpoints, total: shipState.totalHardpoints, id: 'hardpoint-grid' }
+    { label: 'POWER', used: shipState.blueprint.usedPower, total: shipState.blueprint.totalPower, id: 'power-grid' },
+    { label: 'MASS', used: shipState.blueprint.usedMass, total: shipState.blueprint.totalMass, id: 'mass-grid' },
+    { label: 'HARDPOINTS', used: shipState.blueprint.usedHardpoints, total: shipState.blueprint.totalHardpoints, id: 'hardpoint-grid' }
   ]);
 
   let fileInput: HTMLInputElement;
@@ -20,7 +20,7 @@
   }
 </script>
 
-<TerminalPanel title={shipState.name}>
+<TerminalPanel title={shipState.blueprint.name}>
   {#each shipyardStats as stat}
     <div class="progress-bar">
       <div class="progress-header">
@@ -41,21 +41,21 @@
     </div>
   {/each}
 
-  <div class="terminal-alert {shipState.remainingMass < 0 || shipState.remainingPower < 0 || shipState.remainingHardpoints < 0 ? 'error' : ''}">
-    STATUS: {shipState.remainingMass < 0 || shipState.remainingPower < 0 || shipState.remainingHardpoints < 0 ? 'OVERLOAD' : 'NOMINAL'}
+  <div class="terminal-alert {shipState.blueprint.remainingMass < 0 || shipState.blueprint.remainingPower < 0 || shipState.blueprint.remainingHardpoints < 0 ? 'error' : ''}">
+    STATUS: {shipState.blueprint.remainingMass < 0 || shipState.blueprint.remainingPower < 0 || shipState.blueprint.remainingHardpoints < 0 ? 'OVERLOAD' : 'NOMINAL'}
   </div>
 
   <ul>
-    <li>HP: {shipState.totalHealth}</li>
-    <li>COST: {shipState.totalCost.toLocaleString()} CR</li>
-    <li>ARMOR: {shipState.totalArmor}</li>
-    <li>AC: {shipState.totalArmorClass}</li>
+    <li>HP: {shipState.blueprint.totalHealth}</li>
+    <li>COST: {shipState.blueprint.totalCost.toLocaleString()} CR</li>
+    <li>ARMOR: {shipState.blueprint.totalArmor}</li>
+    <li>AC: {shipState.blueprint.totalArmorClass}</li>
     <li>
-      CREW: {shipState.currentMinCrew === shipState.currentMaxCrew 
-        ? shipState.currentMinCrew 
-        : `${shipState.currentMinCrew}/${shipState.currentMaxCrew}`}
+      CREW: {shipState.blueprint.currentMinCrew === shipState.blueprint.currentMaxCrew 
+        ? shipState.blueprint.currentMinCrew 
+        : `${shipState.blueprint.currentMinCrew}/${shipState.blueprint.currentMaxCrew}`}
     </li>
-    <li>SPEED: {shipState.totalSpeed}</li>
+    <li>SPEED: {shipState.blueprint.totalSpeed}</li>
   </ul>
   
   <div class="terminal-controls">

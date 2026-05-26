@@ -1,42 +1,54 @@
 <script lang="ts">
   import { Route } from 'tinro';
   import { fly } from 'svelte/transition';
-  import Navigation from './components/shared/Navigation.svelte';
+  import Navigation from './components/shared/NavigationPanel.svelte';
   
   // Import your pages
   import ShipBuilder from './pages/ShipBuilder.svelte';
   import ShipCondition from './pages/ShipCondition.svelte';
+  import Inventory from './pages/Inventory.svelte';
   import Navmap from './pages/NavmapPage.svelte';
   import Missions from './pages/Missions.svelte';
+  import GMDashboard from './pages/GMDashboard.svelte';
   import Settings from './pages/Settings.svelte'
   
   import { onMount } from 'svelte';
   import { shipState } from './lib/shipState.svelte';
+  import { crewState } from './lib/crewState.svelte';
+  import { dbState } from './lib/dbState.svelte';
   
   let showToast = $state(false);
   let isHydrated = $state(false); // The gatekeeper
 
-  onMount(() => {
+  onMount(async () => {
     const savedSession = localStorage.getItem('DEIMOS_ACTIVE_SESSION');
-    
     if (savedSession) {
       try {
         const payload = JSON.parse(savedSession);
         
-        // 1. Rehydrate the reactive Svelte 5 class instance
-        shipState.name = payload.name;
-        shipState.hull = payload.hull;
-        shipState.reactor = payload.reactor;
-        shipState.engine = payload.engine; // Your custom setter handles the referencing perfectly!
-        shipState.components = payload.components;
-        shipState.currentHealth = payload.currentHealth;
-        shipState.currentRI = payload.currentRI;
-        shipState.activeConditions = payload.activeConditions || [];
-        shipState.activeFuel = payload.activeFuel;
-        shipState.activeMode = payload.activeMode;
-        shipState.currentFuel = payload.currentFuel || {};
+        if (payload.blueprint) {
+          shipState.blueprint.name = payload.blueprint.name;
+          shipState.blueprint.hull = payload.blueprint.hull;
+          shipState.blueprint.reactor = payload.blueprint.reactor;
+          shipState.blueprint.engine = payload.blueprint.engine;
+          shipState.blueprint.components = payload.blueprint.components;
+          
+          shipState.vitals.currentHealth = payload.vitals.currentHealth;
+          shipState.vitals.currentRI = payload.vitals.currentRI;
+          shipState.vitals.activeConditions = payload.vitals.activeConditions;
+          
+          shipState.propulsion.activeFuel = payload.propulsion.activeFuel;
+          shipState.propulsion.activeMode = payload.propulsion.activeMode;
+          shipState.propulsion.currentFuel = payload.propulsion.currentFuel;
+        }
 
-        // 2. Trigger the top-right notification
+        if (payload.crewState) {
+          crewState.shipCredits = payload.crewState.shipCredits ?? 5000;
+          crewState.kibbleDays = payload.crewState.kibbleDays ?? 30;
+          crewState.cargo = payload.crewState.cargo ?? [];
+          if (payload.crewState.crew) crewState.crew = payload.crewState.crew;
+        }
+
         showToast = true;
         setTimeout(() => showToast = false, 4000);
       } catch (e) {
@@ -44,27 +56,40 @@
       }
     }
     
-    // Unlock the autosave loop
-    isHydrated = true; 
+    isHydrated = true;
+
+    // Connect to your cloud database ONCE after hydration is complete
+    await dbState.loadData();
+    dbState.subscribeToChanges();
   });
 
-  // 3. The Svelte 5 Autosave Tracker
   $effect(() => {
-    if (!isHydrated) return; // Don't wipe the save before we load it!
+    if (!isHydrated) return; 
 
-    // Reading these properties automatically registers them as reactive dependencies
     const sessionPayload = {
-      name: shipState.name,
-      hull: shipState.hull,
-      reactor: shipState.reactor,
-      engine: shipState.engine,
-      components: shipState.components,
-      currentHealth: shipState.currentHealth,
-      currentRI: shipState.currentRI,
-      activeConditions: shipState.activeConditions,
-      activeFuel: shipState.activeFuel,
-      activeMode: shipState.activeMode,
-      currentFuel: shipState.currentFuel
+      blueprint: {
+        name: shipState.blueprint.name,
+        hull: shipState.blueprint.hull,
+        reactor: shipState.blueprint.reactor,
+        engine: shipState.blueprint.engine,
+        components: shipState.blueprint.components,
+      },
+      vitals: {
+        currentHealth: shipState.vitals.currentHealth,
+        currentRI: shipState.vitals.currentRI,
+        activeConditions: shipState.vitals.activeConditions,
+      },
+      propulsion: {
+        activeFuel: shipState.propulsion.activeFuel,
+        activeMode: shipState.propulsion.activeMode,
+        currentFuel: shipState.propulsion.currentFuel,
+      },
+      crewState: {
+        shipCredits: crewState.shipCredits,
+        kibbleDays: crewState.kibbleDays,
+        cargo: crewState.cargo,
+        crew: crewState.crew
+      }
     };
     
     localStorage.setItem('DEIMOS_ACTIVE_SESSION', JSON.stringify(sessionPayload));
@@ -91,12 +116,20 @@
     <ShipCondition />
   </Route>
 
+  <Route path="/inventory">
+    <Inventory />
+  </Route>
+
   <Route path="/navmap">
     <Navmap />
   </Route>
 
   <Route path="/missions">
     <Missions />
+  </Route>
+
+  <Route path="/gm">
+    <GMDashboard />
   </Route>
 
   <Route path="/settings">

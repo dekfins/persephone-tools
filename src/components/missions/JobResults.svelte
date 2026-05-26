@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { GeneratedMission } from '../../lib/types';
-  import JobCard from './JobCard.svelte';
+  import JobCard from './JobCardPanel.svelte';
 
-  let { jobs, isScanning } = $props<{
+  let { jobs, isScanning, onAccept } = $props<{
     jobs: GeneratedMission[],
-    isScanning: boolean
+    isScanning: boolean,
+    onAccept: (job: GeneratedMission) => void
   }>();
 </script>
 
@@ -15,7 +16,10 @@
 {:else if jobs.length > 0}
   <div class="jobs-grid">
     {#each jobs as job}
-      <JobCard {job} />
+      <JobCard 
+        {job} 
+        onAccept={onAccept} 
+      />
     {/each}
   </div>
 {/if}

@@ -43,17 +43,17 @@
 
   const categoryOptions = [
     { label: 'FITTINGS', value: 'Fitting' },
-    { label: 'WEAPONS', value: 'Weapon' },
-    { label: 'DEFENSES', value: 'Defense' }
-  ];
+    { label: 'DEFENSES', value: 'Defense' },
+    { label: 'WEAPONS', value: 'Weapon' }
+      ];
 
   let selectedCategoryObj = $state(categoryOptions[0]);
   let selectedItem = $state<any>(null);
 
   let availableItems = $derived.by(() => {
     const rawList = marketInventories[selectedCategoryObj.value as keyof typeof marketInventories] || [];
-    const currentTier = shipState.multipliers.classTier;
-    return rawList.filter((item: any) => shipState.getTier(item.class) <= currentTier);
+    const currentTier = shipState.blueprint.multipliers.classTier;
+    return rawList.filter((item: any) => shipState.blueprint.getTier(item.class) <= currentTier);
   });
 
   $effect(() => {
@@ -63,7 +63,7 @@
 
   function handleAddItem() {
     if (selectedItem) {
-      shipState.addComponent(selectedItem, selectedCategoryObj.value);
+      shipState.blueprint.addComponent(selectedItem, selectedCategoryObj.value);
       selectedItem = null;
       isMarketOpen = false;
     }
@@ -72,7 +72,7 @@
 
 <TerminalPanel title="Internal Systems">
   <div class="systems-list">
-    {#each shipState.components as comp}
+    {#each shipState.blueprint.components as comp}
       <div class="system-row is-{comp.status?.toLowerCase() || 'online'}">
         <div class="sys-primary">
           <span class="cat-label">[{comp.category.substring(0,3).toUpperCase()}]</span> 
@@ -100,7 +100,7 @@
           
           <button 
             class="btn-remove" 
-            onclick={() => shipState.removeComponent(comp.id)}
+            onclick={() => shipState.blueprint.removeComponent(comp.id)}
             title="Remove Component"
           >
             X
@@ -123,6 +123,7 @@
               options={categoryOptions}
               bind:value={selectedCategoryObj}
               labelKey="label"
+              showPopup={false}
             />
           </div>
           <div class="market-field" style="flex: 2;">

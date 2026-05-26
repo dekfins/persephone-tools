@@ -36,7 +36,7 @@
   </div>
   <div class="stat-row">
     <span class="label-text">AVAILABLE DV:</span>
-    <span class="value-text" style="color: var(--ui-cyan)">{shipState.totalDV.toFixed(0)} km/s</span>
+    <span class="value-text" style="color: var(--ui-cyan)">{shipState.propulsion.totalDV.toFixed(0)} km/s</span>
   </div>
 
   <hr class="dim-divider" />

@@ -15,6 +15,7 @@ class CampaignStateManager {
   currentDay = $state(34); 
   shipLocation = $state("mars_orbit"); 
   activeMission = $state<ActiveMission | null>(null);
+  completedMission = $state<ActiveMission | null>(null);
   animatedDaysElapsed = $state(0); 
   
   isPreviewing = $state(false);
@@ -24,9 +25,7 @@ class CampaignStateManager {
   isPlaying = $state(false);
   simSpeed = $state(1.0);
 
-  // MAP CONFIGURATORS (Default orbit spacing to 1.8x to resolve inner system clutter)
-  planetScaleMultiplier = $state(1.0);
-  orbitScaleMultiplier = $state(1.0);
+  // MAP CONFIGURATORS
   orbitTrailOpacity = $state(0.5);
   orbitTrailThickness = $state(1.5);
 
@@ -46,10 +45,10 @@ class CampaignStateManager {
       this.currentDay += 0.25;
       
       // Deduct 0.5 fuel cells of the currently active fuel type
-      if (shipState.engine && shipState.activeFuel) {
-        const fuelKey = shipState.activeFuel;
-        if (shipState.currentFuel[fuelKey] !== undefined) {
-          shipState.currentFuel[fuelKey] = Math.max(0, shipState.currentFuel[fuelKey] - 0.5);
+      if (shipState.blueprint.engine && shipState.propulsion.activeFuel) {
+        const fuelKey = shipState.propulsion.activeFuel;
+        if (shipState.propulsion.currentFuel[fuelKey] !== undefined) {
+          shipState.propulsion.currentFuel[fuelKey] = Math.max(0, shipState.propulsion.currentFuel[fuelKey] - 0.5);
         }
       }
       
@@ -70,7 +69,7 @@ class CampaignStateManager {
     this.#historyStack.push({
       currentDay: this.currentDay,
       daysElapsed: this.activeMission.daysElapsed,
-      fuelSnapshot: { ...shipState.currentFuel }
+      fuelSnapshot: { ...shipState.propulsion.currentFuel }
     });
 
     const oldTelemetry = getTransitTelemetry(this.activeMission.daysElapsed, this.activeMission.telemetry);
@@ -87,10 +86,10 @@ class CampaignStateManager {
     const newTelemetry = getTransitTelemetry(this.activeMission.daysElapsed, this.activeMission.telemetry);
     const dvUsed = oldTelemetry.remainingDvKM - newTelemetry.remainingDvKM;
     if (dvUsed > 0) {
-      shipState.consumeDeltaV(dvUsed);
+      shipState.propulsion.consumeDeltaV(dvUsed);
     }
     
-    shipState.advanceTravelSegment();
+    shipState.vitals.advanceTravelSegment();
   }
 
   revertSegment() {
@@ -99,9 +98,9 @@ class CampaignStateManager {
     if (lastState) {
       this.currentDay = lastState.currentDay;
       this.activeMission.daysElapsed = lastState.daysElapsed;
-      shipState.currentFuel = lastState.fuelSnapshot;
+      shipState.propulsion.currentFuel = lastState.fuelSnapshot;
       
-      for (const cond of shipState.activeConditions) {
+      for (const cond of shipState.vitals.activeConditions) {
         cond.segmentsActive = Math.max(0, cond.segmentsActive - 1);
       }
     }
@@ -130,6 +129,7 @@ class CampaignStateManager {
       this.animatedDaysElapsed = target;
       if (this.activeMission.daysElapsed >= this.activeMission.travelTime) {
         this.shipLocation = this.activeMission.targetName;
+        this.completedMission = this.activeMission;
         this.activeMission = null;
         this.#historyStack = [];
       }

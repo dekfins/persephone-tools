@@ -1,6 +1,7 @@
 <script lang="ts">
   import { campaignState } from '../../lib/campaignState.svelte';
   import { shipState } from '../../lib/shipState.svelte';
+  import { dbState } from '../../lib/dbState.svelte';
   import type { PoiDef } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
@@ -54,8 +55,8 @@
   let hasInsufficientDV = $derived(
     activeTrajectory
       ? (useMaxFuelLimit && userCustomDv
-          ? Number(shipState.totalDV.toFixed(2)) < Number(userCustomDv) || shipState.totalDV <= 0
-          : Number(shipState.totalDV.toFixed(2)) < Number(activeTrajectory.maxDv.toFixed(2)) || shipState.totalDV <= 0)
+          ? Number(shipState.propulsion.totalDV.toFixed(2)) < Number(userCustomDv) || shipState.propulsion.totalDV <= 0
+          : Number(shipState.propulsion.totalDV.toFixed(2)) < Number(activeTrajectory.maxDv.toFixed(2)) || shipState.propulsion.totalDV <= 0)
       : true
   );
 </script>
@@ -85,7 +86,7 @@
   {#if targetPoi && activeTrajectory}
     <div class="stat-row"><span>TRAVEL TIME:</span><span>{activeTrajectory.realisticTime.toFixed(2)} d</span></div>
     <div class="stat-row"><span>BURNOUT DV:</span><span>{activeTrajectory.idealDv.toFixed(2)} km/s</span></div>
-    <div class="stat-row"><span>AVAILABLE DV:</span><span style="color: {hasInsufficientDV ? 'var(--accent-red)' : 'var(--text-main)'};">{shipState.totalDV.toFixed(2)} km/s</span></div>
+    <div class="stat-row"><span>AVAILABLE DV:</span><span style="color: {hasInsufficientDV ? 'var(--accent-red)' : 'var(--text-main)'};">{shipState.propulsion.totalDV.toFixed(2)} km/s</span></div>
 
     <div class="fuel-config-box">
       <label class="config-label">
@@ -100,8 +101,8 @@
             bind:value={userCustomDv} 
             oninput={() => {
               const parsedVal = parseFloat(userCustomDv);
-              if (!isNaN(parsedVal) && parsedVal > shipState.totalDV) {
-                userCustomDv = Math.max(0, shipState.totalDV).toFixed(2);
+              if (!isNaN(parsedVal) && parsedVal > shipState.propulsion.totalDV) {
+                userCustomDv = Math.max(0, shipState.propulsion.totalDV).toFixed(2);
               }
             }}
             class="terminal-input" 
@@ -123,13 +124,14 @@
         class="btn-action" 
         style="width: 100%; margin-top: 10px;"
         disabled={hasInsufficientDV}
-        onclick={() => {
+        onclick={async () => {
           campaignState.initiateTransit({
             originName: originPoi.id, targetName: targetPoi.id, launchDay: campaignState.currentDay,
             travelTime: activeTrajectory.realisticTime, daysElapsed: 0, reqDv: activeTrajectory.maxDv,
             telemetry: activeTrajectory.telemetry 
           });
           onConfirmLaunch();
+          await dbState.syncTimelineToCloud();
         }}>
         {hasInsufficientDV ? 'INSUFFICIENT DELTA-V' : 'CONFIRM LAUNCH'}
       </button>

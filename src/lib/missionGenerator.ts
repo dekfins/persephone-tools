@@ -129,7 +129,8 @@ export function generateJobBoard(
       payoutString,
       payoutCredits: finalCredits,
       lootRarity: loot?.rarity,
-      lootItem: loot?.item
+      lootItem: loot?.item,
+      telemetry: trajectory.telemetry
     });
   }
 

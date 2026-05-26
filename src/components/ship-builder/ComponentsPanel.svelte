@@ -4,6 +4,7 @@
   import defenses from '../../data/defenses.json';
   import weapons from '../../data/weapons.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let activeTab = $state('Fittings');
 
@@ -21,7 +22,7 @@
   function getQty(item: any) {
     if (!item) return 0;
     
-    const found = shipState.components.find(c => {
+    const found = shipState.blueprint.components.find(c => {
       // Only compare if the specific name property exists on the selected item
       if (item.fittingName) return c.item.fittingName === item.fittingName;
       if (item.defenseName) return c.item.defenseName === item.defenseName;
@@ -45,12 +46,12 @@
   }
   
   function isItemAllowed(item: any) {
-    const shipTier = shipState.multipliers.classTier;
-    const minTier = shipState.getTier(item.class);
+    const shipTier = shipState.blueprint.multipliers.classTier;
+    const minTier = shipState.blueprint.getTier(item.class);
     
     // If maxClass is empty or missing, assume it can go on any higher-tier ship
     const maxTier = (item.maxClass && item.maxClass !== "") 
-      ? shipState.getTier(item.maxClass) 
+      ? shipState.blueprint.getTier(item.maxClass) 
       : 99;
 
     return shipTier >= minTier && shipTier <= maxTier;
@@ -66,9 +67,7 @@
   }
 </script>
 
-<div class="terminal-card">
-  <h2>COMPONENTS</h2>
-  
+<TerminalPanel title="COMPONENTS">
   <div class="tabs">
     <button class={activeTab === 'Fittings' ? 'active' : ''} onclick={() => activeTab = 'Fittings'}>Fittings</button>
     <button class={activeTab === 'Defenses' ? 'active' : ''} onclick={() => activeTab = 'Defenses'}>Defenses</button>
@@ -84,7 +83,7 @@
             options={availableFittings} 
             bind:value={selectedFitting} 
             labelKey="fittingName" 
-            onSelect={(item: any) => shipState.addComponent(item, 'Fitting')} 
+            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Fitting')} 
           />
         </div>
       {/if}
@@ -96,7 +95,7 @@
             options={availableDefenses} 
             bind:value={selectedDefense} 
             labelKey="defenseName" 
-            onSelect={(item: any) => shipState.addComponent(item, 'Defense')}
+            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Defense')}
           />
         </div>
       {/if}
@@ -108,14 +107,14 @@
             options={availableWeapons} 
             bind:value={selectedWeapon} 
             labelKey="weaponName" 
-            onSelect={(item: any) => shipState.addComponent(item, 'Weapon')}
+            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Weapon')}
           />
         </div>
       {/if}
     </div>
   </div>
 
-  {#if shipState.components.length > 0}
+  {#if shipState.blueprint.components.length > 0}
     <hr>
     <table class="terminal-table">
       <thead>
@@ -127,7 +126,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each shipState.components as comp}
+        {#each shipState.blueprint.components as comp}
           <tr>
             <td style="font-size: 0.8em; opacity: 0.8;">{comp.category.toUpperCase()}</td>
             <td class="item-name {getClassTag(comp.item.class)}">
@@ -141,27 +140,27 @@
                   <button 
                     class="btn-icon" 
                     disabled={!canInstall(comp.item, comp.category)}
-                    onclick={() => shipState.addComponent(comp.item, comp.category)}
+                    onclick={() => shipState.blueprint.addComponent(comp.item, comp.category)}
                   >
                     +
                   </button>
 
                   <button 
                     class="btn-icon {comp.quantity <= 1 ? 'hidden-space' : ''}" 
-                    onclick={() => shipState.removeComponent(comp.id, false)}
+                    onclick={() => shipState.blueprint.removeComponent(comp.id, false)}
                   >
                     -
                   </button>
                 </div>
               </div>
             </td>
-            <td><button class="btn-danger" title="Remove All" onclick={() => shipState.removeComponent(comp.id, true)}>X</button></td>
+            <td><button class="btn-danger" title="Remove All" onclick={() => shipState.blueprint.removeComponent(comp.id, true)}>X</button></td>
           </tr>
         {/each}
       </tbody>
     </table>
   {/if}
-</div>
+</TerminalPanel>
 
 <style>
   /* --- ADD ROW --- */
@@ -177,7 +176,8 @@
     margin-top: 1.5rem;
   }
   .terminal-table th, .terminal-table td {
-    padding: 0.75rem 1rem;
+    padding: 0.3rem 1.5rem 0.2rem 0;
+    font-size: 0.8rem;
     text-align: left;
     border-bottom: 1px dashed var(--border-subtle);
   }
@@ -193,8 +193,9 @@
     text-align: right;
   }
   .terminal-table th:last-child, .terminal-table td:last-child {
-    width: 80px;
-    text-align: center;
+    width: 60px;
+    text-align: right;
+    padding-right: 0;
   }
 
   .selector-wrapper {
@@ -205,14 +206,15 @@
   .qty-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    justify-content: space-between;
-    min-width: 100px;
+    gap: 0.5rem;
+    justify-content: flex-end;
   }
   .qty-number {
+    font-family: var(--font-terminal, monospace);
     font-weight: bold;
     min-width: 1.5rem;
     display: inline-block;
+    color: var(--ui-cyan);
   }
   .qty-actions {
     display: flex;
@@ -248,11 +250,17 @@
     line-height: 1;
   }
   .btn-danger {
-    color: var(--accent-red);
-    border-color: var(--accent-red);
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 0.2rem;
+    transition: color 0.2s;
   }
   .btn-danger:hover {
-    background-color: var(--accent-red);
-    color: var(--bg-void);
+    background: transparent;
+    color: var(--accent-red);
   }
 </style>

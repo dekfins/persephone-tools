@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { shipState } from '../lib/shipState.svelte';
   import VitalsPanel from '../components/ship-condition/VitalsPanel.svelte';
-  import EngineeringPanel from '../components/ship-condition/EngineeringPanel.svelte'; 
+  import FuelManagementPanel from '../components/ship-condition/FuelManagementPanel.svelte';
   import SystemsPanel from '../components/ship-condition/SystemsPanel.svelte';
   import ConditionsPanel from '../components/ship-condition/ConditionsPanel.svelte';
   import '../styles/layout.css'; 
@@ -13,7 +12,7 @@
     
     <div class="col-stack">
       <VitalsPanel />
-      <EngineeringPanel />
+      <FuelManagementPanel />
     </div>
     
     <div class="col-stack">

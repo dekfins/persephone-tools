@@ -4,32 +4,33 @@
   import reactors from '../../data/reactors.json';
   import engines from '../../data/engines.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let availableReactors = $derived(
-    reactors.filter(r => shipState.getTier(r.class) <= shipState.multipliers.classTier)
+    reactors.filter(r => shipState.blueprint.getTier(r.class) <= shipState.blueprint.multipliers.classTier)
   );
 
   let availableEngines = $derived(
-    engines.filter(e => shipState.getTier(e.class) <= shipState.multipliers.classTier)
+    engines.filter(e => shipState.blueprint.getTier(e.class) <= shipState.blueprint.multipliers.classTier)
   );
 
   $effect(() => {
-    const tier = shipState.multipliers.classTier;
+    const tier = shipState.blueprint.multipliers.classTier;
     
-    if (shipState.reactor && shipState.getTier(shipState.reactor.class) > tier) {
-      shipState.reactor = availableReactors[0];
+    if (shipState.blueprint.reactor && shipState.blueprint.getTier(shipState.blueprint.reactor.class) > tier) {
+      shipState.blueprint.reactor = availableReactors[0];
     }
     
-    if (shipState.engine && shipState.getTier(shipState.engine.class) > tier) {
-      shipState.engine = availableEngines[0];
+    if (shipState.blueprint.engine && shipState.blueprint.getTier(shipState.blueprint.engine.class) > tier) {
+      shipState.blueprint.engine = availableEngines[0];
     }
   });
 </script>
 
-<div class="terminal-card">
+<TerminalPanel title="CORE SYSTEMS">
   <div class="form-group">
     <label for="shipName">Ship Name:</label>
-    <input id="shipName" type="text" placeholder="Enter Name..." bind:value={shipState.name} class="terminal-input"/>
+    <input id="shipName" type="text" placeholder="Enter Name..." bind:value={shipState.blueprint.name} class="terminal-input"/>
   </div>
 
   <div class="form-group">
@@ -37,7 +38,7 @@
     <TerminalSelect 
       id="hull-dropdown"
       options={hulls} 
-      bind:value={shipState.hull} 
+      bind:value={shipState.blueprint.hull} 
       labelKey="hullType" 
     />
   </div>
@@ -47,7 +48,7 @@
     <TerminalSelect 
       id="reactor-select"
       options={availableReactors} 
-      bind:value={shipState.reactor} 
+      bind:value={shipState.blueprint.reactor} 
       labelKey="reactorType" 
     />
   </div>
@@ -57,7 +58,7 @@
     <TerminalSelect 
       id="engine-select"
       options={availableEngines} 
-      bind:value={shipState.engine} 
+      bind:value={shipState.blueprint.engine} 
       labelKey="engineName" />
   </div>
-</div>
+</TerminalPanel>

@@ -320,7 +320,7 @@
     "isCloud": "TRUE",
     "isClumsy": "FALSE",
     "isFlak": "FALSE",
-    "description": "Shapes the drive plume's waste energy into a contained lightning field that clings to the hull like a star's corona. Anything small is instantly fried",
+    "description": "Shapes the drive plume's waste energy into a contained lightning field that clings to the hull like a star's corona. Anything small is instantly fried.",
     "attribute": "1d20, AP 5, Cloud"
   },
   {

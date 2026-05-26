@@ -7,7 +7,10 @@
 
   const pois = poisData as PoiDef[];
 
-  let { job }: { job: GeneratedMission } = $props();
+  let { job, onAccept }: { 
+    job: GeneratedMission; 
+    onAccept: (mission: GeneratedMission) => void 
+  } = $props();
 
   let targetPoiName = $derived(pois.find(p => p.id === job.targetPoiId)?.name || job.targetPoiId);
 </script>
@@ -29,7 +32,7 @@
   
   <div class="card-stat-row">
     <span>DV REQUIRED:</span>
-    <span style="color: {job.reqDv > shipState.totalDV ? 'var(--accent-red)' : 'var(--ui-cyan)'}">
+    <span style="color: {job.reqDv > shipState.propulsion.totalDV ? 'var(--accent-red)' : 'var(--ui-cyan)'}">
       {job.reqDv.toFixed(2)} km/s
     </span>
   </div>
@@ -53,7 +56,11 @@
     </span>
   </div>
   
-  <button class="btn-action btn-compact" style="width: 100%; margin-top: 1rem;">
+  <button 
+    class="btn-action btn-compact" 
+    style="width: 100%; margin-top: 1rem;"
+    onclick={() => onAccept(job)}
+  >
     ACCEPT CONTRACT
   </button>
 </TerminalPanel>
