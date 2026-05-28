@@ -2,6 +2,7 @@
   import CoreSystems from '../components/ship-builder/CoreSystemsPanel.svelte';
   import ComponentCart from '../components/ship-builder/ComponentsPanel.svelte';
   import ShipStats from '../components/ship-builder/ShipStatsPanel.svelte';
+  import '../styles/layout.css';
 </script>
 
 <div class="page-container">

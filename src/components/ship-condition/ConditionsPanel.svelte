@@ -1,16 +1,19 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  
+  // Create local state instance for this component
+  const localState = shipState;
 </script>
 
 <TerminalPanel title="ACTIVE SHIP CONDITIONS" extraClass="span-full">
   <div class="conditions-list">
-    {#if shipState.vitals.activeConditions.length === 0}
+    {#if localState.vitals.activeConditions.length === 0}
       <div class="terminal-alert" style="border-color: var(--fighter-green); color: var(--fighter-green);">
         SHIP OPERATING NOMINALLY. NO ACTIVE DEBUFFS.
       </div>
     {:else}
-      {#each shipState.vitals.activeConditions as cond}
+      {#each localState.vitals.activeConditions as cond}
         <div class="condition-card">
           <div class="cond-header">
             <h4 class="error">{cond.name} [DC {cond.fixDC}]</h4>

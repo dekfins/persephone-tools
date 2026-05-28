@@ -2,8 +2,8 @@
   import { onMount } from 'svelte';
   import { Application, Container, Graphics, Text } from 'pixi.js'; // PIXI.js library for 2D rendering
   
-  import { campaignState } from '../../lib/campaignState.svelte';
-  import { shipState } from '../../lib/shipState.svelte';
+  import { campaignState } from '../../lib/states/campaignState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import { solveTrajectory, getPoiState } from '../../lib/orbitalMath';
   import type { PlanetDef, MoonDef, PoiDef } from '../../lib/types';
   

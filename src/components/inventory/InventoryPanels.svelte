@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dbState } from '../../lib/dbState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import ShipInventoryPanel from './ShipInventoryPanel.svelte';
   import PersonalInventoryPanel from './PersonalInventoryPanel.svelte';
 </script>

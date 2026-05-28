@@ -4,6 +4,7 @@
   import Navigation from './components/shared/NavigationPanel.svelte';
   
   // Import your pages
+  import PlayerDashboard from './pages/PlayerDashboard.svelte';
   import ShipBuilder from './pages/ShipBuilder.svelte';
   import ShipCondition from './pages/ShipCondition.svelte';
   import Inventory from './pages/Inventory.svelte';
@@ -13,9 +14,9 @@
   import Settings from './pages/Settings.svelte'
   
   import { onMount } from 'svelte';
-  import { shipState } from './lib/shipState.svelte';
-  import { crewState } from './lib/crewState.svelte';
-  import { dbState } from './lib/dbState.svelte';
+  import { shipState } from './lib/states/shipState.svelte';
+  import { crewState } from './lib/states/crewState.svelte';
+  import { dbState } from './lib/states/dbState.svelte';
   
   let showToast = $state(false);
   let isHydrated = $state(false); // The gatekeeper
@@ -108,11 +109,15 @@
     <Navigation />
   </header>
 
-  <Route path="/" fallback>
+  <Route path="/overview" fallback>
+    <PlayerDashboard />
+  </Route>
+
+  <Route path="/ship-builder">
     <ShipBuilder />
   </Route>
 
-  <Route path="/condition">
+  <Route path="/ship-condition">
     <ShipCondition />
   </Route>
 

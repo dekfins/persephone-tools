@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { dbState } from '../../lib/dbState.svelte';
-  import { crewState } from '../../lib/crewState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
+  import { crewState } from '../../lib/states/crewState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   function moveToPlayer(itemId: string) {

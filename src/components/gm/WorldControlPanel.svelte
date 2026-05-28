@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { campaignState } from '../../lib/campaignState.svelte';
-  import { dbState } from '../../lib/dbState.svelte';
-  import { toastState } from '../../lib/toastState.svelte';
+  import { campaignState } from '../../lib/states/campaignState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
+  import { toastState } from '../../lib/states/toastState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import poisData from '../../data/pois.json';

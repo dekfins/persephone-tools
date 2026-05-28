@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { createShipState } from '../../lib/states/shipState.svelte';
   import fittings from '../../data/fittings.json';
   import defenses from '../../data/defenses.json';
   import weapons from '../../data/weapons.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  
+  // Create local state instance for this component
+  const localState = createShipState();
 
   let activeTab = $state('Fittings');
 
@@ -16,13 +19,13 @@
   if (availableFittings.length > 0) selectedFitting = availableFittings[0];
   if (availableDefenses.length > 0) selectedDefense = availableDefenses[0];
   if (availableWeapons.length > 0) selectedWeapon = availableWeapons[0];
-});
+  });
 
   // Helper to check how many of an item are already installed
   function getQty(item: any) {
     if (!item) return 0;
     
-    const found = shipState.blueprint.components.find(c => {
+    const found = localState.blueprint.components.find(c => {
       // Only compare if the specific name property exists on the selected item
       if (item.fittingName) return c.item.fittingName === item.fittingName;
       if (item.defenseName) return c.item.defenseName === item.defenseName;
@@ -46,12 +49,12 @@
   }
   
   function isItemAllowed(item: any) {
-    const shipTier = shipState.blueprint.multipliers.classTier;
-    const minTier = shipState.blueprint.getTier(item.class);
+    const shipTier = localState.blueprint.multipliers.classTier;
+    const minTier = localState.blueprint.getTier(item.class);
     
     // If maxClass is empty or missing, assume it can go on any higher-tier ship
     const maxTier = (item.maxClass && item.maxClass !== "") 
-      ? shipState.blueprint.getTier(item.maxClass) 
+      ? localState.blueprint.getTier(item.maxClass) 
       : 99;
 
     return shipTier >= minTier && shipTier <= maxTier;
@@ -76,45 +79,45 @@
 
   <div class="tab-content">
     <div class="selector-wrapper">
-      {#if activeTab === 'Fittings'}
+{#if activeTab === 'Fittings'}
         <div class="add-row">
           <TerminalSelect 
             id="fitting-select"
             options={availableFittings} 
             bind:value={selectedFitting} 
             labelKey="fittingName" 
-            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Fitting')} 
+            onSelect={(item: any) => localState.blueprint.addComponent(item, 'Fitting')} 
           />
         </div>
-      {/if}
+{/if}
 
-      {#if activeTab === 'Defenses'}
+{#if activeTab === 'Defenses'}
         <div class="add-row">
           <TerminalSelect 
             id="defense-select"
             options={availableDefenses} 
             bind:value={selectedDefense} 
             labelKey="defenseName" 
-            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Defense')}
+            onSelect={(item: any) => localState.blueprint.addComponent(item, 'Defense')}
           />
         </div>
-      {/if}
+{/if}
 
-      {#if activeTab === 'Weapons'}
+{#if activeTab === 'Weapons'}
         <div class="add-row">
           <TerminalSelect 
             id="weapon-select"
             options={availableWeapons} 
             bind:value={selectedWeapon} 
             labelKey="weaponName" 
-            onSelect={(item: any) => shipState.blueprint.addComponent(item, 'Weapon')}
+            onSelect={(item: any) => localState.blueprint.addComponent(item, 'Weapon')}
           />
         </div>
-      {/if}
+{/if}
     </div>
   </div>
 
-  {#if shipState.blueprint.components.length > 0}
+  {#if localState.blueprint.components.length > 0}
     <hr>
     <table class="terminal-table">
       <thead>
@@ -126,7 +129,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each shipState.blueprint.components as comp}
+        {#each localState.blueprint.components as comp}
           <tr>
             <td style="font-size: 0.8em; opacity: 0.8;">{comp.category.toUpperCase()}</td>
             <td class="item-name {getClassTag(comp.item.class)}">
@@ -140,21 +143,21 @@
                   <button 
                     class="btn-icon" 
                     disabled={!canInstall(comp.item, comp.category)}
-                    onclick={() => shipState.blueprint.addComponent(comp.item, comp.category)}
+                    onclick={() => localState.blueprint.addComponent(comp.item, comp.category)}
                   >
                     +
                   </button>
 
                   <button 
                     class="btn-icon {comp.quantity <= 1 ? 'hidden-space' : ''}" 
-                    onclick={() => shipState.blueprint.removeComponent(comp.id, false)}
+                    onclick={() => localState.blueprint.removeComponent(comp.id, false)}
                   >
                     -
                   </button>
                 </div>
               </div>
             </td>
-            <td><button class="btn-danger" title="Remove All" onclick={() => shipState.blueprint.removeComponent(comp.id, true)}>X</button></td>
+            <td><button class="btn-danger" title="Remove All" onclick={() => localState.blueprint.removeComponent(comp.id, true)}>X</button></td>
           </tr>
         {/each}
       </tbody>
@@ -185,6 +188,11 @@
     color: var(--text-dim);
     font-weight: normal;
     border-bottom: 1px solid var(--accent-amber);
+    padding-bottom: 0.5rem;
+  }
+    /* Add a gap between the header line and the first item in the list */
+  .terminal-table tbody tr:first-child td {
+    padding-top: 1rem;
   }
   
   /* Column Locks */

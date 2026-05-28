@@ -1,12 +1,15 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { createShipState } from '../../lib/states/shipState.svelte';
   import { shipCodec } from '../../lib/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  
+  // Create local state instance for this component
+  const localState = createShipState();
 
   const shipyardStats = $derived([
-    { label: 'POWER', used: shipState.blueprint.usedPower, total: shipState.blueprint.totalPower, id: 'power-grid' },
-    { label: 'MASS', used: shipState.blueprint.usedMass, total: shipState.blueprint.totalMass, id: 'mass-grid' },
-    { label: 'HARDPOINTS', used: shipState.blueprint.usedHardpoints, total: shipState.blueprint.totalHardpoints, id: 'hardpoint-grid' }
+    { label: 'POWER', used: localState.blueprint.usedPower, total: localState.blueprint.totalPower, id: 'power-grid' },
+    { label: 'MASS', used: localState.blueprint.usedMass, total: localState.blueprint.totalMass, id: 'mass-grid' },
+    { label: 'HARDPOINTS', used: localState.blueprint.usedHardpoints, total: localState.blueprint.totalHardpoints, id: 'hardpoint-grid' }
   ]);
 
   let fileInput: HTMLInputElement;
@@ -14,13 +17,13 @@
   function handleImport(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      shipCodec.importFromFile(input.files[0]);
+      shipCodec.importFromFile(input.files[0], localState);
       input.value = ''; 
     }
   }
 </script>
 
-<TerminalPanel title={shipState.blueprint.name}>
+<TerminalPanel title={localState.blueprint.name}>
   {#each shipyardStats as stat}
     <div class="progress-bar">
       <div class="progress-header">
@@ -41,40 +44,40 @@
     </div>
   {/each}
 
-  <div class="terminal-alert {shipState.blueprint.remainingMass < 0 || shipState.blueprint.remainingPower < 0 || shipState.blueprint.remainingHardpoints < 0 ? 'error' : ''}">
-    STATUS: {shipState.blueprint.remainingMass < 0 || shipState.blueprint.remainingPower < 0 || shipState.blueprint.remainingHardpoints < 0 ? 'OVERLOAD' : 'NOMINAL'}
+  <div class="terminal-alert {localState.blueprint.remainingMass < 0 || localState.blueprint.remainingPower < 0 || localState.blueprint.remainingHardpoints < 0 ? 'error' : ''}">
+    STATUS: {localState.blueprint.remainingMass < 0 || localState.blueprint.remainingPower < 0 || localState.blueprint.remainingHardpoints < 0 ? 'OVERLOAD' : 'NOMINAL'}
   </div>
 
   <ul>
-    <li>HP: {shipState.blueprint.totalHealth}</li>
-    <li>COST: {shipState.blueprint.totalCost.toLocaleString()} CR</li>
-    <li>ARMOR: {shipState.blueprint.totalArmor}</li>
-    <li>AC: {shipState.blueprint.totalArmorClass}</li>
+    <li>HP: {localState.blueprint.totalHealth}</li>
+    <li>COST: {localState.blueprint.totalCost.toLocaleString()} CR</li>
+    <li>ARMOR: {localState.blueprint.totalArmor}</li>
+    <li>AC: {localState.blueprint.totalArmorClass}</li>
     <li>
-      CREW: {shipState.blueprint.currentMinCrew === shipState.blueprint.currentMaxCrew 
-        ? shipState.blueprint.currentMinCrew 
-        : `${shipState.blueprint.currentMinCrew}/${shipState.blueprint.currentMaxCrew}`}
+      CREW: {localState.blueprint.currentMinCrew === localState.blueprint.currentMaxCrew 
+        ? localState.blueprint.currentMinCrew 
+        : `${localState.blueprint.currentMinCrew}/${localState.blueprint.currentMaxCrew}`}
     </li>
-    <li>SPEED: {shipState.blueprint.totalSpeed}</li>
+    <li>SPEED: {localState.blueprint.totalSpeed}</li>
   </ul>
   
-  <div class="terminal-controls">
-    <button class="btn-action" onclick={() => shipCodec.exportToFile()}>
-      EXPORT SHIP
-    </button>
+<div class="terminal-controls">
+  <button class="btn-action" onclick={() => shipCodec.exportToFile(localState)}>
+    EXPORT SHIP
+  </button>
 
-    <button class="btn-action" onclick={() => fileInput.click()}>
-      IMPORT SHIP
-    </button>
+  <button class="btn-action" onclick={() => fileInput.click()}>
+    IMPORT SHIP
+  </button>
 
-    <input 
-      type="file" 
-      accept=".deimos" 
-      bind:this={fileInput} 
-      onchange={handleImport} 
-      style="display: none;" 
-    />
-  </div>
+  <input 
+    type="file" 
+    accept=".deimos" 
+    bind:this={fileInput} 
+    onchange={handleImport} 
+    style="display: none;" 
+  />
+</div>
 
 </TerminalPanel>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import TerminalPanel from '../components/shared/TerminalPanel.svelte';
-  import { campaignState } from '../lib/campaignState.svelte';
+  import { campaignState } from '../lib/states/campaignState.svelte';
 
   function factoryReset() {
     const confirmWipe = confirm("WARNING: This will permanently nuke your local save. Are you sure?");

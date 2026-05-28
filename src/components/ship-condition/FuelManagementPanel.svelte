@@ -1,18 +1,21 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
-  import { dbState } from '../../lib/dbState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import fuelsData from '../../data/fuels.json';
+  
+  // Create local state instance for this component
+  const localState = shipState;
 
-  let fuelOptions = $derived((shipState.blueprint.engine?.availableFuels || []).map(f => ({ name: f, class: "universal" })));
-  let modeOptions = $derived((shipState.blueprint.engine?.availableModes || []).map(m => ({ name: m, class: "universal" })));
+  let fuelOptions = $derived((localState.blueprint.engine?.availableFuels || []).map(f => ({ name: f, class: "universal" })));
+  let modeOptions = $derived((localState.blueprint.engine?.availableModes || []).map(m => ({ name: m, class: "universal" })));
 
   // 1. DYNAMIC CONFIG LOOKUP
   let activeConfig = $derived.by(() => {
-    if (!shipState.blueprint.engine || !shipState.propulsion.activeFuel || !shipState.propulsion.activeMode) return null;
-    return shipState.blueprint.engine.configs.find(
-      (c: any) => c.fuel === shipState.propulsion.activeFuel && c.mode === shipState.propulsion.activeMode
+    if (!localState.blueprint.engine || !localState.propulsion.activeFuel || !localState.propulsion.activeMode) return null;
+    return localState.blueprint.engine.configs.find(
+      (c: any) => c.fuel === localState.propulsion.activeFuel && c.mode === localState.propulsion.activeMode
     ) || null;
   });
 
@@ -25,7 +28,7 @@
 
     let bunkerCap = 0; let cryoCap = 0; let particleCap = 0; let amCap = 0;
     
-    for (const comp of shipState.blueprint.components) {
+    for (const comp of localState.blueprint.components) {
       const name = (comp.item.fittingName || comp.item.name || "").toLowerCase();
       const qty = comp.quantity;
 
@@ -53,21 +56,21 @@
 
   // 3. AUTO-FILL AND HARD SAFETY CLAMP EFFECT
   $effect(() => {
-    if (shipState.propulsion.currentFuel === undefined || typeof shipState.propulsion.currentFuel === 'number') {
-      shipState.propulsion.currentFuel = {}; 
+    if (localState.propulsion.currentFuel === undefined || typeof localState.propulsion.currentFuel === 'number') {
+      localState.propulsion.currentFuel = {}; 
     }
     
     for (const prop of activePropellants) {
       const maxCap = fuelCapacities[prop.name] || 0;
 
-      if (shipState.propulsion.currentFuel[prop.name] === undefined) {
-        shipState.propulsion.currentFuel[prop.name] = maxCap;
+      if (localState.propulsion.currentFuel[prop.name] === undefined) {
+        localState.propulsion.currentFuel[prop.name] = maxCap;
       }
-      if (shipState.propulsion.currentFuel[prop.name] > maxCap) {
-        shipState.propulsion.currentFuel[prop.name] = maxCap;
+      if (localState.propulsion.currentFuel[prop.name] > maxCap) {
+        localState.propulsion.currentFuel[prop.name] = maxCap;
       }
-      if (shipState.propulsion.currentFuel[prop.name] < 0) {
-        shipState.propulsion.currentFuel[prop.name] = 0;
+      if (localState.propulsion.currentFuel[prop.name] < 0) {
+        localState.propulsion.currentFuel[prop.name] = 0;
       }
     }
   });
@@ -76,15 +79,15 @@
   let selectedModeObj = $state<{ name: string } | null>(null);
 
   $effect(() => {
-    const isValidFuel = fuelOptions.some(f => f.name === shipState.propulsion.activeFuel);
-    if (!isValidFuel && fuelOptions.length > 0) shipState.propulsion.activeFuel = fuelOptions[0].name; 
-    if (shipState.propulsion.activeFuel) selectedFuelObj = { name: shipState.propulsion.activeFuel };
+    const isValidFuel = fuelOptions.some(f => f.name === localState.propulsion.activeFuel);
+    if (!isValidFuel && fuelOptions.length > 0) localState.propulsion.activeFuel = fuelOptions[0].name; 
+    if (localState.propulsion.activeFuel) selectedFuelObj = { name: localState.propulsion.activeFuel };
   });
 
   $effect(() => {
-    const isValidMode = modeOptions.some(m => m.name === shipState.propulsion.activeMode);
-    if (!isValidMode && modeOptions.length > 0) shipState.propulsion.activeMode = modeOptions[0].name; 
-    if (shipState.propulsion.activeMode) selectedModeObj = { name: shipState.propulsion.activeMode };
+    const isValidMode = modeOptions.some(m => m.name === localState.propulsion.activeMode);
+    if (!isValidMode && modeOptions.length > 0) localState.propulsion.activeMode = modeOptions[0].name; 
+    if (localState.propulsion.activeMode) selectedModeObj = { name: localState.propulsion.activeMode };
   });
 
   function getFuelUnit(name: string) {
@@ -105,7 +108,7 @@
         options={fuelOptions}
         bind:value={selectedFuelObj}
         labelKey="name"
-        onSelect={(item: any) => shipState.propulsion.activeFuel = item.name}
+        onSelect={(item: any) => localState.propulsion.activeFuel = item.name}
       />
     </div>
 
@@ -116,7 +119,7 @@
         options={modeOptions}
         bind:value={selectedModeObj}
         labelKey="name"
-        onSelect={(item: any) => shipState.propulsion.activeMode = item.name}
+        onSelect={(item: any) => localState.propulsion.activeMode = item.name}
       />
     </div>
 
@@ -131,7 +134,7 @@
           step="0.01" 
           min="0" 
           max={fuelCapacities[prop.name] || 0}
-          bind:value={shipState.propulsion.currentFuel[prop.name]} 
+          bind:value={localState.propulsion.currentFuel[prop.name]} 
           class="terminal-input num-input" 
         />
       </div>
@@ -143,19 +146,19 @@
   {:else}
     <div class="telemetry-row">
       <span class="eng-label">ACTIVE MIX:</span>
-      <span class="telemetry-value" style="color: var(--ui-cyan);">{shipState.propulsion.activeFuel?.toUpperCase() || 'NONE'}</span>
+      <span class="telemetry-value" style="color: var(--ui-cyan);">{localState.propulsion.activeFuel?.toUpperCase() || 'NONE'}</span>
     </div>
 
     <div class="telemetry-row">
       <span class="eng-label">BURN MODE:</span>
-      <span class="telemetry-value">{shipState.propulsion.activeMode?.toUpperCase() || 'OFFLINE'}</span>
+      <span class="telemetry-value">{localState.propulsion.activeMode?.toUpperCase() || 'OFFLINE'}</span>
     </div>
 
     {#each activePropellants as prop}
       <div class="telemetry-row">
         <span class="eng-label">{prop.name.toUpperCase()} LEVEL:</span>
         <div class="fuel-readout">
-          <span class="current-fuel">{shipState.propulsion.currentFuel[prop.name]?.toFixed(2) || '0.00'}</span>
+          <span class="current-fuel">{localState.propulsion.currentFuel[prop.name]?.toFixed(2) || '0.00'}</span>
           <span class="text-dim"> / {fuelCapacities[prop.name] || 0}</span>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import type { PlanetDef, MoonDef, PoiDef } from './types';
-import { solveTrajectory } from './orbitalMath';
+import type { PlanetDef, MoonDef, PoiDef } from '../types';
+import { solveTrajectory } from '../orbitalMath';
 
 // The stores exported from Svelte files are store objects, not callables,
 // so using ReturnType<typeof ...> is incorrect. Use broad any types here
@@ -108,15 +108,10 @@ export function calculateActiveTrajectory({ originPoi, targetPoi, shipState, cam
   const currentConfig = shipState.blueprint.engine.configs.find((c: any) => c.mode === activeModeName) || shipState.blueprint.engine.configs[0];
   const accel = (Number(currentConfig?.twrG) || 0.05) * 9.81;
 
-  let solverOrigin: PoiDef | null = originPoi;
-  let solverTarget: PoiDef | null = targetPoi;
-
-  if (!transitRefBody) {
-    const originPlanetName = getSystemPlanetName(originPoi.id, pois, moons, planets);
-    const targetPlanetName = getSystemPlanetName(targetPoi.id, pois, moons, planets);
-    solverOrigin = getPlanetAsPoi(originPlanetName, planets) || originPoi;
-    solverTarget = getPlanetAsPoi(targetPlanetName, planets) || targetPoi;
-  }
+  const originPlanetName = getSystemPlanetName(originPoi.id, pois, moons, planets);
+  const targetPlanetName = getSystemPlanetName(targetPoi.id, pois, moons, planets);
+  const solverOrigin = !transitRefBody ? (getPlanetAsPoi(originPlanetName, planets) || originPoi) : originPoi;
+  const solverTarget = !transitRefBody ? (getPlanetAsPoi(targetPlanetName, planets) || targetPoi) : targetPoi;
 
   const maxTripDv = solveTrajectory(solverOrigin, solverTarget, campaignState.currentDay, accel, 0)?.maxDv || 0;
   const limitValue = useMaxFuelLimit ? (parseFloat(userCustomDv) || maxTripDv) : shipState.propulsion.totalDV;

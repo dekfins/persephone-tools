@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
-  import { toastState } from '../../lib/toastState.svelte';
-  import { dbState } from '../../lib/dbState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
+  import { toastState } from '../../lib/states/toastState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
 

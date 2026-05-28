@@ -1,8 +1,8 @@
 <script lang="ts">
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import DualRangeSlider from './DualRangeSlider.svelte';
-  import { campaignState } from '../../lib/campaignState.svelte';
-  import { shipState } from '../../lib/shipState.svelte';
+  import { campaignState } from '../../lib/states/campaignState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import poisData from '../../data/pois.json';
 
   const pois = poisData as any[];

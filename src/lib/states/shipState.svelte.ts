@@ -1,14 +1,14 @@
-import hulls from '../data/hulls.json';
-import constants from '../data/constants.json';
-import reactors from '../data/reactors.json';
-import rawEngines from '../data/engines.json'; 
-import type { ActiveCondition, Engine } from './types'; 
+import hulls from '../../data/hulls.json';
+import constants from '../../data/constants.json';
+import reactors from '../../data/reactors.json';
+import rawEngines from '../../data/engines.json'; 
+import type { ActiveCondition, Engine } from '../types'; 
 
 const engines = rawEngines as unknown as Engine[];
 
 // --- 1. THE BLUEPRINT ---
 // Only cares about the physical design, components, and maximum limits
-class ShipBlueprint {
+export class ShipBlueprint {
   name = $state("Unnamed Ship");
   #hull = $state(hulls.find(h => h.hullType === "Free Merchant") as typeof hulls[0]);
   #reactor = $state(reactors[0] as typeof reactors[0]);
@@ -161,7 +161,7 @@ class ShipBlueprint {
 
 // --- 2. THE VITALS ---
 // Only cares about damage, wear, and tear
-class ShipVitals {
+export class ShipVitals {
   currentHealth = $state(0);
   currentRI = $state(0);
   activeConditions = $state<ActiveCondition[]>([]);
@@ -181,7 +181,7 @@ class ShipVitals {
 
 // --- 3. THE PROPULSION ---
 // Only cares about thrust, fuel modes, and delta-V
-class ShipPropulsion {
+export class ShipPropulsion {
   activeFuel = $state<string | null>(null);
   activeMode = $state<string | null>(null);
   currentFuel = $state<Record<string, number>>({});
@@ -217,7 +217,7 @@ class ShipPropulsion {
 }
 
 // --- 4. THE MASTER UMBRELLA ---
-class MasterShipState {
+export class MasterShipState {
   blueprint = new ShipBlueprint();
   vitals = new ShipVitals();
   propulsion = new ShipPropulsion(this.blueprint);
@@ -240,3 +240,8 @@ class MasterShipState {
 }
 
 export const shipState = new MasterShipState();
+
+// Factory function to create independent ship state instances
+export function createShipState() {
+  return new MasterShipState();
+}

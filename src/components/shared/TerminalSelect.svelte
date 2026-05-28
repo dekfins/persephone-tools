@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import constants from '../../data/constants.json';
   let { 
     options, 

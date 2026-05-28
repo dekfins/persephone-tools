@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dbState } from '../lib/dbState.svelte';
+  import { dbState } from '../lib/states/dbState.svelte';
   import GMDashboardPanel from '../components/gm/GMDashboardPanels.svelte';
   import '../styles/layout.css';
 </script>

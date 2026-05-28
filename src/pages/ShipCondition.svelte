@@ -1,5 +1,5 @@
 <script lang="ts">
-  import VitalsPanel from '../components/ship-condition/VitalsPanel.svelte';
+  import ShipVitalsPanel from '../components/ship-condition/ShipVitalsPanel.svelte';
   import FuelManagementPanel from '../components/ship-condition/FuelManagementPanel.svelte';
   import SystemsPanel from '../components/ship-condition/SystemsPanel.svelte';
   import ConditionsPanel from '../components/ship-condition/ConditionsPanel.svelte';
@@ -11,7 +11,7 @@
   <div class="layout-grid grid-condition">
     
     <div class="col-stack">
-      <VitalsPanel />
+      <ShipVitalsPanel />
       <FuelManagementPanel />
     </div>
     

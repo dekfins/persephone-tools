@@ -1,5 +1,5 @@
-import { getPlanetState, getMoonState, getPoiState, getVisualRadius, getSoiRadius, getMoonSoiRadius } from './orbitalMath';
-import type { PlanetDef, MoonDef, PoiDef } from './types';
+import { getPlanetState, getMoonState, getPoiState, getVisualRadius, getSoiRadius, getMoonSoiRadius } from '../orbitalMath';
+import type { PlanetDef, MoonDef, PoiDef } from '../types';
 
 export interface MappedPlanet {
   def: PlanetDef;

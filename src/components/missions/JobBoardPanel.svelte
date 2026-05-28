@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { campaignState } from '../../lib/campaignState.svelte';
-  import { shipState } from '../../lib/shipState.svelte';
-  import { crewState } from '../../lib/crewState.svelte';
-  import { dbState } from '../../lib/dbState.svelte';
+  import { campaignState } from '../../lib/states/campaignState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
+  import { crewState } from '../../lib/states/crewState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import { generateJobBoard } from '../../lib/missionGenerator';
   import type { GeneratedMission } from '../../lib/types';
   import JobBoardControls from './JobBoardControls.svelte';

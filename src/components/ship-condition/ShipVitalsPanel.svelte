@@ -1,59 +1,62 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import { shipCodec } from '../../lib/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  
+  // Create local state instance for this component
+  const localState = shipState;
 
-  let twr = $derived(shipState.propulsion.activeConfig?.twrG || 0);
-  let totalDV = $derived(shipState.propulsion.totalDV);
+  let twr = $derived(localState.propulsion.activeConfig?.twrG || 0);
+  let totalDV = $derived(localState.propulsion.totalDV);
 
   let fileInput: HTMLInputElement;
 
   function handleFileUpload(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files.length > 0) {
-      shipCodec.importFromFile(target.files[0]);
+      shipCodec.importFromFile(target.files[0], localState);
       target.value = '';
     }
   }
 </script>
 
-<TerminalPanel title={shipState.blueprint.name || "UNNAMED SHIP"} extraClass="vitals-panel">
+<TerminalPanel title={localState.blueprint.name || "UNNAMED SHIP"} extraClass="vitals-panel">
   <div class="vitals-grid">
     <div class="vital-cell">
       <span class="vital-label">HP</span>
-      <span class="vital-value accent {shipState.vitals.currentHealth <= (shipState.blueprint.totalHealth / 4) ? 'error' : ''}">
-        {shipState.vitals.currentHealth}/{shipState.blueprint.totalHealth}
+      <span class="vital-value accent {localState.vitals.currentHealth <= (localState.blueprint.totalHealth / 4) ? 'error' : ''}">
+        {localState.vitals.currentHealth}/{localState.blueprint.totalHealth}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">RI</span>
-      <span class="vital-value accent {shipState.vitals.currentRI <= 2 ? 'error' : ''}">
-        {shipState.vitals.currentRI}/{shipState.blueprint.reactor?.reactorIntegrity || 6}
+      <span class="vital-value accent {localState.vitals.currentRI <= 2 ? 'error' : ''}">
+        {localState.vitals.currentRI}/{localState.blueprint.reactor?.reactorIntegrity || 6}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">ARMOR</span>
-      <span class="vital-value">{shipState.blueprint.totalArmor}</span>
+      <span class="vital-value">{localState.blueprint.totalArmor}</span>
     </div>
 
     <div class="vital-cell">
       <span class="vital-label">AC</span>
-      <span class="vital-value">{shipState.blueprint.totalArmorClass}</span>
+      <span class="vital-value">{localState.blueprint.totalArmorClass}</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">CARGO</span>
-      <span class="vital-value">{shipState.blueprint.totalCargo}t</span>
+      <span class="vital-value">{localState.blueprint.totalCargo}t</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">CREW</span>
       <span class="vital-value">
-        {shipState.blueprint.currentMinCrew === shipState.blueprint.currentMaxCrew ? shipState.blueprint.currentMinCrew : `${shipState.blueprint.currentMinCrew}/${shipState.blueprint.currentMaxCrew}`}
+        {localState.blueprint.currentMinCrew === localState.blueprint.currentMaxCrew ? localState.blueprint.currentMinCrew : `${localState.blueprint.currentMinCrew}/${localState.blueprint.currentMaxCrew}`}
       </span>
     </div>
 
     <div class="vital-cell">
       <span class="vital-label">SPEED</span>
-      <span class="vital-value">{shipState.blueprint.totalSpeed}</span>
+      <span class="vital-value">{localState.blueprint.totalSpeed}</span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">TWR</span>
@@ -66,25 +69,25 @@
 
     <div class="vital-cell">
       <span class="vital-label">POWER</span>
-      <span class="vital-value {shipState.blueprint.usedPower > shipState.blueprint.totalPower ? 'error' : ''}">
-        {Math.round(shipState.blueprint.usedPower * 10) / 10}/{Math.round(shipState.blueprint.totalPower * 10) / 10}
+      <span class="vital-value {localState.blueprint.usedPower > localState.blueprint.totalPower ? 'error' : ''}">
+        {Math.round(localState.blueprint.usedPower * 10) / 10}/{Math.round(localState.blueprint.totalPower * 10) / 10}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">MASS</span>
-      <span class="vital-value {shipState.blueprint.usedMass > shipState.blueprint.totalMass ? 'error' : ''}">
-        {Math.round(shipState.blueprint.usedMass * 10) / 10}/{Math.round(shipState.blueprint.totalMass * 10) / 10}
+      <span class="vital-value {localState.blueprint.usedMass > localState.blueprint.totalMass ? 'error' : ''}">
+        {Math.round(localState.blueprint.usedMass * 10) / 10}/{Math.round(localState.blueprint.totalMass * 10) / 10}
       </span>
     </div>
     <div class="vital-cell">
       <span class="vital-label">HPTS</span>
-      <span class="vital-value {shipState.blueprint.usedHardpoints > shipState.blueprint.totalHardpoints ? 'error' : ''}">
-        {shipState.blueprint.usedHardpoints}/{shipState.blueprint.totalHardpoints}
+      <span class="vital-value {localState.blueprint.usedHardpoints > localState.blueprint.totalHardpoints ? 'error' : ''}">
+        {localState.blueprint.usedHardpoints}/{localState.blueprint.totalHardpoints}
       </span>
     </div>
-</div>
+  </div>
   <div class="io-controls">
-    <button class="btn-action" onclick={() => shipCodec.exportToFile()}>EXPORT SHIP</button>
+    <button class="btn-action" onclick={() => shipCodec.exportToFile(localState)}>EXPORT SHIP</button>
     <button class="btn-action" onclick={() => fileInput.click()}>IMPORT SHIP</button>
     
     <input 

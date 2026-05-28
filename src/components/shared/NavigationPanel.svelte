@@ -1,6 +1,6 @@
 <script lang="ts">
   import { active } from 'tinro';
-  import { dbState } from '../../lib/dbState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from './TerminalPanel.svelte';
 </script>
 
@@ -9,8 +9,9 @@
     <div class="brand">DEIMOS</div>
     
     <nav class="navbar">
-      <a href="/" class="nav-link" exact use:active>SHIP BUILDER</a>
-      <a href="/condition" class="nav-link" use:active>SHIP CONDITION</a>
+      <a href="/overview" class="nav-link" exact use:active>OVERVIEW</a>
+      <a href="/ship-builder" class="nav-link" exact use:active>SHIP BUILDER</a>
+      <a href="/ship-condition" class="nav-link" use:active>SHIP CONDITION</a>
       <a href="/inventory" class="nav-link" use:active>INVENTORY</a>
       <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
       {#if dbState.activeCharacter?.role === 'GM'}

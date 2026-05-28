@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
-  import { toastState } from '../../lib/toastState.svelte';
+  import { toastState } from '../../lib/states/toastState.svelte.ts';
 
   import ShipLogisticsPanel from './ShipLogisticsPanel.svelte';
   import CargoSpawnerPanel from './ItemSpawnerPanel.svelte';

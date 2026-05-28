@@ -1,16 +1,16 @@
-import { shipState } from './shipState.svelte';
+import { shipState, MasterShipState } from './states/shipState.svelte';
 
 const FILE_HEADER = 'DEIMOS-V1|';
 
 export const shipCodec = {
-  exportToFile() {
+  exportToFile(state: MasterShipState = shipState) {
     const payload = {
       // 1. The Blueprint Data
-      name: shipState.blueprint.name,
-      hull: shipState.blueprint.hull,
-      reactor: shipState.blueprint.reactor,
-      engine: shipState.blueprint.engine,
-      components: shipState.blueprint.components.map(c => ({
+      name: state.blueprint.name,
+      hull: state.blueprint.hull,
+      reactor: state.blueprint.reactor,
+      engine: state.blueprint.engine,
+      components: state.blueprint.components.map(c => ({
         item: c.item,
         category: c.category,
         id: c.id,
@@ -19,12 +19,12 @@ export const shipCodec = {
       })),
       
       // 2. The LIVE Tracker Data
-      currentHealth: shipState.vitals.currentHealth,
-      currentRI: shipState.vitals.currentRI,
-      activeConditions: shipState.vitals.activeConditions,
-      activeFuel: shipState.propulsion.activeFuel,
-      activeMode: shipState.propulsion.activeMode,
-      currentFuel: shipState.propulsion.currentFuel
+      currentHealth: state.vitals.currentHealth,
+      currentRI: state.vitals.currentRI,
+      activeConditions: state.vitals.activeConditions,
+      activeFuel: state.propulsion.activeFuel,
+      activeMode: state.propulsion.activeMode,
+      currentFuel: state.propulsion.currentFuel
     };
 
     const jsonStr = JSON.stringify(payload);
@@ -55,7 +55,7 @@ export const shipCodec = {
     URL.revokeObjectURL(url);
   },
 
-  importFromFile(file: File) {
+  importFromFile(file: File, state: MasterShipState = shipState) {
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -72,24 +72,24 @@ export const shipCodec = {
         const payload = JSON.parse(jsonStr);
 
         // 1. Load Blueprint Data
-        shipState.blueprint.name = payload.name;
-        shipState.blueprint.hull = payload.hull;
-        shipState.blueprint.reactor = payload.reactor;
-        shipState.blueprint.engine = payload.engine;
-        shipState.blueprint.components = payload.components;
+        state.blueprint.name = payload.name;
+        state.blueprint.hull = payload.hull;
+        state.blueprint.reactor = payload.reactor;
+        state.blueprint.engine = payload.engine;
+        state.blueprint.components = payload.components;
 
         // 2. Load LIVE Tracker Data (With safety fallbacks for old save files!)
         // If an old save file doesn't have currentHealth, it defaults to max hull health
-        shipState.vitals.currentHealth = payload.currentHealth ?? shipState.blueprint.hull.health;
+        state.vitals.currentHealth = payload.currentHealth ?? state.blueprint.hull.health;
         
         // If it doesn't have RI, default to max RI
-        shipState.vitals.currentRI = payload.currentRI ?? (shipState.blueprint.reactor?.reactorIntegrity || 6);
+        state.vitals.currentRI = payload.currentRI ?? (state.blueprint.reactor?.reactorIntegrity || 6);
         
-        shipState.vitals.activeConditions = payload.activeConditions || [];
-        shipState.propulsion.activeFuel = payload.activeFuel || null;
-        shipState.propulsion.activeMode = payload.activeMode || null;
-        shipState.propulsion.currentFuel = payload.currentFuel || {};
-        
+        state.vitals.activeConditions = payload.activeConditions || [];
+        state.propulsion.activeFuel = payload.activeFuel || null;
+        state.propulsion.activeMode = payload.activeMode || null;
+        state.propulsion.currentFuel = payload.currentFuel || {};
+
       } catch (error) {
         alert("DECRYPTION FAILED: The file archive has been tampered with.");
         console.error(error);

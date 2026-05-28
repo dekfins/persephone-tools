@@ -14,6 +14,7 @@
      * of JS in `.svelte` files.
      */
     "allowJs": true,
+    "allowImportingTsExtensions": true,
     "checkJs": true,
     "moduleDetection": "force",
     "resolveJsonModule": true

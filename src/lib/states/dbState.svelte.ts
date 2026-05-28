@@ -1,6 +1,5 @@
-// src/lib/dbState.svelte.ts
-import { supabase } from './supabaseClient';
-import type { CharacterRecord, ItemRecord } from './types';
+import { supabase } from '../supabaseClient';
+import type { CharacterRecord, ItemRecord } from '../types';
 import { shipState } from './shipState.svelte';
 import { campaignState } from './campaignState.svelte';
 import { crewState } from './crewState.svelte';
@@ -47,6 +46,7 @@ class DatabaseStateManager {
       if (ledgerData.ship_credits !== undefined) crewState.shipCredits = ledgerData.ship_credits;
       if (ledgerData.kibble_days !== undefined) crewState.kibbleDays = ledgerData.kibble_days;
       if (ledgerData.active_conditions) shipState.vitals.activeConditions = ledgerData.active_conditions;
+      if (ledgerData.components) shipState.blueprint.components = ledgerData.components;
       if (ledgerData.current_day !== undefined) campaignState.currentDay = ledgerData.current_day;
       if (ledgerData.current_location) campaignState.shipLocation = ledgerData.current_location;
       if (ledgerData.active_flight !== undefined) campaignState.activeMission = ledgerData.active_flight;
@@ -61,7 +61,8 @@ class DatabaseStateManager {
       active_fuel: shipState.propulsion.activeFuel,
       active_mode: shipState.propulsion.activeMode,
       fuel_levels: shipState.propulsion.currentFuel,
-      active_conditions: shipState.vitals.activeConditions
+      active_conditions: shipState.vitals.activeConditions,
+      components: shipState.blueprint.components
     };
 
     const { error } = await supabase
@@ -137,6 +138,7 @@ class DatabaseStateManager {
             if (payload.new.ship_credits !== undefined) crewState.shipCredits = payload.new.ship_credits;
             if (payload.new.kibble_days !== undefined) crewState.kibbleDays = payload.new.kibble_days;
             if (payload.new.active_conditions) shipState.vitals.activeConditions = payload.new.active_conditions;
+            if (payload.new.components) shipState.blueprint.components = payload.new.components;
             if (payload.new.current_day !== undefined) campaignState.currentDay = payload.new.current_day;
             if (payload.new.current_location) campaignState.shipLocation = payload.new.current_location;
             if (payload.new.active_flight !== undefined) campaignState.activeMission = payload.new.active_flight;
@@ -306,6 +308,20 @@ class DatabaseStateManager {
     if (updateErr) console.error("GM Error - Failed to update kibble:", updateErr);
   }
 
+  async updateHP(characterId: string, newHP: number) {
+    // Optimistic local update
+    const char = this.characters.find(c => c.id === characterId);
+    if (char) char.hp = newHP;
+
+    const { error } = await supabase
+      .from('characters')
+      .update({ hp: newHP })
+      .eq('id', characterId);
+
+    if (error) console.error("GM Error - Failed to update HP:", error);
+  }
+
+
   async updateRads(characterId: string, newRads: number) {
     // Optimistic local update
     const char = this.characters.find(c => c.id === characterId);
@@ -317,6 +333,22 @@ class DatabaseStateManager {
       .eq('id', characterId);
 
     if (error) console.error("GM Error - Failed to update rads:", error);
+  }
+
+  async updateCharacter(characterId: string, updates: Partial<CharacterRecord>) {
+    // Update local state for immediate feedback
+    const index = this.characters.findIndex(c => c.id === characterId);
+    if (index !== -1) {
+      this.characters[index] = { ...this.characters[index], ...updates };
+    }
+
+    // Push to Supabase
+    const { error } = await supabase
+      .from('characters')
+      .update(updates)
+      .eq('id', characterId);
+
+    if (error) console.error("Update failed:", error);
   }
 }
 

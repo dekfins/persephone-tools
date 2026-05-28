@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GeneratedMission } from '../../lib/types';
-  import { shipState } from '../../lib/shipState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import poisData from '../../data/pois.json';
   import type { PoiDef } from '../../lib/types';

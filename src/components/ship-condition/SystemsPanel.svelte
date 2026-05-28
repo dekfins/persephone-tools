@@ -1,17 +1,23 @@
 <script lang="ts">
-  import { shipState } from '../../lib/shipState.svelte';
+  import { shipState } from '../../lib/states/shipState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte.ts';
   import fittings from '../../data/fittings.json';
   import weapons from '../../data/weapons.json';
   import defenses from '../../data/defenses.json';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  
+  // Create local state instance for this component
+  const localState = shipState;
 
-  function cycleStatus(comp: any) {
+  async function cycleStatus(comp: any) {
     const currentStatus = comp.status || "Online"; 
     
     if (currentStatus === "Online") comp.status = "Damaged";
     else if (currentStatus === "Damaged") comp.status = "Destroyed";
     else comp.status = "Online";
+
+    await dbState.syncShipStateToCloud();
   }
 
   function getClassTag(className: string) {
@@ -52,8 +58,8 @@
 
   let availableItems = $derived.by(() => {
     const rawList = marketInventories[selectedCategoryObj.value as keyof typeof marketInventories] || [];
-    const currentTier = shipState.blueprint.multipliers.classTier;
-    return rawList.filter((item: any) => shipState.blueprint.getTier(item.class) <= currentTier);
+    const currentTier = localState.blueprint.multipliers.classTier;
+    return rawList.filter((item: any) => localState.blueprint.getTier(item.class) <= currentTier);
   });
 
   $effect(() => {
@@ -61,93 +67,97 @@
     selectedItem = null;
   });
 
-  function handleAddItem() {
+  async function handleAddItem() {
     if (selectedItem) {
-      shipState.blueprint.addComponent(selectedItem, selectedCategoryObj.value);
+      localState.blueprint.addComponent(selectedItem, selectedCategoryObj.value);
       selectedItem = null;
       isMarketOpen = false;
+      await dbState.syncShipStateToCloud();
     }
   }
 </script>
 
 <TerminalPanel title="Internal Systems">
-  <div class="systems-list">
-    {#each shipState.blueprint.components as comp}
-      <div class="system-row is-{comp.status?.toLowerCase() || 'online'}">
-        <div class="sys-primary">
-          <span class="cat-label">[{comp.category.substring(0,3).toUpperCase()}]</span> 
-          <span class="item-label {getClassTag(comp.item.class)}">
-            {comp.item.fittingName || comp.item.defenseName || comp.item.weaponName}
-            {#if comp.quantity > 1} 
-              <span class="qty-badge">x{comp.quantity}</span>
-            {/if}
-          </span>
-        </div>
-
-        <div class="sys-secondary">
-          <span class="sys-desc">
-            {getLiveAttribute(comp)}
-          </span>
-        </div>
-
-        <div class="sys-action">
-          <button 
-            class="status-btn status-{(comp.status || 'Online').toLowerCase()}"
-            onclick={() => cycleStatus(comp)}
-          >
-            {(comp.status || 'Online').toUpperCase()}
-          </button>
-          
-          <button 
-            class="btn-remove" 
-            onclick={() => shipState.blueprint.removeComponent(comp.id)}
-            title="Remove Component"
-          >
-            X
-          </button>
-        </div>
+<div class="systems-list">
+  {#each localState.blueprint.components as comp}
+    <div class="system-row is-{comp.status?.toLowerCase() || 'online'}">
+      <div class="sys-primary">
+        <span class="cat-label">[{comp.category.substring(0,3).toUpperCase()}]</span> 
+        <span class="item-label {getClassTag(comp.item.class)}">
+          {comp.item.fittingName || comp.item.defenseName || comp.item.weaponName}
+          {#if comp.quantity > 1} 
+            <span class="qty-badge">x{comp.quantity}</span>
+          {/if}
+        </span>
       </div>
-    {/each}
 
-    <button class="btn-add-item" onclick={() => isMarketOpen = !isMarketOpen}>
-      {isMarketOpen ? "- Cancel installation..." : "+ Add item..."}
-    </button>
+      <div class="sys-secondary">
+        <span class="sys-desc">
+          {getLiveAttribute(comp)}
+        </span>
+      </div>
 
-    {#if isMarketOpen}
-      <div class="market-popup">
-        <div class="market-row">
-          <div class="market-field">
-            <label for="category">CATEGORY</label>
-            <TerminalSelect
-              id="market-cat-select"
-              options={categoryOptions}
-              bind:value={selectedCategoryObj}
-              labelKey="label"
-              showPopup={false}
-            />
-          </div>
-          <div class="market-field" style="flex: 2;">
-            <label for="available-components">AVAILABLE COMPONENTS</label>
-            <TerminalSelect
-              id="market-item-select"
-              options={availableItems}
-              bind:value={selectedItem}
-              labelKey="displayName"
-              popupSide="left"
-            />
-          </div>
-        </div>
+      <div class="sys-action">
+        <button 
+          class="status-btn status-{(comp.status || 'Online').toLowerCase()}"
+          onclick={() => cycleStatus(comp)}
+        >
+          {(comp.status || 'Online').toUpperCase()}
+        </button>
         
         <button 
-          class="btn-install" 
-          disabled={!selectedItem}
-          onclick={handleAddItem}
+          class="btn-remove" 
+          onclick={async () => {
+            localState.blueprint.removeComponent(comp.id);
+            await dbState.syncShipStateToCloud();
+          }}
+          title="Remove Component"
         >
-          INSTALL COMPONENT
+          X
         </button>
       </div>
-    {/if}
-  </div>
+    </div>
+  {/each}
+
+  <button class="btn-add-item" onclick={() => isMarketOpen = !isMarketOpen}>
+    {isMarketOpen ? "- Cancel installation..." : "+ Add item..."}
+  </button>
+
+  {#if isMarketOpen}
+    <div class="market-popup">
+      <div class="market-row">
+        <div class="market-field">
+          <label for="category">CATEGORY</label>
+          <TerminalSelect
+            id="market-cat-select"
+            options={categoryOptions}
+            bind:value={selectedCategoryObj}
+            labelKey="label"
+            showPopup={false}
+          />
+        </div>
+        <div class="market-field" style="flex: 2;">
+          <label for="available-components">AVAILABLE COMPONENTS</label>
+          <TerminalSelect
+            id="market-item-select"
+            options={availableItems}
+            bind:value={selectedItem}
+            labelKey="displayName"
+            popupSide="left"
+          />
+        </div>
+      </div>
+      
+      <button 
+        class="btn-install" 
+        disabled={!selectedItem}
+        onclick={handleAddItem}
+      >
+        INSTALL COMPONENT
+      </button>
+    </div>
+  {/if}
+</div>
 </TerminalPanel>
 
 <style>

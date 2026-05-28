@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { dbState } from '../../lib/dbState.svelte';
-    import { toastState } from '../../lib/toastState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte.ts';
+    import { toastState } from '../../lib/states/toastState.svelte.ts';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let creditsAdjust = $state(0);

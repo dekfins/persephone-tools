@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { crewState } from "../../lib/crewState.svelte";
-  import { campaignState } from "../../lib/campaignState.svelte";
-  import { dbState } from "../../lib/dbState.svelte";
+  import { crewState } from "../../lib/states/crewState.svelte";
+  import { campaignState } from "../../lib/states/campaignState.svelte";
+  import { dbState } from "../../lib/states/dbState.svelte";
   import poisData from '../../data/pois.json';
   import type { PoiDef } from '../../lib/types';
 
