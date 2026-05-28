@@ -15,11 +15,11 @@
   import TransitPlanningPanel from './TransitPlanningPanel.svelte'; // Panel for planning new transits
 
   // Helper functions to transform raw celestial body data into renderable coordinates
-  import { mapPlanets, mapMoons, mapPoiOrbits } from '../../lib/mapDataHelpers'; 
+  import { mapPlanets, mapMoons, mapPoiOrbits } from '../../lib/helpers/mapDataHelpers'; 
   // Helper functions to draw celestial bodies, orbits, and trajectories on the PIXI canvas
   import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from '../../lib/mapRenderers';
   // Helper functions to calculate derived state for the map
-  import { calculateActiveTrajectory, calculateTransitRefBody } from '../../lib/mapStateHelpers';
+  import { calculateActiveTrajectory, calculateTransitRefBody } from '../../lib/helpers/mapStateHelpers';
 
   // Load static data for celestial bodies and points of interest
   const planets = planetsData as PlanetDef[];
