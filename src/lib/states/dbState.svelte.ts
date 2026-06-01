@@ -337,10 +337,12 @@ class DatabaseStateManager {
 
   async updateCharacter(characterId: string, updates: Partial<CharacterRecord>) {
     // Update local state for immediate feedback
-    const index = this.characters.findIndex(c => c.id === characterId);
-    if (index !== -1) {
-      this.characters[index] = { ...this.characters[index], ...updates };
-    }
+    // const index = this.characters.findIndex(c => c.id === characterId);
+    // if (index !== -1) {
+    //   this.characters[index] = { ...this.characters[index], ...updates };
+    // }
+    const char = this.characters.find(c => c.id === characterId);
+    if (char) Object.assign(char, updates);
 
     // Push to Supabase
     const { error } = await supabase

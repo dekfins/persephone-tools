@@ -3,9 +3,9 @@ import { solveTrajectory } from './orbitalMath';
 import type { PoiDef } from './types';
 import type { GeneratedMission } from './types';
 import missionsData from '../data/missions.json';
-import poisData from '../data/pois.json';
-import planetsData from '../data/planets.json';
-import moonsData from '../data/moons.json';
+import poisData from '../data/celestial/pois.json';
+import planetsData from '../data/celestial/planets.json';
+import moonsData from '../data/celestial/moons.json';
 
 const pois = poisData as PoiDef[];
 

@@ -18,14 +18,14 @@
   // --- TEMPLATE CONDITION STATE ---
   const conditionTemplates = [
     { name: "Cracked Coolant Loop", fixDC: "10", effect: "-1 Reactor Maint. Crit: +1 Rad to engine crew. Untreated 3 segments = -1 RI." },
-    { name: "Thruster Offline", fixDC: "12", effect: "TWR reduced by 20% or 0.01g." },
+    { name: "Thruster Offline", fixDC: "12", effect: "Travels take 50% more segments until fixed." },
     { name: "Sensor Array Damaged", fixDC: "10", effect: "-2 to Nav/Comms. Blind beyond visual." },
     { name: "Life Support Degradation", fixDC: "10", effect: "-1 to all checks. 2 segments untreated = +1 Rad/segment." },
     { name: "Hull Breach", fixDC: "8", effect: "Lose 1 HP per segment until patched. Vacc suits required." },
     { name: "Berth Microfractures", fixDC: "12", effect: "Resting does not remove Rads." },
-    { name: "Comms Array Damaged", fixDC: "10", effect: "Cannot send/receive long-range. Vega lost." },
-    { name: "Weapon System Malfunction", fixDC: "12", effect: "One weapon becomes inoperable." },
-    { name: "Strange Resonance", fixDC: "14", effect: "-1 Mental saves. May attract attention." }
+    { name: "Comms Array Damaged", fixDC: "10", effect: "Cannot send/receive long-range signals. Vega lost." },
+    { name: "Weapon System Malfunction", fixDC: "12", effect: "One random weapon becomes inoperable." },
+    { name: "Strange Resonance", fixDC: "14", effect: "-1 to all Mental saves. May attract attention." }
   ].map(t => ({
     ...t,
     selectLabel: `${t.name} (DC ${t.fixDC})`

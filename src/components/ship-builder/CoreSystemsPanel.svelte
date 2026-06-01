@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createShipState } from '../../lib/states/shipState.svelte';
-  import hulls from '../../data/hulls.json'
-  import reactors from '../../data/reactors.json';
-  import engines from '../../data/engines.json';
+  import hulls from '../../data/ship/hulls.json'
+  import reactors from '../../data/ship/reactors.json';
+  import engines from '../../data/ship/engines.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   

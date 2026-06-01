@@ -5,7 +5,7 @@
   import type { PoiDef } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
 
   const pois = poisData as PoiDef[];
 

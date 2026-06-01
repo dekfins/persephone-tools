@@ -3,7 +3,7 @@
   import DualRangeSlider from './DualRangeSlider.svelte';
   import { campaignState } from '../../lib/states/campaignState.svelte';
   import { shipState } from '../../lib/states/shipState.svelte';
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
 
   const pois = poisData as any[];
 

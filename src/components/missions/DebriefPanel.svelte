@@ -2,7 +2,7 @@
   import { crewState } from "../../lib/states/crewState.svelte";
   import { campaignState } from "../../lib/states/campaignState.svelte";
   import { dbState } from "../../lib/states/dbState.svelte";
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
   import type { PoiDef } from '../../lib/types';
 
   const pois = poisData as PoiDef[];

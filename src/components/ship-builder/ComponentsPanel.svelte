@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createShipState } from '../../lib/states/shipState.svelte';
-  import fittings from '../../data/fittings.json';
-  import defenses from '../../data/defenses.json';
-  import weapons from '../../data/weapons.json';
+  import fittings from '../../data/ship/fittings.json';
+  import defenses from '../../data/ship/defenses.json';
+  import weapons from '../../data/ship/weapons.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   

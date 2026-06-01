@@ -4,7 +4,7 @@
   import { getTransitTelemetry } from '../../lib/orbitalMath';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import type { PoiDef } from '../../lib/types';
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
   
   const pois = poisData as PoiDef[];
 

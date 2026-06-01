@@ -4,7 +4,7 @@
   import { toastState } from '../../lib/states/toastState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
   
   let timeAdjust = $state(1);
   let teleportTarget = $state(poisData[0]);

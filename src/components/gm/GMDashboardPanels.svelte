@@ -123,7 +123,7 @@
   :global(.flex-2) { flex: 2; }
   :global(.no-margin) { margin: 0; }
   :global(.mb-1) { margin-bottom: 1rem; }
-  :global(.sel-label) { font-size: 0.8rem; }
+  :global(.sel-label) { font-size: 1rem; }
   
   :global(.btn-full-cyan) {
     width: 100%;

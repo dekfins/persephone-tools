@@ -1,0 +1,462 @@
+{
+  "Barbarian": {
+    "name": "Barbarian",
+    "freeSkill": "Survive",
+    "quickSkills": ["Survive", "Notice", "Any Combat"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Punch" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Survive" }
+    ]
+  },
+  "Clergy": {
+    "name": "Clergy",
+    "freeSkill": "Talk",
+    "quickSkills": ["Talk", "Perform", "Know"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Courtesan": {
+    "name": "Courtesan",
+    "freeSkill": "Perform",
+    "quickSkills": ["Perform", "Notice", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Survive" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Criminal": {
+    "name": "Criminal",
+    "freeSkill": "Sneak",
+    "quickSkills": ["Sneak", "Connect", "Talk"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Program" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Dilettante": {
+    "name": "Dilettante",
+    "freeSkill": "Connect",
+    "quickSkills": ["Connect", "Know", "Talk"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Skill" },
+      { "type": "special", "value": "Any Skill" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Entertainer": {
+    "name": "Entertainer",
+    "freeSkill": "Perform",
+    "quickSkills": ["Perform", "Talk", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Merchant": {
+    "name": "Merchant",
+    "freeSkill": "Trade",
+    "quickSkills": ["Trade", "Talk", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Trade" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Noble": {
+    "name": "Noble",
+    "freeSkill": "Lead",
+    "quickSkills": ["Lead", "Connect", "Administer"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Official": {
+    "name": "Official",
+    "freeSkill": "Administer",
+    "quickSkills": ["Administer", "Talk", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Skill" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Peasant": {
+    "name": "Peasant",
+    "freeSkill": "Exert",
+    "quickSkills": ["Exert", "Sneak", "Survive"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Survive" },
+      { "type": "skill", "value": "Trade" },
+      { "type": "skill", "value": "Work" }
+    ]
+  },
+  "Physician": {
+    "name": "Physician",
+    "freeSkill": "Heal",
+    "quickSkills": ["Heal", "Know", "Notice"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Heal" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Pilot": {
+    "name": "Pilot",
+    "freeSkill": "Pilot",
+    "quickSkills": ["Pilot", "Fix", "Shoot or Trade"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Shoot" },
+      { "type": "skill", "value": "Trade" }
+    ]
+  },
+  "Politician": {
+    "name": "Politician",
+    "freeSkill": "Talk",
+    "quickSkills": ["Talk", "Lead", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Talk" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Scholar": {
+    "name": "Scholar",
+    "freeSkill": "Know",
+    "quickSkills": ["Know", "Connect", "Administer"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Program" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Soldier": {
+    "name": "Soldier",
+    "freeSkill": "Any Combat",
+    "quickSkills": ["Any Combat", "Exert", "Survive"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Lead" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Survive" }
+    ]
+  },
+  "Spacer": {
+    "name": "Spacer",
+    "freeSkill": "Fix",
+    "quickSkills": ["Fix", "Pilot", "Program"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Program" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Technician": {
+    "name": "Technician",
+    "freeSkill": "Fix",
+    "quickSkills": ["Fix", "Exert", "Notice"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Know" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Pilot" }
+    ]
+  },
+  "Thug": {
+    "name": "Thug",
+    "freeSkill": "Any Combat",
+    "quickSkills": ["Any Combat", "Talk", "Connect"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "skill", "value": "Connect" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Stab or Shoot" },
+      { "type": "skill", "value": "Survive" },
+      { "type": "skill", "value": "Talk" }
+    ]
+  },
+  "Vagabond": {
+    "name": "Vagabond",
+    "freeSkill": "Survive",
+    "quickSkills": ["Survive", "Sneak", "Notice"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "physical", "bonus": 2 },
+      { "type": "stat", "category": "mental", "bonus": 2 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "special", "value": "Any Combat" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Notice" },
+      { "type": "skill", "value": "Perform" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Sneak" },
+      { "type": "skill", "value": "Survive" },
+      { "type": "skill", "value": "Work" }
+    ]
+  },
+  "Worker": {
+    "name": "Worker",
+    "freeSkill": "Work",
+    "quickSkills": ["Work", "Connect", "Exert"],
+    "growth": [
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "stat", "category": "any", "bonus": 1 },
+      { "type": "skill", "value": "Exert" },
+      { "type": "special", "value": "Any Skill" }
+    ],
+    "learning": [
+      { "type": "skill", "value": "Administer" },
+      { "type": "special", "value": "Any Skill" },
+      { "type": "skill", "value": "Connect" },
+      { "type": "skill", "value": "Exert" },
+      { "type": "skill", "value": "Fix" },
+      { "type": "skill", "value": "Pilot" },
+      { "type": "skill", "value": "Program" },
+      { "type": "skill", "value": "Work" }
+    ]
+  }
+}

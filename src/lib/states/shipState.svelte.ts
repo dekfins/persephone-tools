@@ -1,7 +1,7 @@
-import hulls from '../../data/hulls.json';
+import hulls from '../../data/ship/hulls.json';
 import constants from '../../data/constants.json';
-import reactors from '../../data/reactors.json';
-import rawEngines from '../../data/engines.json'; 
+import reactors from '../../data/ship/reactors.json';
+import rawEngines from '../../data/ship/engines.json'; 
 import type { ActiveCondition, Engine } from '../types'; 
 
 const engines = rawEngines as unknown as Engine[];

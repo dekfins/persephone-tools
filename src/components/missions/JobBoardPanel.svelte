@@ -9,7 +9,7 @@
   import JobResults from './JobResults.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import { router } from 'tinro';
-  import poisData from '../../data/pois.json';
+  import poisData from '../../data/celestial/pois.json';
   import type { PoiDef } from '../../lib/types';
 
   const pois = poisData as PoiDef[];

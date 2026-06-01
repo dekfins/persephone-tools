@@ -15,7 +15,8 @@
     <AttributesPanel />
   </div>
 
-  <div class="col-stack"></div>
+  <div class="col-stack">
+  </div>
 </div>
 
 <style>

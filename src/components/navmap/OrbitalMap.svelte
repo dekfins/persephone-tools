@@ -7,9 +7,9 @@
   import { solveTrajectory, getPoiState } from '../../lib/orbitalMath';
   import type { PlanetDef, MoonDef, PoiDef } from '../../lib/types';
   
-  import planetsData from '../../data/planets.json';
-  import moonsData from '../../data/moons.json';
-  import poisData from '../../data/pois.json';
+  import planetsData from '../../data/celestial/planets.json';
+  import moonsData from '../../data/celestial/moons.json';
+  import poisData from '../../data/celestial/pois.json';
 
   import ActiveTransitPanel from './ActiveTransitPanel.svelte'; // Panel to display active transit information
   import TransitPlanningPanel from './TransitPlanningPanel.svelte'; // Panel for planning new transits

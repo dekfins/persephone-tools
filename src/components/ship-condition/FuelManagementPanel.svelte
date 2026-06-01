@@ -3,7 +3,7 @@
   import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
-  import fuelsData from '../../data/fuels.json';
+  import fuelsData from '../../data/ship/fuels.json';
   
   // Create local state instance for this component
   const localState = shipState;
