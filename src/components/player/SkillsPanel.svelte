@@ -1,51 +1,144 @@
 <script lang="ts">
+  import { ALL_ATTRIBUTES, ALL_SKILLS, SKILL_DEFINITIONS } from '../../lib/characterConstants';
+  import { formatModifier, getAttributeModifier } from '../../lib/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
+  import type { AttributeKey, Skill } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
-  import type { Skill } from '../../lib/types';
+  import TerminalSelect from '../shared/TerminalSelect.svelte';
+
+  type AttributeOption = {
+    label: string;
+    value: AttributeKey;
+  };
+
+  type SkillRollResult = {
+    total: number;
+    dieOne: number;
+    dieTwo: number;
+    skillLevel: number;
+    attribute: AttributeKey;
+    attributeModifier: number;
+  };
+
+  const attributeOptions: AttributeOption[] = ALL_ATTRIBUTES.map((attribute) => ({
+    label: attribute.toUpperCase(),
+    value: attribute
+  }));
 
   let char = $derived(dbState.activeCharacter);
+  let expandedSkill = $state<Skill | null>(null);
+  let attributeOverrides = $state<Partial<Record<Skill, AttributeKey>>>({});
+  let rollResults = $state<Partial<Record<Skill, SkillRollResult>>>({});
 
-  // Explicitly mapping the union type to an iterable array for the UI grid
-  const ALL_SKILLS: Skill[] = [
-    'Administer', 'Connect', 'Exert', 'Fix', 'Heal', 'Know',
-    'Lead', 'Notice', 'Perform', 'Pilot', 'Program', 'Punch',
-    'Shoot', 'Sneak', 'Stab', 'Survive', 'Talk', 'Trade', 'Work'
-  ];
+  function skillLevel(skill: Skill) {
+    return char?.skills?.[skill] ?? -1;
+  }
 
-  async function adjustSkill(skill: Skill, delta: number) {
+  function skillDefinition(skill: Skill) {
+    return SKILL_DEFINITIONS[skill];
+  }
+
+  function selectedAttribute(skill: Skill) {
+    return attributeOverrides[skill] ?? skillDefinition(skill).defaultAttribute;
+  }
+
+  function selectedAttributeOption(skill: Skill) {
+    const attribute = selectedAttribute(skill);
+    return attributeOptions.find((option) => option.value === attribute) ?? attributeOptions[0];
+  }
+
+  function setSkillAttribute(skill: Skill, option: AttributeOption) {
+    attributeOverrides = {
+      ...attributeOverrides,
+      [skill]: option.value
+    };
+  }
+
+  function attributeModifier(attribute: AttributeKey) {
+    if (!char) return 0;
+    return getAttributeModifier(char.attributes[attribute]);
+  }
+
+  function rollSkill(skill: Skill) {
     if (!char) return;
 
-    // Default to -1 if the skill isn't present in the JSONB record
-    const currentLevel = char.skills?.[skill] ?? -1;
-    
-    // Clamp the skill level between untrained (-1) and master (4)
-    const newLevel = Math.max(-1, Math.min(4, currentLevel + delta));
+    const attribute = selectedAttribute(skill);
+    const dieOne = Math.floor(Math.random() * 6) + 1;
+    const dieTwo = Math.floor(Math.random() * 6) + 1;
+    const currentSkillLevel = skillLevel(skill);
+    const currentAttributeModifier = attributeModifier(attribute);
 
-    if (currentLevel === newLevel) return;
-
-    // Construct the new nested JSONB object
-    const updatedSkills = { 
-      ...(char.skills || {}), 
-      [skill]: newLevel 
+    rollResults = {
+      ...rollResults,
+      [skill]: {
+        total: dieOne + dieTwo + currentSkillLevel + currentAttributeModifier,
+        dieOne,
+        dieTwo,
+        skillLevel: currentSkillLevel,
+        attribute,
+        attributeModifier: currentAttributeModifier
+      }
     };
+  }
 
-    // Push via the centralized manager
-    await dbState.updateCharacter(char.id, { skills: updatedSkills });
+  function rollSummary(result: SkillRollResult) {
+    const skillPart = `${formatRollTerm(result.skillLevel)} skill`;
+    const attributePart = `${formatRollTerm(result.attributeModifier)} ${result.attribute.toUpperCase()}`;
+    return `${result.total} [${result.dieOne}+${result.dieTwo}] ${skillPart} ${attributePart}`;
+  }
+
+  function formatRollTerm(value: number) {
+    return value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`;
   }
 </script>
 
-<TerminalPanel title="VOCATIONAL SKILLS" extraClass="player-panel">
+<TerminalPanel title="SKILLS" extraClass="player-panel">
   {#if char}
-    <div class="skills-grid">
+    <div class="skill-list">
       {#each ALL_SKILLS as skill}
-        {@const level = char.skills?.[skill] ?? -1}
-        <div class="skill-row" class:trained={level > -1}>
-          <span class="skill-name">{skill.toUpperCase()}</span>
-          <div class="skill-controls">
-            <button class="btn-action btn-compact" onclick={() => adjustSkill(skill, -1)} disabled={level <= -1}>-</button>
-            <span class="skill-level">{level}</span>
-            <button class="btn-action btn-compact" onclick={() => adjustSkill(skill, 1)} disabled={level >= 4}>+</button>
-          </div>
+        {@const definition = skillDefinition(skill)}
+        {@const expanded = expandedSkill === skill}
+        {@const attribute = selectedAttribute(skill)}
+        {@const result = rollResults[skill]}
+        <div class="skill-row" class:expanded>
+          <button
+            class="skill-toggle"
+            type="button"
+            aria-expanded={expanded}
+            onclick={() => expandedSkill = expanded ? null : skill}
+          >
+            <span>{skill.toUpperCase()}</span>
+            <strong>{skillLevel(skill)}</strong>
+          </button>
+
+          {#if expanded}
+            <div class="skill-detail">
+              <p>{definition.description}</p>
+              <div class="roll-controls">
+                <div class="attribute-control">
+                  <span>SUGGESTED ATTRIBUTE</span>
+                  <TerminalSelect
+                    options={attributeOptions}
+                    value={selectedAttributeOption(skill)}
+                    id={`skill-attribute-${skill}`}
+                    showPopup={false}
+                    onSelect={(option: AttributeOption) => setSkillAttribute(skill, option)}
+                  />
+                </div>
+                <button class="btn-action" onclick={() => rollSkill(skill)}>
+                  ROLL 2D6
+                </button>
+              </div>
+
+              <div class="formula-line">
+                2D6 + {skillLevel(skill)} SKILL + {formatModifier(attributeModifier(attribute))} {attribute.toUpperCase()}
+              </div>
+
+              {#if result}
+                <div class="roll-result">{rollSummary(result)}</div>
+              {/if}
+            </div>
+          {/if}
         </div>
       {/each}
     </div>
@@ -55,57 +148,95 @@
 </TerminalPanel>
 
 <style>
-  .skills-grid {
+  .skill-list {
     display: grid;
-    /* 2 columns handles 19 skills efficiently without making the list too long */
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem 1.5rem;
+    gap: 0.45rem;
   }
 
   .skill-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.25rem 0;
-    border-bottom: 1px dashed var(--border-subtle);
-    color: var(--text-dim);
-    transition: color 0.2s;
+    display: grid;
+    background: var(--bg-void);
+    border: var(--border-subtle);
+    font-family: var(--font-terminal);
   }
 
-  /* Highlight skills the character has actively invested points into */
-  .skill-row.trained {
+  .skill-row.expanded {
+    border-color: var(--accent-amber);
+  }
+
+  .skill-toggle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 3rem;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: transparent;
+    border: 0;
     color: var(--text-main);
+    padding: 0.55rem;
+    font-family: var(--font-terminal);
+    text-align: left;
+    cursor: pointer;
   }
 
-  .skill-row.trained .skill-name {
+  .skill-toggle span {
+    color: var(--text-main);
+    font-size: 0.82rem;
+  }
+
+  .skill-toggle strong {
     color: var(--accent-amber);
-    font-weight: bold;
-  }
-
-  .skill-name {
-    font-family: var(--font-terminal);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-  }
-
-  .skill-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .skill-level {
-    font-family: var(--font-terminal);
-    font-weight: bold;
-    font-size: 1rem;
-    width: 1.5rem;
+    border: var(--border-subtle);
+    padding: 0.3rem;
     text-align: center;
   }
 
-  /* Ensure the compact buttons from your widgets.css scale nicely here */
-  button.btn-compact {
-    padding: 0.1rem 0.4rem;
-    font-size: 0.8rem;
-    min-width: 1.5rem;
+  .skill-detail {
+    display: grid;
+    gap: 0.6rem;
+    border-top: var(--border-subtle);
+    padding: 0.65rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .roll-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.65rem;
+    align-items: end;
+  }
+
+  .attribute-control {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .attribute-control span,
+  .formula-line {
+    color: var(--text-dim);
+    font-size: 0.72rem;
+  }
+
+  .formula-line,
+  .roll-result {
+    border: var(--border-subtle);
+    padding: 0.45rem;
+  }
+
+  .roll-result {
+    color: var(--accent-amber);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 700px) {
+    .roll-controls {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

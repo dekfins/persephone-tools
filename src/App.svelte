@@ -4,6 +4,7 @@
   import Navigation from './components/shared/NavigationPanel.svelte';
   
   // Import your pages
+  import CharacterCreator from './pages/CharacterCreator.svelte';
   import PlayerDashboard from './pages/PlayerDashboard.svelte';
   import ShipBuilder from './pages/ShipBuilder.svelte';
   import ShipCondition from './pages/ShipCondition.svelte';
@@ -111,6 +112,10 @@
 
   <Route path="/overview" fallback>
     <PlayerDashboard />
+  </Route>
+
+  <Route path="/character-creator">
+    <CharacterCreator />
   </Route>
 
   <Route path="/ship-builder">

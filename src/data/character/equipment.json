@@ -1,0 +1,3318 @@
+{
+  "primitive_shield": {
+    "id": "primitive_shield",
+    "name": "Plate-and-hide shield",
+    "sourceName": "Shield",
+    "category": "armor",
+    "description": "A hand-carried slab of hide, laminate, scrap plate, or station plastic. It is useful against low-tech threats but ignored by weapons that punch through primitive armor.",
+    "cost": 10,
+    "encumbrance": 2,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "primitive",
+      "shield"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorClassBonus": 1,
+      "armorType": "shield"
+    },
+    "mechanics": "Requires one free hand. Sets base AC 13; if the bearer already has AC 13 or better, grants +1 AC instead. Weapons that ignore primitive armor also ignore this shield."
+  },
+  "leather_jacks": {
+    "id": "leather_jacks",
+    "name": "Padded work leathers",
+    "sourceName": "Leather jacks, thick hides, quilted armor",
+    "category": "armor",
+    "description": "Layered hides, quilted pressure cloth, or belter work padding. It is cheap protection for backwater fights and industrial accidents.",
+    "cost": 10,
+    "encumbrance": 1,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorType": "primitive"
+    }
+  },
+  "brigandine_cuirass": {
+    "id": "brigandine_cuirass",
+    "name": "Plate-laced cuirass",
+    "sourceName": "Cuirass, brigandine, linothorax, half-plate",
+    "category": "armor",
+    "description": "A rigid low-tech shell of layered plates or dense composite. It stops simple blades well and advertises that the wearer expects violence.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 1,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 15,
+      "armorType": "primitive"
+    }
+  },
+  "layered_mail": {
+    "id": "layered_mail",
+    "name": "Layered mail harness",
+    "sourceName": "Full plate, layered mail",
+    "category": "armor",
+    "description": "Heavy archaic armor used by militias, reenactors, and places where metallurgy outruns electronics. It is protective, obvious, and tiring.",
+    "cost": 100,
+    "encumbrance": 2,
+    "techLevel": 1,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "armor",
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 17,
+      "armorType": "primitive"
+    }
+  },
+  "warpaint": {
+    "id": "warpaint",
+    "name": "Ablative skincoat",
+    "sourceName": "Warpaint",
+    "category": "armor",
+    "description": "A thin impact-reactive coating disguised as cosmetics, tattoos, or station fashion. It is enough to turn a graze without looking like armor.",
+    "cost": 300,
+    "encumbrance": 0,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 12,
+      "armorType": "street"
+    }
+  },
+  "armored_undersuit": {
+    "id": "armored_undersuit",
+    "name": "Armored pressure undersuit",
+    "sourceName": "Armored Undersuit",
+    "category": "armor",
+    "description": "A flexible underlayer worn beneath ordinary clothes or a vac shell. It is popular with couriers who expect checkpoints and bad odds.",
+    "cost": 600,
+    "encumbrance": 0,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorType": "street"
+    }
+  },
+  "secure_clothing": {
+    "id": "secure_clothing",
+    "name": "Secure stationwear",
+    "sourceName": "Secure Clothing",
+    "category": "armor",
+    "description": "Business or utility clothing with woven armor panels and discreet seals. It passes most casual inspection outside military zones.",
+    "cost": 300,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorType": "street"
+    }
+  },
+  "armored_vacc_suit": {
+    "id": "armored_vacc_suit",
+    "name": "Armored vacc suit",
+    "sourceName": "Armored Vacc Suit",
+    "category": "armor",
+    "description": "A pressure suit with ceramic strike plates and reinforced seals. It is clumsy in hab corridors but standard kit for ugly EVA work.",
+    "cost": 400,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "armor",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorType": "street"
+    },
+    "mechanics": "Counts as armor and vacc protection in one suit. It is bulkier than a normal pressure suit and should use suit-tear rules where vacuum exposure matters."
+  },
+  "deflector_array": {
+    "id": "deflector_array",
+    "name": "Microdeflector weave",
+    "sourceName": "Deflector Array",
+    "category": "armor",
+    "description": "A pretech field lattice hidden in clothing seams. DAVE flags these units as anomalous hardware whenever one appears on a legal manifest.",
+    "cost": 30000,
+    "encumbrance": 0,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "armor",
+      "pretech",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "armor": {
+      "armorClass": 18,
+      "armorType": "street"
+    }
+  },
+  "force_pavis": {
+    "id": "force_pavis",
+    "name": "Force pavis projector",
+    "sourceName": "Force Pavis",
+    "category": "armor",
+    "description": "A compact pretech disc that blooms into a defensive field when braced. It requires a free hand and attracts official attention fast.",
+    "cost": 10000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "faction_contact",
+    "tags": [
+      "armor",
+      "pretech",
+      "shield"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 15,
+      "armorClassBonus": 1,
+      "armorType": "shield"
+    },
+    "mechanics": "Requires one free hand. Sets base AC 15; if the bearer already has AC 15 or better, grants +1 AC instead. Counts as pretech defensive hardware."
+  },
+  "security_armor": {
+    "id": "security_armor",
+    "name": "Security carapace",
+    "sourceName": "Security Armor",
+    "category": "armor",
+    "description": "Visible riot and checkpoint armor used by station security, dock police, and corporate response teams.",
+    "cost": 700,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "armor"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 14,
+      "armorType": "combat"
+    }
+  },
+  "woven_body_armor": {
+    "id": "woven_body_armor",
+    "name": "Woven ballistic vest",
+    "sourceName": "Woven Body Armor",
+    "category": "armor",
+    "description": "Older ballistic armor still common in low-budget security lockers and militia stores.",
+    "cost": 400,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "armor"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 15,
+      "armorType": "combat"
+    }
+  },
+  "combat_field_uniform": {
+    "id": "combat_field_uniform",
+    "name": "Combat field uniform",
+    "sourceName": "Combat Field Uniform",
+    "category": "armor",
+    "description": "A TL4 battle dress of shock cloth, plates, and ablative coatings. It is legal only where someone has stamped the right orders.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "licensed_vendor",
+    "tags": [
+      "armor"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 16,
+      "armorType": "combat"
+    }
+  },
+  "icarus_harness": {
+    "id": "icarus_harness",
+    "name": "Icarus drop harness",
+    "sourceName": "Icarus Harness",
+    "category": "armor",
+    "description": "A combat uniform with a crude fall damper and short-duration vacc seals. Every serious drop burns a type A cell.",
+    "cost": 8000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "armor",
+      "powered",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 16,
+      "armorType": "combat"
+    }
+  },
+  "vestimentum": {
+    "id": "vestimentum",
+    "name": "Vestimentum ceremonial shell",
+    "sourceName": "Vestimentum",
+    "category": "armor",
+    "description": "Ancient ceremonial protection with field emitters hidden under impossible tailoring. It looks ornamental until it stops a blade.",
+    "cost": 15000,
+    "encumbrance": 0,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "armor",
+      "powered",
+      "pretech"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "armor": {
+      "armorClass": 18,
+      "armorType": "powered"
+    },
+    "mechanics": "Powered armor protection in ceremonial form. Counts as powered armor for immunity to primitive melee weapons, unarmed attacks, and TL3-or-lower firearm or grenade-scale explosives."
+  },
+  "assault_suit": {
+    "id": "assault_suit",
+    "name": "Assault pressure suit",
+    "sourceName": "Assault Suit",
+    "category": "armor",
+    "description": "Military powered armor with sealed life support, encrypted comms, low-light sensors, and a type B power draw.",
+    "cost": 10000,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "armor",
+      "powered",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 18,
+      "armorType": "powered"
+    },
+    "mechanics": "Powered armor requiring a type B cell for 24 hours. Includes encrypted military comms, low-light/IR vision, vacc protection while powered, and an energy feed interface for one type A-cell device."
+  },
+  "storm_armor": {
+    "id": "storm_armor",
+    "name": "Storm assault frame",
+    "sourceName": "Storm Armor",
+    "category": "armor",
+    "description": "A rare pretech-derived assault suit with exo-augments and superior field control. It is contraband anywhere nervous people write laws.",
+    "cost": 20000,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "armor",
+      "powered",
+      "pretech",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "armor": {
+      "armorClass": 19,
+      "armorType": "powered"
+    },
+    "mechanics": "Functions as an assault suit with superior pretech exo-augments. Treat Strength as 4 points higher where the armor's powered frame applies."
+  },
+  "field_emitter_panoply": {
+    "id": "field_emitter_panoply",
+    "name": "Field emitter panoply",
+    "sourceName": "Field Emitter Panoply",
+    "category": "armor",
+    "description": "A collector-grade defensive lattice built for people who can afford to make a battlefield look like a physics error.",
+    "cost": 40000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "armor",
+      "powered",
+      "pretech"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "armor": {
+      "armorClass": 20,
+      "armorType": "powered"
+    },
+    "mechanics": "Powered pretech armor built around field emitters. Counts as powered armor and should be treated as rare mission hardware rather than open-market gear."
+  },
+  "primitive_bow": {
+    "id": "primitive_bow",
+    "name": "Handmade bow",
+    "sourceName": "Primitive Bow",
+    "category": "ranged_weapon",
+    "description": "A local bow or spring launcher used where quiet, repairable weapons matter more than elegance.",
+    "cost": 15,
+    "encumbrance": 2,
+    "techLevel": 1,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "range": "50/75",
+      "magazine": "1",
+      "attribute": "Dex",
+      "ammoType": "none"
+    }
+  },
+  "advanced_bow": {
+    "id": "advanced_bow",
+    "name": "Composite hunting bow",
+    "sourceName": "Advanced Bow",
+    "category": "ranged_weapon",
+    "description": "A modernized bow using smart materials, favored by survivalists and habitats with strict firearm controls.",
+    "cost": 50,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "range": "100/150",
+      "magazine": "1",
+      "attribute": "Dex",
+      "ammoType": "none"
+    }
+  },
+  "conversion_bow": {
+    "id": "conversion_bow",
+    "name": "Conversion bow",
+    "sourceName": "Conversion Bow",
+    "category": "ranged_weapon",
+    "description": "A force-glazed bow that sheaths arrows in a penetrating field. It is quiet enough for habitat work and strange enough for customs interest.",
+    "cost": 500,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8",
+      "range": "150/300",
+      "magazine": "1",
+      "attribute": "Dex",
+      "ammoType": "none"
+    }
+  },
+  "grenade": {
+    "id": "grenade",
+    "name": "Fragmentation grenade",
+    "sourceName": "Grenade",
+    "category": "ranged_weapon",
+    "description": "A compact explosive with enough spread to make ship crews deeply unhappy about missed throws.",
+    "cost": 25,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "black_market",
+    "tags": [
+      "explosive",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d6",
+      "range": "10/30",
+      "magazine": "N/A",
+      "attribute": "Dex",
+      "ammoType": "none"
+    },
+    "mechanics": "Thrown attacks target AC 10. On a miss, it lands 1d10 meters away in a random direction. Hit or miss, targets within 5 meters take 2d6 damage, with Evasion for half; reduce damage by 1 per AC point above 14."
+  },
+  "crude_pistol": {
+    "id": "crude_pistol",
+    "name": "Shopmade pistol",
+    "sourceName": "Crude Pistol",
+    "category": "ranged_weapon",
+    "description": "A dirty single-shot firearm from prison shops, frontier smiths, or emergency fabrication benches.",
+    "cost": 20,
+    "encumbrance": 1,
+    "techLevel": 2,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "reload_slow"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "range": "5/15",
+      "magazine": "1",
+      "attribute": "Dex",
+      "reload": "two Main Actions",
+      "ammoType": "projectile"
+    }
+  },
+  "musket": {
+    "id": "musket",
+    "name": "Long blackpowder gun",
+    "sourceName": "Musket",
+    "category": "ranged_weapon",
+    "description": "A primitive longarm from worlds where propellant chemistry is easier than microelectronics.",
+    "cost": 30,
+    "encumbrance": 2,
+    "techLevel": 2,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "primitive",
+      "reload_slow"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d12",
+      "range": "25/50",
+      "magazine": "1",
+      "attribute": "Dex",
+      "reload": "two Main Actions",
+      "ammoType": "projectile"
+    }
+  },
+  "revolver": {
+    "id": "revolver",
+    "name": "Frontier revolver",
+    "sourceName": "Revolver",
+    "category": "ranged_weapon",
+    "description": "A rugged sidearm that tolerates dust, bad maintenance, and bad decisions better than most sleek weapons.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 2,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8",
+      "range": "30/100",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "rifle": {
+    "id": "rifle",
+    "name": "Frontier rifle",
+    "sourceName": "Rifle",
+    "category": "ranged_weapon",
+    "description": "A reliable longarm common to hunters, outpost guards, and isolated militias.",
+    "cost": 75,
+    "encumbrance": 2,
+    "techLevel": 2,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d10+2",
+      "range": "200/400",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "shotgun": {
+    "id": "shotgun",
+    "name": "Dock shotgun",
+    "sourceName": "Shotgun",
+    "category": "ranged_weapon",
+    "description": "A cheap close-range weapon found in ship lockers, hab farms, and places where walls are close.",
+    "cost": 50,
+    "encumbrance": 2,
+    "techLevel": 2,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d4",
+      "range": "10/30",
+      "magazine": "2",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "semi_auto_pistol": {
+    "id": "semi_auto_pistol",
+    "name": "Autopistol",
+    "sourceName": "Semi-Auto Pistol",
+    "category": "ranged_weapon",
+    "description": "A common compact sidearm with higher capacity than a revolver and more parts to foul.",
+    "cost": 75,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6+1",
+      "range": "30/100",
+      "magazine": "12",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "submachine_gun": {
+    "id": "submachine_gun",
+    "name": "Compact machine pistol",
+    "sourceName": "Submachine Gun",
+    "category": "ranged_weapon",
+    "description": "A short automatic weapon built for corridors, boarding actions, and bad-news briefcases.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8",
+      "range": "30/100",
+      "magazine": "20",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "combat_rifle": {
+    "id": "combat_rifle",
+    "name": "Combat rifle",
+    "sourceName": "Combat Rifle",
+    "category": "ranged_weapon",
+    "description": "The standard long gun of serious security forces and line troops. Possession without paperwork means trouble.",
+    "cost": 300,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "licensed_vendor",
+    "tags": [
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d12",
+      "range": "100/300",
+      "magazine": "30",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "combat_shotgun": {
+    "id": "combat_shotgun",
+    "name": "Breacher shotgun",
+    "sourceName": "Combat Shotgun",
+    "category": "ranged_weapon",
+    "description": "A high-capacity shotgun used by boarding teams and riot units when doors and people both need persuading.",
+    "cost": 300,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "licensed_vendor",
+    "tags": [
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d4",
+      "range": "10/30",
+      "magazine": "12",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "sniper_rifle": {
+    "id": "sniper_rifle",
+    "name": "Longwatch rifle",
+    "sourceName": "Sniper Rifle",
+    "category": "ranged_weapon",
+    "description": "A precision rifle for security overwatch, vacuum-range interdiction, and assassins with patience.",
+    "cost": 400,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d8",
+      "range": "1000/2000",
+      "magazine": "1",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    },
+    "mechanics": "Precision weapon with extreme range and single-shot magazine. Best used from prepared positions; normal long-range attack penalties still apply beyond listed normal range."
+  },
+  "void_carbine": {
+    "id": "void_carbine",
+    "name": "Void carbine",
+    "sourceName": "Void Carbine",
+    "category": "ranged_weapon",
+    "description": "A compact sealed rifle designed for vacuum, gloves, and hullside messes.",
+    "cost": 400,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d6",
+      "range": "100/300",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "mag_pistol": {
+    "id": "mag_pistol",
+    "name": "Mag pistol",
+    "sourceName": "Mag Pistol",
+    "category": "ranged_weapon",
+    "description": "A compact coil sidearm that puts small slugs through armor with very little ceremony.",
+    "cost": 400,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d6+2",
+      "range": "100/300",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "mag_rifle": {
+    "id": "mag_rifle",
+    "name": "Mag rifle",
+    "sourceName": "Mag Rifle",
+    "category": "ranged_weapon",
+    "description": "A full-length coil rifle used by people who want hard penetration without hauling a crew weapon.",
+    "cost": 500,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d8+2",
+      "range": "300/600",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "spike_thrower": {
+    "id": "spike_thrower",
+    "name": "Spike thrower",
+    "sourceName": "Spike Thrower",
+    "category": "ranged_weapon",
+    "description": "A brutal short-range flechette weapon for boarding corridors and panic distances.",
+    "cost": 600,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "black_market",
+    "tags": [
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d8",
+      "range": "20/40",
+      "magazine": "15",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "laser_pistol": {
+    "id": "laser_pistol",
+    "name": "Laser pistol",
+    "sourceName": "Laser Pistol",
+    "category": "ranged_weapon",
+    "description": "A standard energy sidearm with clean logistics and poor manners around reflective dust.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "advanced",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "range": "100/300",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    },
+    "mechanics": "Energy weapon recharged from type A cells. Dense thermally resistant particulate clouds can penalize laser fire and cut effective range at the GM's discretion."
+  },
+  "laser_rifle": {
+    "id": "laser_rifle",
+    "name": "Laser rifle",
+    "sourceName": "Laser Rifle",
+    "category": "ranged_weapon",
+    "description": "A common energy longarm for trained security and anyone who likes ammunition to fit in a pocket.",
+    "cost": 300,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced",
+      "powered",
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d10",
+      "range": "300/500",
+      "magazine": "20",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    },
+    "mechanics": "Energy weapon recharged from type A cells and capable of burst mode. Dense thermally resistant particulate clouds can penalize laser fire and cut effective range at the GM's discretion."
+  },
+  "thermal_pistol": {
+    "id": "thermal_pistol",
+    "name": "Thermal pistol",
+    "sourceName": "Thermal Pistol",
+    "category": "ranged_weapon",
+    "description": "A loud compact plasma weapon that hits harder than a laser and gives up reach for it.",
+    "cost": 300,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d6",
+      "range": "25/50",
+      "magazine": "5",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    }
+  },
+  "plasma_projector": {
+    "id": "plasma_projector",
+    "name": "Plasma projector",
+    "sourceName": "Plasma Projector",
+    "category": "ranged_weapon",
+    "description": "A two-handed plasma weapon built for short, violent work in places where collateral damage is someone else's problem.",
+    "cost": 400,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d8",
+      "range": "50/100",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    }
+  },
+  "shear_rifle": {
+    "id": "shear_rifle",
+    "name": "Shear rifle",
+    "sourceName": "Shear Rifle",
+    "category": "ranged_weapon",
+    "description": "A rare silent pretech rifle that cuts through targets with tightly controlled gravitic shear.",
+    "cost": 600,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "advanced",
+      "pretech",
+      "burst"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "weapon": {
+      "damage": "2d8",
+      "range": "100/300",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    }
+  },
+  "thunder_gun": {
+    "id": "thunder_gun",
+    "name": "Thunder gun",
+    "sourceName": "Thunder Gun",
+    "category": "ranged_weapon",
+    "description": "A pretech grav-disruptor that announces itself as a pressure wave before the target starts coming apart.",
+    "cost": 1000,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "advanced",
+      "pretech",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "weapon": {
+      "damage": "2d10",
+      "range": "100/300",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    }
+  },
+  "distortion_cannon": {
+    "id": "distortion_cannon",
+    "name": "Distortion cannon",
+    "sourceName": "Distortion Cannon",
+    "category": "ranged_weapon",
+    "description": "A man-portable pretech disruption weapon that DAVE treats less like a gun and more like a loose disaster.",
+    "cost": 1250,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "advanced",
+      "pretech",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "weapon": {
+      "damage": "2d12",
+      "range": "100/300",
+      "magazine": "6",
+      "attribute": "Dex",
+      "ammoType": "type_a_cell"
+    }
+  },
+  "small_primitive_weapon": {
+    "id": "small_primitive_weapon",
+    "name": "Small primitive blade",
+    "sourceName": "Small primitive weapon",
+    "category": "melee_weapon",
+    "description": "A knife, baton, or other simple hand weapon. It is easy to hide and easy to explain badly.",
+    "cost": 0,
+    "encumbrance": 1,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "primitive",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d4",
+      "shock": "1/AC 15",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    }
+  },
+  "medium_primitive_weapon": {
+    "id": "medium_primitive_weapon",
+    "name": "Medium primitive weapon",
+    "sourceName": "Medium primitive weapon",
+    "category": "melee_weapon",
+    "description": "A sword, axe, spear, or heavy tool from places where a sharp edge remains the local answer.",
+    "cost": 20,
+    "encumbrance": 1,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6+1",
+      "shock": "2/AC 13",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    }
+  },
+  "large_primitive_weapon": {
+    "id": "large_primitive_weapon",
+    "name": "Large primitive weapon",
+    "sourceName": "Large primitive weapon",
+    "category": "melee_weapon",
+    "description": "A two-handed low-tech weapon that relies on leverage, mass, and a user who can swing it.",
+    "cost": 30,
+    "encumbrance": 2,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "primitive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8+1",
+      "shock": "2/AC 15",
+      "attribute": "Str",
+      "ammoType": "none"
+    }
+  },
+  "small_advanced_weapon": {
+    "id": "small_advanced_weapon",
+    "name": "Monoblade knife",
+    "sourceName": "Small advanced weapon",
+    "category": "melee_weapon",
+    "description": "A compact advanced blade or kinetic baton that cuts above its size and hides below most search thresholds.",
+    "cost": 40,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "advanced",
+      "concealable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "shock": "1/AC 15",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    }
+  },
+  "medium_advanced_weapon": {
+    "id": "medium_advanced_weapon",
+    "name": "Powered boarding blade",
+    "sourceName": "Medium advanced weapon",
+    "category": "melee_weapon",
+    "description": "A one-handed melee weapon with a powered edge, heat wire, or impact sheath.",
+    "cost": 60,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8+1",
+      "shock": "2/AC 13",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    }
+  },
+  "large_advanced_weapon": {
+    "id": "large_advanced_weapon",
+    "name": "Heavy breach cutter",
+    "sourceName": "Large advanced weapon",
+    "category": "melee_weapon",
+    "description": "A two-handed advanced melee weapon built to ruin armor, bulkheads, or anyone standing between them.",
+    "cost": 80,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "licensed_vendor",
+    "tags": [
+      "advanced"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d10+1",
+      "shock": "2/AC 15",
+      "attribute": "Str",
+      "ammoType": "none"
+    }
+  },
+  "stun_baton": {
+    "id": "stun_baton",
+    "name": "Stun baton",
+    "sourceName": "Stun baton",
+    "category": "melee_weapon",
+    "description": "A law-enforcement contact weapon that drops targets without killing them when used as intended.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "nonlethal",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d8",
+      "shock": "1/AC 15",
+      "attribute": "Str/Dex",
+      "ammoType": "integral"
+    }
+  },
+  "suit_ripper": {
+    "id": "suit_ripper",
+    "name": "Suit ripper",
+    "sourceName": "Suit ripper",
+    "category": "melee_weapon",
+    "description": "A fractal cutting rod tuned to defeat vacc suit repair layers. In space, carrying one is treated as intent to murder.",
+    "cost": 75,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "advanced",
+      "illegal_space",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6",
+      "shock": "None",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    },
+    "mechanics": "Every hit against a vacc-suited target counts as a suit tear. Treat possession in space habitats as lethal contraband, not a normal sidearm."
+  },
+  "unarmed_attack": {
+    "id": "unarmed_attack",
+    "name": "Unarmed attack",
+    "sourceName": "Unarmed attack",
+    "category": "melee_weapon",
+    "description": "A rules reference for fists, boots, elbows, and improvised violence. It is not a spawnable inventory item.",
+    "cost": null,
+    "encumbrance": null,
+    "techLevel": null,
+    "legality": "open",
+    "availability": "common",
+    "tags": [],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": false
+    },
+    "weapon": {
+      "damage": "1d2",
+      "shock": "None",
+      "attribute": "Str/Dex",
+      "ammoType": "none"
+    }
+  },
+  "heavy_machine_gun": {
+    "id": "heavy_machine_gun",
+    "name": "Crew-served machine gun",
+    "sourceName": "Heavy Machine Gun",
+    "category": "heavy_weapon",
+    "description": "A belt-fed projectile weapon that needs a mount, a firing lane, and a crew that likes paperwork.",
+    "cost": 5000,
+    "encumbrance": 3,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "heavy",
+      "suppression",
+      "vehicle_mount"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d6",
+      "range": "500/2000",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    },
+    "mechanics": "Requires a vehicle mount or prepared firing position. Can suppress by spending double ammunition; uncovered targets in the firing area take half damage unless they pass an Evasion save."
+  },
+  "rocket_launcher": {
+    "id": "rocket_launcher",
+    "name": "Shoulder rocket launcher",
+    "sourceName": "Rocket Launcher",
+    "category": "heavy_weapon",
+    "description": "A guided launcher that is excellent against vehicles and deeply awkward against a single running person.",
+    "cost": 4000,
+    "encumbrance": 2,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "black_market",
+    "tags": [
+      "heavy",
+      "anti_vehicle",
+      "explosive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d10",
+      "range": "2000/4000",
+      "magazine": "1",
+      "attribute": "Dex",
+      "ammoType": "missile"
+    },
+    "mechanics": "Can be shoulder-fired without emplacement. Takes a -4 hit penalty against human-sized or smaller targets."
+  },
+  "demo_charge": {
+    "id": "demo_charge",
+    "name": "Demo charge",
+    "sourceName": "Demo Charge",
+    "category": "heavy_weapon",
+    "description": "A shaped demolition pack used by miners, saboteurs, and engineers who need a wall to stop being a wall.",
+    "cost": 250,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "heavy",
+      "explosive",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d10",
+      "range": "20/40",
+      "magazine": "-",
+      "attribute": "None",
+      "ammoType": "none"
+    },
+    "mechanics": "Placed explosive. A demolitions background or Fix-0 can shape the blast to spare most directions."
+  },
+  "railgun": {
+    "id": "railgun",
+    "name": "Vehicle railgun",
+    "sourceName": "Railgun",
+    "category": "heavy_weapon",
+    "description": "A scaled coil weapon for vehicles and fixed mounts. It turns ammunition budgets into hypervelocity spray.",
+    "cost": 8000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "heavy",
+      "suppression",
+      "vehicle_mount"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d8",
+      "range": "4000/8000",
+      "magazine": "20",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    },
+    "mechanics": "Vehicle or fixed-mount weapon. Can suppress by spending double ammunition; each round of fire consumes costly projectile ammunition."
+  },
+  "anti_vehicle_laser": {
+    "id": "anti_vehicle_laser",
+    "name": "Anti-vehicle laser",
+    "sourceName": "Anti-Vehicle Laser",
+    "category": "heavy_weapon",
+    "description": "A hard-target laser optimized for armor, hull skins, and machines that thought distance made them safe.",
+    "cost": 10000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "heavy",
+      "anti_vehicle",
+      "powered",
+      "vehicle_mount"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d10",
+      "range": "2000/4000",
+      "magazine": "15",
+      "attribute": "Dex",
+      "ammoType": "type_b_cell"
+    },
+    "mechanics": "Heavy energy weapon using type B cells. Against vehicles and other hard targets, roll damage twice and use the better result."
+  },
+  "hydra_array": {
+    "id": "hydra_array",
+    "name": "Hydra missile array",
+    "sourceName": "Hydra Array",
+    "category": "heavy_weapon",
+    "description": "A sequenced missile rack that splits fire across targets or hammers one target until luck runs out.",
+    "cost": 20000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "heavy",
+      "suppression",
+      "explosive",
+      "vehicle_mount"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "3d6",
+      "range": "4000/8000",
+      "magazine": "10",
+      "attribute": "Dex",
+      "ammoType": "missile"
+    },
+    "mechanics": "Vehicle or fixed-mount missile array. Assign up to three attack rolls among targets; each hit rolls damage, but only the best damage applies to each target."
+  },
+  "wheatcutter_belt": {
+    "id": "wheatcutter_belt",
+    "name": "Wheatcutter belt",
+    "sourceName": "Wheatcutter Belt",
+    "category": "heavy_weapon",
+    "description": "A vehicle-mounted antipersonnel belt that throws a side-facing storm of fragments.",
+    "cost": 10000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "faction_contact",
+    "tags": [
+      "heavy",
+      "vehicle_mount",
+      "explosive"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "2d12",
+      "range": "10/20",
+      "magazine": "5",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    },
+    "mechanics": "Vehicle-mounted antipersonnel belt. It does not ignore vehicle armor like most heavy weapons and must be reloaded after use."
+  },
+  "vortex_cannon": {
+    "id": "vortex_cannon",
+    "name": "Vortex cannon",
+    "sourceName": "Vortex Cannon",
+    "category": "heavy_weapon",
+    "description": "A gravitic shear cannon too heavy for infantry and too illegal for most manifests.",
+    "cost": 75000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "heavy",
+      "pretech",
+      "vehicle_mount"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "weapon": {
+      "damage": "5d12",
+      "range": "1000/2000",
+      "magazine": "5",
+      "attribute": "Dex",
+      "ammoType": "type_b_cell"
+    },
+    "mechanics": "Vehicle-only pretech gravitic shear weapon. Treat as mission-scale hardware, not personal equipment."
+  },
+  "ammo_20_rounds": {
+    "id": "ammo_20_rounds",
+    "name": "Ammunition pack",
+    "sourceName": "Ammo, 20 rounds",
+    "category": "ammo_power",
+    "description": "A mixed-caliber projectile reload pack standardized for table use rather than real logistics.",
+    "cost": 10,
+    "encumbrance": 1,
+    "techLevel": 2,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "ammo",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "ammo_missile": {
+    "id": "ammo_missile",
+    "name": "Missile reload",
+    "sourceName": "Ammo, missile",
+    "category": "ammo_power",
+    "description": "A reload for man-portable launchers or small vehicle racks. Civilians do not buy these cleanly.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "military",
+    "availability": "black_market",
+    "tags": [
+      "ammo",
+      "explosive",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "power_cell_type_a": {
+    "id": "power_cell_type_a",
+    "name": "Type A power cell",
+    "sourceName": "Power cell, type A",
+    "category": "ammo_power",
+    "description": "The standard small cell used by personal electronics, tools, and many energy weapons.",
+    "cost": 10,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "ammo",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "power_cell_type_b": {
+    "id": "power_cell_type_b",
+    "name": "Type B power cell",
+    "sourceName": "Power cell, type B",
+    "category": "ammo_power",
+    "description": "A larger cell for powered armor, heavy equipment, and vehicle-scale draw.",
+    "cost": 100,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "ammo",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "solar_recharger": {
+    "id": "solar_recharger",
+    "name": "Foldout solar recharger",
+    "sourceName": "Solar recharger",
+    "category": "ammo_power",
+    "description": "A two-meter panel sheet that slowly refills type A cells under decent sunlight.",
+    "cost": 500,
+    "encumbrance": 3,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "powered",
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "manual_charge_generator": {
+    "id": "manual_charge_generator",
+    "name": "Manual charge generator",
+    "sourceName": "Persephone manual charge generator",
+    "category": "ammo_power",
+    "description": "A resistance-bar charger stripped of its banned psychic assumptions. Strong users can crank a type A cell full with time and sweat.",
+    "cost": 250,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "black_slab": {
+    "id": "black_slab",
+    "name": "Black slab",
+    "sourceName": "Black slab",
+    "category": "computing",
+    "description": "A hacker dataslab with intrusion hardware hidden in a civilian shell. Security teams confiscate these on sight.",
+    "cost": 10000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "black_market",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "data_phase_tap": {
+    "id": "data_phase_tap",
+    "name": "Data phase tap",
+    "sourceName": "Data phase tap",
+    "category": "computing",
+    "description": "A handheld scanner and field tap for finding data lines through walls without opening the wall first.",
+    "cost": 5000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "data_protocol": {
+    "id": "data_protocol",
+    "name": "Local data protocol pack",
+    "sourceName": "Data protocol",
+    "category": "computing",
+    "description": "A black-market bundle of manuals, dumps, and schema notes for one world's locked-down systems.",
+    "cost": 1000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "dataslab": {
+    "id": "dataslab",
+    "name": "Dataslab",
+    "sourceName": "Dataslab",
+    "category": "computing",
+    "description": "A folding personal computer and comm surface compatible with most station grids.",
+    "cost": 300,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "line_shunt": {
+    "id": "line_shunt",
+    "name": "Line shunt",
+    "sourceName": "Line shunt",
+    "category": "computing",
+    "description": "A single-use adhesive tap that lets a hacker bridge a nearby line through casing or wall material.",
+    "cost": 100,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "consumable",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "remote_link_unit": {
+    "id": "remote_link_unit",
+    "name": "Remote link unit",
+    "sourceName": "Remote link unit",
+    "category": "computing",
+    "description": "A hardened one-time-pad relay pair for keeping a connection alive while the operator stays elsewhere.",
+    "cost": 250,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "computing",
+      "communications"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "stiletto_charge": {
+    "id": "stiletto_charge",
+    "name": "Stiletto charge",
+    "sourceName": "Stiletto charge",
+    "category": "computing",
+    "description": "A pretech intrusion consumable used to burn a narrow opening through hardened data security.",
+    "cost": null,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "pretech",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "storage_unit": {
+    "id": "storage_unit",
+    "name": "Hardened storage unit",
+    "sourceName": "Storage unit",
+    "category": "computing",
+    "description": "A rugged data vault for moving sensitive archives without trusting local grids.",
+    "cost": 500,
+    "encumbrance": 3,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "tightbeam_link_unit": {
+    "id": "tightbeam_link_unit",
+    "name": "Tightbeam link unit",
+    "sourceName": "Tightbeam link unit",
+    "category": "computing",
+    "description": "A directional data link for quiet point-to-point communication when broadcast logs are a liability.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "computing",
+      "communications"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "comm_server": {
+    "id": "comm_server",
+    "name": "Portable comm server",
+    "sourceName": "Comm server",
+    "category": "communications",
+    "description": "A base unit that creates an encrypted local comm net for teams operating away from station infrastructure.",
+    "cost": 1000,
+    "encumbrance": 3,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "station_only",
+    "tags": [
+      "communications"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "compad": {
+    "id": "compad",
+    "name": "Compad",
+    "sourceName": "Compad",
+    "category": "communications",
+    "description": "A small personal comm device for local networks, ship channels, and station services.",
+    "cost": 100,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "communications",
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "field_radio": {
+    "id": "field_radio",
+    "name": "Field radio",
+    "sourceName": "Field radio",
+    "category": "communications",
+    "description": "A rugged voice unit that keeps working where consumer grid access does not.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "communications",
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "translator_torc": {
+    "id": "translator_torc",
+    "name": "Translator torc",
+    "sourceName": "Translator torc",
+    "category": "communications",
+    "description": "A collar or clip translator loaded with common human language models and enough accent drift to embarrass itself.",
+    "cost": 200,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "communications"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "bioscanner": {
+    "id": "bioscanner",
+    "name": "Bioscanner",
+    "sourceName": "Bioscanner",
+    "category": "tools_medical",
+    "description": "A handheld diagnostic scanner for toxins, internal injury, infection markers, and quick genetic reads.",
+    "cost": 300,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "medical",
+      "tool",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "lazarus_patch": {
+    "id": "lazarus_patch",
+    "name": "Lazarus patch",
+    "sourceName": "Lazarus patch",
+    "category": "tools_medical",
+    "description": "A one-use trauma compress with sealants, stabilizers, and a diagnostic bite. It buys seconds when seconds matter.",
+    "cost": 30,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "medkit": {
+    "id": "medkit",
+    "name": "Medkit",
+    "sourceName": "Medkit",
+    "category": "tools_medical",
+    "description": "A field medical kit with stims, spray bandage, sutures, and enough instructions to keep a trained hand moving.",
+    "cost": 100,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "medical",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "metatool": {
+    "id": "metatool",
+    "name": "Metatool",
+    "sourceName": "Metatool",
+    "category": "tools_medical",
+    "description": "A compact repair wand with cutters, drivers, sealers, diagnostics, and enough adapters to hate losing.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "tool",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "spare_parts": {
+    "id": "spare_parts",
+    "name": "Spare parts",
+    "sourceName": "Spare parts",
+    "category": "tools_medical",
+    "description": "A standardized repair bundle of seals, couplers, contacts, fasteners, and sacrificial electronics.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "tool",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "tailored_antiallergens": {
+    "id": "tailored_antiallergens",
+    "name": "Tailored antiallergens",
+    "sourceName": "Tailored antiallergens",
+    "category": "tools_medical",
+    "description": "Cheap local counteragents for pollen, hab mold, food additives, and the biology that makes visitors miserable.",
+    "cost": 5,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "toolkit_postech": {
+    "id": "toolkit_postech",
+    "name": "Postech toolkit",
+    "sourceName": "Toolkit/Postech",
+    "category": "tools_medical",
+    "description": "A full TL4 repair kit for ship, station, and field machinery.",
+    "cost": 300,
+    "encumbrance": 3,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "toolkit_pretech": {
+    "id": "toolkit_pretech",
+    "name": "Pretech toolkit",
+    "sourceName": "Toolkit/Pretech",
+    "category": "tools_medical",
+    "description": "A compact high-grade tool suite for ancient or classified hardware. Most owners do not admit they own it.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "faction_contact",
+    "tags": [
+      "tool",
+      "pretech"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "bezoar_stim": {
+    "id": "bezoar_stim",
+    "name": "Bezoar infection purge",
+    "sourceName": "Bezoar",
+    "category": "pharmaceutical",
+    "description": "A broad-spectrum infection stim used when diagnosis is slower than the fever.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "pharmaceutical",
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 1
+      },
+      "effect": "Attempts to cure many infectious diseases within 24 hours; some infections are resistant.",
+      "strainCost": 1,
+      "duration": "24 hours"
+    }
+  },
+  "brainwave_stim": {
+    "id": "brainwave_stim",
+    "name": "Brainwave psionic stim",
+    "sourceName": "Brainwave",
+    "category": "restricted_tech",
+    "description": "Removed psychic-only pharmaceutical kept as a GM reference for quarantined legacy material.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "removed",
+    "availability": "removed",
+    "tags": [
+      "pharmaceutical",
+      "pretech"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "gmOnly": true,
+      "spawnable": false
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 2
+      },
+      "effect": "Psychic-only effect removed from the Persephone player catalog.",
+      "strainCost": 4,
+      "duration": "1 hour"
+    }
+  },
+  "hush_stim": {
+    "id": "hush_stim",
+    "name": "Hush compliance sedative",
+    "sourceName": "Hush",
+    "category": "pharmaceutical",
+    "description": "A heavy neurotranquilizer that leaves a subject docile but awake. It is legal only in tightly controlled medical or security contexts.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "pharmaceutical",
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 0
+      },
+      "effect": "Immobilized or willing targets become responsive only to simple low-stress commands.",
+      "duration": "1 hour plus 3 hours per Heal level"
+    }
+  },
+  "lift_stim": {
+    "id": "lift_stim",
+    "name": "Lift trauma stim",
+    "sourceName": "Lift",
+    "category": "pharmaceutical",
+    "description": "A common recovery stim that accelerates healing after the patient is stable enough to benefit from it.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "pharmaceutical",
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 0
+      },
+      "effect": "After five minutes of rest, heals 1d8 plus the applier's Heal skill. Later same-day applications require higher Heal skill.",
+      "strainCost": 1,
+      "duration": "5 minutes"
+    }
+  },
+  "pretech_cosmetic": {
+    "id": "pretech_cosmetic",
+    "name": "Pretech cosmetic stim",
+    "sourceName": "Pretech Cosmetic",
+    "category": "pharmaceutical",
+    "description": "A luxury pretech stim substrate that happens to mend tissue while improving skin, scent, or grooming.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "pharmaceutical",
+      "medical",
+      "pretech",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "pharmaceutical": {
+      "effect": "Heals 1d6 lost hit points and provides minor cosmetic or hygiene effects.",
+      "strainCost": 1
+    }
+  },
+  "psych_stim": {
+    "id": "psych_stim",
+    "name": "Psych combat stim",
+    "sourceName": "Psych",
+    "category": "pharmaceutical",
+    "description": "A reckless confidence drug common in black-market military surplus. It makes users brave, capable, and dangerously stupid.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "pharmaceutical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "effect": "Morale becomes 12 and skill checks gain +1, but the user ignores cover and cannot back out after learning a check difficulty.",
+      "strainCost": 1,
+      "overdoseRisk": "Highly psychologically addictive.",
+      "duration": "15 minutes"
+    }
+  },
+  "reverie_stim": {
+    "id": "reverie_stim",
+    "name": "Reverie combat sedative",
+    "sourceName": "Reverie",
+    "category": "pharmaceutical",
+    "description": "A dangerous combat drug that strips panic and urgency alike, leaving a calm shooter with a terrible survival instinct.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "pharmaceutical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 1
+      },
+      "effect": "Allows precision attacks by skill check, but slows action timing and doubles incoming damage.",
+      "strainCost": 2,
+      "duration": "10 minutes"
+    }
+  },
+  "squeal_stim": {
+    "id": "squeal_stim",
+    "name": "Squeal interrogation stim",
+    "sourceName": "Squeal",
+    "category": "pharmaceutical",
+    "description": "An unreliable interrogation drug that forces factual answers but cannot make a subject reason for the interrogator.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "pharmaceutical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 1
+      },
+      "effect": "Immobilized or willing targets answer factual questions for a short period; unwilling targets may resist one topic.",
+      "duration": "5 minutes"
+    }
+  },
+  "tsunami_stim": {
+    "id": "tsunami_stim",
+    "name": "Tsunami assault stim",
+    "sourceName": "Tsunami",
+    "category": "pharmaceutical",
+    "description": "A short-duration assault stim for expendable troops and desperate boarders. The crash is often worse than the fight.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "black_market",
+    "tags": [
+      "pharmaceutical",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "pharmaceutical": {
+      "requiredSkill": {
+        "skill": "Heal",
+        "minimumLevel": 1
+      },
+      "effect": "Morale becomes 12, gain 10 temporary hit points and +2 to hit rolls, then lose the temporary hit points at expiry.",
+      "strainCost": 2,
+      "duration": "10 minutes"
+    }
+  },
+  "atmofilter": {
+    "id": "atmofilter",
+    "name": "Atmofilter mask",
+    "sourceName": "Atmofilter",
+    "category": "field_equipment",
+    "description": "A face mask and belt feed that filters common toxins or draws from a small oxygen bottle.",
+    "cost": 100,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "backpack_primitive": {
+    "id": "backpack_primitive",
+    "name": "Plain backpack",
+    "sourceName": "Backpack",
+    "category": "field_equipment",
+    "description": "A simple pack, sack, or frame for carrying stowed gear.",
+    "cost": 5,
+    "encumbrance": 1,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "backpack_smart": {
+    "id": "backpack_smart",
+    "name": "Smart load pack",
+    "sourceName": "Backpack",
+    "category": "field_equipment",
+    "description": "A TL4 pack with load-balancing straps, vacuum-tolerant fabric, and enough pockets to hide mistakes.",
+    "cost": 50,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "binoculars_optical": {
+    "id": "binoculars_optical",
+    "name": "Optical binoculars",
+    "sourceName": "Binoculars",
+    "category": "field_equipment",
+    "description": "Simple magnifying optics for scouts who do not want another battery problem.",
+    "cost": 20,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "binoculars_smart": {
+    "id": "binoculars_smart",
+    "name": "Smart binoculars",
+    "sourceName": "Binoculars",
+    "category": "field_equipment",
+    "description": "Powered high-magnification optics with low-light support and local overlay hooks.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "climbing_harness": {
+    "id": "climbing_harness",
+    "name": "Climbing harness",
+    "sourceName": "Climbing harness",
+    "category": "field_equipment",
+    "description": "A strap, piton, and line kit for hullwork, cliffs, shafts, and elevator cores.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "glowbug": {
+    "id": "glowbug",
+    "name": "Glowbug",
+    "sourceName": "Glowbug",
+    "category": "field_equipment",
+    "description": "A palm-sized adhesive light disc that keeps a room lit long enough to regret entering it.",
+    "cost": 5,
+    "encumbrance": "*",
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "grapnel_launcher": {
+    "id": "grapnel_launcher",
+    "name": "Grapnel launcher",
+    "sourceName": "Grapnel launcher",
+    "category": "field_equipment",
+    "description": "A powered line launcher for vertical movement, hull access, and hauling loads across bad gaps.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "grav_chute_postech": {
+    "id": "grav_chute_postech",
+    "name": "Postech grav chute",
+    "sourceName": "Grav chute",
+    "category": "field_equipment",
+    "description": "A one-use fall modulator for drops up to local-atmosphere limits.",
+    "cost": 300,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "grav_chute_orbital": {
+    "id": "grav_chute_orbital",
+    "name": "Orbital grav chute",
+    "sourceName": "Grav chute",
+    "category": "field_equipment",
+    "description": "A pretech one-use chute rated for absurd descents that postech insurers refuse to describe.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "survival",
+      "powered",
+      "pretech",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "grav_harness": {
+    "id": "grav_harness",
+    "name": "Grav harness",
+    "sourceName": "Grav harness",
+    "category": "field_equipment",
+    "description": "A high-drain flight harness that moves a person awkwardly through open air or low-g service spaces.",
+    "cost": 5000,
+    "encumbrance": 3,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "survival",
+      "powered",
+      "pretech"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "instapanel": {
+    "id": "instapanel",
+    "name": "Instapanel",
+    "sourceName": "Instapanel",
+    "category": "field_equipment",
+    "description": "A compressed ceraplast panel that expands from a cube into a foldable sheet before hardening.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "low_light_goggles": {
+    "id": "low_light_goggles",
+    "name": "Low-light goggles",
+    "sourceName": "Low-light goggles",
+    "category": "field_equipment",
+    "description": "Powered optics that turn dim service tunnels and night-side rock into workable monochrome sightlines.",
+    "cost": 200,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "navcomp": {
+    "id": "navcomp",
+    "name": "Field navcomp",
+    "sourceName": "Navcomp",
+    "category": "field_equipment",
+    "description": "A rugged navigation computer for routes, local survey data, and not dying because the map was optimistic.",
+    "cost": 500,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "portabox": {
+    "id": "portabox",
+    "name": "Portabox",
+    "sourceName": "Portabox",
+    "category": "field_equipment",
+    "description": "A compact sealed container for tools, samples, evidence, or whatever the crew should not spill.",
+    "cost": 50,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "pressure_tent": {
+    "id": "pressure_tent",
+    "name": "Pressure tent",
+    "sourceName": "Pressure tent",
+    "category": "field_equipment",
+    "description": "A bulky shelter for thin atmospheres, toxic weather, and nights spent regretting the landing site.",
+    "cost": 100,
+    "encumbrance": 4,
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "survival",
+      "vacc"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "rations_1_day": {
+    "id": "rations_1_day",
+    "name": "Field ration",
+    "sourceName": "Rations, 1 day",
+    "category": "food_water",
+    "description": "Shelf-stable calories and salts for one hard day outside the ship's meal cycle.",
+    "cost": 5,
+    "encumbrance": 1,
+    "techLevel": 1,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "survival",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 day",
+      "days": 1,
+      "quality": "survival"
+    }
+  },
+  "rope_plain": {
+    "id": "rope_plain",
+    "name": "Plain rope",
+    "sourceName": "Rope, 20 meters",
+    "category": "field_equipment",
+    "description": "Twenty meters of low-tech line. Cheap, bulky, and still useful.",
+    "cost": 4,
+    "encumbrance": 2,
+    "techLevel": 0,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "rope_smartline": {
+    "id": "rope_smartline",
+    "name": "Smartline rope",
+    "sourceName": "Rope, 20 meters",
+    "category": "field_equipment",
+    "description": "Twenty meters of compact high-grade line that packs better than old fiber.",
+    "cost": 40,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "scout_report": {
+    "id": "scout_report",
+    "name": "Scout report",
+    "sourceName": "Scout report",
+    "category": "field_equipment",
+    "description": "A local hazard and route packet compiled by someone who hopefully went there first.",
+    "cost": 200,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "survival",
+      "computing"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "survey_scanner": {
+    "id": "survey_scanner",
+    "name": "Survey scanner",
+    "sourceName": "Survey scanner",
+    "category": "field_equipment",
+    "description": "A sensor block for quick terrain, atmosphere, radiation, and sample reads.",
+    "cost": 250,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "powered",
+      "radiation"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "radiation": {
+      "effect": "Can identify elevated local radiation hazards but does not reduce exposure."
+    }
+  },
+  "survival_kit": {
+    "id": "survival_kit",
+    "name": "Survival kit",
+    "sourceName": "Survival kit",
+    "category": "field_equipment",
+    "description": "A belt kit with fire, filter, flare, blade, tarp, glowbug, beacon, and local hazard notes.",
+    "cost": null,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "telescoping_pole": {
+    "id": "telescoping_pole",
+    "name": "Telescoping pole",
+    "sourceName": "Telescoping pole",
+    "category": "field_equipment",
+    "description": "A baton-sized pole that locks into a long rigid support, probe, or ugly improvised club.",
+    "cost": null,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "thermal_flare": {
+    "id": "thermal_flare",
+    "name": "Thermal flare",
+    "sourceName": "Thermal flare",
+    "category": "field_equipment",
+    "description": "A bright flare that can burn as a signal or launch in an awkward arc.",
+    "cost": null,
+    "encumbrance": "*",
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "consumable"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "trade_goods": {
+    "id": "trade_goods",
+    "name": "Trade goods",
+    "sourceName": "Trade goods",
+    "category": "trade_good",
+    "description": "A kilo of useful TL4 small goods: lighters, glowbugs, antibiotics, simple tools, and things isolated markets want.",
+    "cost": 100,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "trade"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 kg",
+      "quality": "standard"
+    }
+  },
+  "trade_metals": {
+    "id": "trade_metals",
+    "name": "Trade metals",
+    "sourceName": "Trade metals",
+    "category": "trade_good",
+    "description": "A kilo of gold, platinum, synthetic gems, or other portable value useful where credits mean less than weight.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "trade"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 kg",
+      "quality": "luxury"
+    }
+  },
+  "vacc_fresher": {
+    "id": "vacc_fresher",
+    "name": "Vacc fresher",
+    "sourceName": "Vacc fresher",
+    "category": "field_equipment",
+    "description": "A portable atmospheric compressor and scrubber for refreshing suit oxygen bottles from usable air.",
+    "cost": null,
+    "encumbrance": 3,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "station_only",
+    "tags": [
+      "survival",
+      "vacc",
+      "tool"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "vacc_suit": {
+    "id": "vacc_suit",
+    "name": "Standard vacc suit",
+    "sourceName": "Vacc suit",
+    "category": "field_equipment",
+    "description": "A TL4 pressure suit for vacuum and hostile surfaces. It has basic radiation protection, radio, self-sealing fabric, and the usual movement penalty.",
+    "cost": null,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "vacc",
+      "powered",
+      "radiation"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "armor": {
+      "armorClass": 13,
+      "armorType": "street"
+    },
+    "radiation": {
+      "effect": "Protects against ordinary cosmic background exposure but not serious radiation events."
+    },
+    "mechanics": "Functions as AC 13 but cannot be worn with other armor. Applies -2 to movement-based hit rolls and skill checks unless the wearer has substantial zero-g/vacc experience. Uses one type A cell per 12 hours and can suffer suit tears from edged hits."
+  },
+  "vacc_skin": {
+    "id": "vacc_skin",
+    "name": "Vacc skin",
+    "sourceName": "Vacc skin",
+    "category": "field_equipment",
+    "description": "A TL5 skin-tight vacuum suit that can be worn with armor, recycles air and waste, and avoids the bulk of a standard suit.",
+    "cost": null,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "survival",
+      "vacc",
+      "powered",
+      "pretech",
+      "radiation"
+    ],
+    "source": "persephone_reflavor",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    },
+    "radiation": {
+      "effect": "Protects against ordinary cosmic background exposure but not serious radiation events."
+    },
+    "mechanics": "Can be worn with armor and gives no AC by itself. It avoids the standard vacc suit movement penalty, recycles atmosphere and waste, and uses one type A cell per 24 hours. It can still suffer suit tears."
+  },
+  "kibble_day": {
+    "id": "kibble_day",
+    "name": "Kibble day",
+    "sourceName": "Persephone ship kibble",
+    "category": "food_water",
+    "description": "One day of ship-grade calories from the shared stores. Nutritious, joyless, and optimized for storage more than morale.",
+    "cost": 3,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 day",
+      "days": 1,
+      "quality": "standard"
+    }
+  },
+  "sludge_standard": {
+    "id": "sludge_standard",
+    "name": "Standard sludge bulb",
+    "sourceName": "Persephone sludge",
+    "category": "food_water",
+    "description": "A sealed bulb of processed protein slurry used by stations that have solved survival but not taste.",
+    "cost": 2,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 day",
+      "quality": "standard",
+      "days": 1
+    }
+  },
+  "sludge_recycled": {
+    "id": "sludge_recycled",
+    "name": "Recycled sludge bulb",
+    "sourceName": "Persephone recycled sludge",
+    "category": "food_water",
+    "description": "A cheaper slurry batch with a processing history nobody wants printed on the label.",
+    "cost": 1,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 day",
+      "quality": "survival",
+      "days": 1
+    }
+  },
+  "sludge_fortified": {
+    "id": "sludge_fortified",
+    "name": "Fortified sludge bulb",
+    "sourceName": "Persephone fortified sludge",
+    "category": "food_water",
+    "description": "Sludge with extra minerals, anti-nausea additives, and a mild binder for crews living near reactor or hull work.",
+    "cost": 5,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "radiation",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "radiation": {
+      "effect": "Supports recovery routines after radiation exposure but does not reduce Rads by itself."
+    },
+    "logistics": {
+      "units": "1 day",
+      "quality": "standard",
+      "days": 1
+    }
+  },
+  "fresh_produce_crate": {
+    "id": "fresh_produce_crate",
+    "name": "Fresh produce crate",
+    "sourceName": "Persephone fresh produce",
+    "category": "food_water",
+    "description": "A fragile crate of real greens, fruiting crops, or algae cuts. It is morale, leverage, and spoilage risk in one box.",
+    "cost": 100,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "food",
+      "trade",
+      "consumable",
+      "radiation"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "7 crew-days",
+      "quality": "fresh",
+      "days": 7
+    },
+    "radiation": {
+      "effect": "During proper downtime and medical care, fresh produce can support GM-approved Rad recovery. It does not reduce Rads by itself."
+    },
+    "mechanics": "Track as crew-days rather than individual meals. Spoils or loses value quickly without refrigeration or active ship stores."
+  },
+  "clean_water_canister": {
+    "id": "clean_water_canister",
+    "name": "Clean water canister",
+    "sourceName": "Persephone clean water",
+    "category": "food_water",
+    "description": "A sealed water canister with traceable purity tags. Worth more than credits in the wrong habitat.",
+    "cost": 10,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "water",
+      "survival",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "logistics": {
+      "units": "1 day",
+      "waterLiters": 5,
+      "quality": "standard",
+      "days": 1
+    }
+  },
+  "iodine_rad_salt_pack": {
+    "id": "iodine_rad_salt_pack",
+    "name": "Iodine rad-salt pack",
+    "sourceName": "Persephone anti-rad ration additive",
+    "category": "food_water",
+    "description": "A ration additive used before known exposure windows. It helps protect specific organs but is not treatment for chronic radiation poisoning.",
+    "cost": 20,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "food",
+      "radiation",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "radiation": {
+      "effect": "Preventive support for specific radiation exposure scenarios; only modifies Rads if a scenario rule says it does."
+    },
+    "logistics": {
+      "units": "1 exposure-prep day",
+      "quality": "standard",
+      "days": 1
+    }
+  }
+}

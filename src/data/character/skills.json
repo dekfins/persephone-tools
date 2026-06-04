@@ -1,0 +1,97 @@
+{
+  "Administer": {
+    "name": "Administer",
+    "description": "Handle bureaucracy, organizations, logistics, legal process, and formal systems.",
+    "defaultAttribute": "int"
+  },
+  "Connect": {
+    "name": "Connect",
+    "description": "Find people, favors, contacts, and useful introductions in a social network.",
+    "defaultAttribute": "cha"
+  },
+  "Exert": {
+    "name": "Exert",
+    "description": "Climb, swim, run, lift, jump, endure exertion, and perform demanding physical work.",
+    "defaultAttribute": "str"
+  },
+  "Fix": {
+    "name": "Fix",
+    "description": "Repair, sabotage, jury-rig, maintain, and understand machines or technical hardware.",
+    "defaultAttribute": "int"
+  },
+  "Heal": {
+    "name": "Heal",
+    "description": "Stabilize injuries, treat disease, use medical gear, and understand biological hazards.",
+    "defaultAttribute": "int"
+  },
+  "Know": {
+    "name": "Know",
+    "description": "Recall facts, reason from education, research records, and understand academic fields.",
+    "defaultAttribute": "int"
+  },
+  "Lead": {
+    "name": "Lead",
+    "description": "Command groups, manage morale, coordinate crews, and impose discipline under stress.",
+    "defaultAttribute": "cha"
+  },
+  "Notice": {
+    "name": "Notice",
+    "description": "Spot ambushes, read details, detect hidden threats, and stay aware under pressure.",
+    "defaultAttribute": "wis"
+  },
+  "Perform": {
+    "name": "Perform",
+    "description": "Create, entertain, persuade through art, and handle performance-facing work.",
+    "defaultAttribute": "cha"
+  },
+  "Pilot": {
+    "name": "Pilot",
+    "description": "Fly, drive, dock, evade, and operate vehicles or spacecraft under difficult conditions.",
+    "defaultAttribute": "dex"
+  },
+  "Program": {
+    "name": "Program",
+    "description": "Write code, breach systems, handle security, and understand digital infrastructure.",
+    "defaultAttribute": "int"
+  },
+  "Punch": {
+    "name": "Punch",
+    "description": "Fight unarmed, grapple, brawl, and use natural weapons or close body leverage.",
+    "defaultAttribute": "str"
+  },
+  "Shoot": {
+    "name": "Shoot",
+    "description": "Use ranged weapons, handle firefights, aim under stress, and judge firing conditions.",
+    "defaultAttribute": "dex"
+  },
+  "Sneak": {
+    "name": "Sneak",
+    "description": "Move quietly, hide, infiltrate, conceal objects, and bypass attention.",
+    "defaultAttribute": "dex"
+  },
+  "Stab": {
+    "name": "Stab",
+    "description": "Fight with melee weapons, thrown weapons, close weapons, and direct violence.",
+    "defaultAttribute": "str"
+  },
+  "Survive": {
+    "name": "Survive",
+    "description": "Navigate hostile terrain, forage, handle wilderness threats, and endure exposure.",
+    "defaultAttribute": "wis"
+  },
+  "Talk": {
+    "name": "Talk",
+    "description": "Persuade, deceive, negotiate, read a conversation, and handle direct social pressure.",
+    "defaultAttribute": "cha"
+  },
+  "Trade": {
+    "name": "Trade",
+    "description": "Buy, sell, appraise, haggle, evaluate markets, and manage commercial deals.",
+    "defaultAttribute": "cha"
+  },
+  "Work": {
+    "name": "Work",
+    "description": "Practice a profession, craft, labor specialty, or practical civilian trade.",
+    "defaultAttribute": "int"
+  }
+}

@@ -9,7 +9,7 @@
     <PlayerDashboardPanels />
   {:else}
     <div class="terminal-alert error" style="margin-top: 4rem;">
-      ACCESS DENIED: CREW AUTHORIZATION REQUIRED
+      ACCESS DENIED
     </div>
   {/if}
 </div>

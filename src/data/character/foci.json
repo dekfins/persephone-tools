@@ -1,0 +1,183 @@
+{
+  "Alert": {
+    "name": "Alert",
+    "category": "noncombat",
+    "description": "Heightened awareness and fast reactions.",
+    "bonusSkill": { "type": "skill", "value": "Notice" },
+    "level1": "Gain Notice. Avoid surprise and execution attacks, and roll initiative twice.",
+    "level2": "Act first unless another participant is equally alert."
+  },
+  "Armsman": {
+    "name": "Armsman",
+    "category": "combat",
+    "description": "Training with melee and thrown weapons.",
+    "bonusSkill": { "type": "skill", "value": "Stab" },
+    "level1": "Gain Stab. Ready melee or thrown weapons quickly and add Stab to damage or Shock.",
+    "level2": "Primitive melee and thrown weapons overcome advanced armor better; melee misses still deal minor damage."
+  },
+  "Assassin": {
+    "name": "Assassin",
+    "category": "combat",
+    "description": "Sudden murder and concealed weapons.",
+    "bonusSkill": { "type": "skill", "value": "Sneak" },
+    "level1": "Gain Sneak. Hide a small weapon from routine detection and point-blank surprise shots cannot miss.",
+    "level2": "Move as part of an execution attack before and after the strike."
+  },
+  "Authority": {
+    "name": "Authority",
+    "category": "noncombat",
+    "description": "Natural command presence.",
+    "bonusSkill": { "type": "skill", "value": "Lead" },
+    "level1": "Gain Lead. NPCs are more likely to accept orders when the situation supports it.",
+    "level2": "Once per scene, turn a willing ally's failed morale or mental-pressure check into success."
+  },
+  "Close Combatant": {
+    "name": "Close Combatant",
+    "category": "combat",
+    "description": "Reliable performance in close quarters.",
+    "bonusSkill": { "type": "special", "value": "Any Combat" },
+    "level1": "Gain any combat skill. Ignore most penalties for fighting in cramped or chaotic melee range.",
+    "level2": "Prevent adjacent foes from easily withdrawing and improve close-range threat control."
+  },
+  "Connected": {
+    "name": "Connected",
+    "category": "noncombat",
+    "description": "Broad personal networks and favors.",
+    "bonusSkill": { "type": "skill", "value": "Connect" },
+    "level1": "Gain Connect. Find contacts or useful introductions in plausible places.",
+    "level2": "Call in stronger favors, introductions, or local help once per session."
+  },
+  "Die Hard": {
+    "name": "Die Hard",
+    "category": "combat",
+    "description": "Unusual toughness and survival instinct.",
+    "level1": "Gain extra maximum hit points every level and stabilize automatically from most mortal wounds.",
+    "level2": "Once per day, remain at one hit point instead of dropping to zero from most injuries."
+  },
+  "Diplomat": {
+    "name": "Diplomat",
+    "category": "noncombat",
+    "description": "Negotiation, languages, and social pressure.",
+    "bonusSkill": { "type": "skill", "value": "Talk" },
+    "level1": "Gain Talk. Speak common sector languages and reroll 1s on diplomacy checks.",
+    "level2": "Once per session, improve an intelligent NPC's reaction after brief conversation."
+  },
+  "Gunslinger": {
+    "name": "Gunslinger",
+    "category": "combat",
+    "description": "Gifted ranged weapon handling.",
+    "bonusSkill": { "type": "skill", "value": "Shoot" },
+    "level1": "Gain Shoot. Ready ranged weapons quickly and add Shoot to ranged damage.",
+    "level2": "Reload quickly once per round and deal minor damage even on missed Shoot attacks."
+  },
+  "Hacker": {
+    "name": "Hacker",
+    "category": "noncombat",
+    "description": "Digital intrusion and protocol fluency.",
+    "bonusSkill": { "type": "skill", "value": "Program" },
+    "level1": "Gain Program. Roll 3d6 and drop the lowest die for hacking attempts.",
+    "level2": "Extend hack duration and adapt quickly to unfamiliar systems."
+  },
+  "Healer": {
+    "name": "Healer",
+    "category": "noncombat",
+    "description": "Field medicine and trauma care.",
+    "bonusSkill": { "type": "skill", "value": "Heal" },
+    "level1": "Gain Heal. Improve mundane medical care and post-combat treatment.",
+    "level2": "Restore more damage with medical attention and handle severe injuries better."
+  },
+  "Henchkeeper": {
+    "name": "Henchkeeper",
+    "category": "noncombat",
+    "description": "Recruitment and management of loyal helpers.",
+    "bonusSkill": { "type": "skill", "value": "Lead" },
+    "level1": "Gain Lead. Maintain a small group of useful followers.",
+    "level2": "Followers become more capable, reliable, and numerous."
+  },
+  "Ironhide": {
+    "name": "Ironhide",
+    "category": "combat",
+    "description": "Innate defensive resilience.",
+    "level1": "Gain an innate armor class based on level that does not stack with worn armor.",
+    "level2": "Ignore unarmed attacks and primitive weaponry as if protected by advanced armor."
+  },
+  "Savage Fray": {
+    "name": "Savage Fray",
+    "category": "combat",
+    "description": "Melee havoc against nearby enemies.",
+    "bonusSkill": { "type": "skill", "value": "Stab" },
+    "level1": "Gain Stab. Adjacent enemies you did not attack can suffer your weapon's Shock damage.",
+    "level2": "After the first melee hit each round, other melee attackers automatically miss."
+  },
+  "Shocking Assault": {
+    "name": "Shocking Assault",
+    "category": "combat",
+    "description": "Overwhelming melee pressure.",
+    "bonusSkill": { "type": "special", "value": "Punch or Stab" },
+    "level1": "Gain Punch or Stab. Your weapon's Shock treats targets as AC 10 when it can harm them.",
+    "level2": "Increase Shock damage and make nearby enemies suffer more from your attacks."
+  },
+  "Sniper": {
+    "name": "Sniper",
+    "category": "combat",
+    "description": "Precision fire from concealment or distance.",
+    "bonusSkill": { "type": "skill", "value": "Shoot" },
+    "level1": "Gain Shoot. Improve accuracy and lethality for carefully aimed ranged attacks.",
+    "level2": "Make aimed shots more dangerous and harder for targets to survive."
+  },
+  "Specialist": {
+    "name": "Specialist",
+    "category": "noncombat",
+    "description": "Exceptional competence with one non-combat skill.",
+    "bonusSkill": { "type": "special", "value": "Any Non-Combat" },
+    "level1": "Gain a non-combat skill. Roll 3d6 and drop the lowest die with that skill.",
+    "level2": "Once per scene, reroll a failed check with the specialized skill."
+  },
+  "Star Captain": {
+    "name": "Star Captain",
+    "category": "noncombat",
+    "description": "Command talent aboard ships.",
+    "bonusSkill": { "type": "skill", "value": "Lead" },
+    "level1": "Gain Lead. Improve shipboard command and crew coordination.",
+    "level2": "Once per scene, improve an allied ship action through command."
+  },
+  "Starfarer": {
+    "name": "Starfarer",
+    "category": "noncombat",
+    "description": "Spacer instincts and shipboard familiarity.",
+    "bonusSkill": { "type": "skill", "value": "Pilot" },
+    "level1": "Gain Pilot. Handle common shipboard hazards and spacer tasks more reliably.",
+    "level2": "React better to ship emergencies and difficult space travel problems."
+  },
+  "Tinker": {
+    "name": "Tinker",
+    "category": "noncombat",
+    "description": "Equipment modification and maintenance.",
+    "bonusSkill": { "type": "skill", "value": "Fix" },
+    "level1": "Gain Fix. Maintain more mods and reduce ship and gear mod costs.",
+    "level2": "Treat Fix as higher for mods and reduce advanced mod salvage needs."
+  },
+  "Unarmed Combatant": {
+    "name": "Unarmed Combatant",
+    "category": "combat",
+    "description": "Dangerous empty-hand fighting.",
+    "bonusSkill": { "type": "skill", "value": "Punch" },
+    "level1": "Gain Punch. Improve unarmed damage by Punch level and gain Shock at Punch-1 or better.",
+    "level2": "Unarmed attacks count as advanced weapons and missed Punch attacks still deal minor damage."
+  },
+  "Unique Gift": {
+    "name": "Unique Gift",
+    "category": "noncombat",
+    "description": "A GM-approved unusual aptitude or capability.",
+    "level1": "Define a special ability with the GM that is stronger than ordinary training but limited in scope.",
+    "level2": "Improve or broaden the approved special ability with GM consent."
+  },
+  "Wanderer": {
+    "name": "Wanderer",
+    "category": "noncombat",
+    "description": "Travel, survival, and adaptation.",
+    "bonusSkill": { "type": "skill", "value": "Survive" },
+    "level1": "Gain Survive. Travel safely and adapt to hostile environments more easily.",
+    "level2": "Protect companions and handle extreme travel hazards more reliably."
+  }
+}

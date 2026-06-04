@@ -1,12 +1,42 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
   import { crewState } from '../../lib/states/crewState.svelte';
+  import type { ItemRecord } from '../../lib/types';
+  import EquipmentItemList, { type EquipmentItemListRow } from '../shared/EquipmentItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+
+  let shipInventoryRows = $derived(dbState.shipInventory.map(toEquipmentRow));
 
   function moveToPlayer(itemId: string) {
     dbState.transferItem(itemId, dbState.activeUserId);
   }
+
+  function toEquipmentRow(item: ItemRecord): EquipmentItemListRow {
+    return {
+      id: item.id,
+      equipmentId: item.equipment_id,
+      name: item.name,
+      category: item.category,
+      rarity: item.rarity,
+      quantity: item.quantity,
+      mass: item.mass
+    };
+  }
 </script>
+
+{#snippet itemActions(item: EquipmentItemListRow)}
+  <div class="item-actions">
+    {#if dbState.activeCharacter?.role === 'GM'}
+      <button class="btn-action-red btn-compact" onclick={() => dbState.deleteItem(item.id)}>
+        X
+      </button>
+    {/if}
+
+    <button class="btn-action btn-compact" onclick={() => moveToPlayer(item.id)}>
+      TAKE
+    </button>
+  </div>
+{/snippet}
 
 <TerminalPanel title="TEST SHIP" extraClass="ledger-panel">
   <div class="wallet-box">
@@ -23,29 +53,9 @@
   </div>
 
   <h3 class="section-title">CARGO HOLD</h3>
-  {#if dbState.shipInventory.length === 0}
-    <div class="terminal-alert empty-state">CARGO HOLD EMPTY</div>
-  {:else}
-    <ul class="item-list">
-      {#each dbState.shipInventory as item}
-        <li class="item-row">
-          <div class="item-details">
-            <span class="item-name loot-{item.rarity}">{item.name.toUpperCase()}</span>
-            <span class="item-meta">[{item.category}] • {item.mass}t • Qty: {item.quantity}</span>
-          </div>
-          <div style="display: flex; gap: 0.5rem;">
-            {#if dbState.activeCharacter?.role === 'GM'}
-              <button class="btn-action-red btn-compact" onclick={() => dbState.deleteItem(item.id)}>
-                X
-              </button>
-            {/if}
-            
-            <button class="btn-action btn-compact" onclick={() => moveToPlayer(item.id)}>
-              TAKE
-            </button>
-          </div>
-        </li>
-      {/each}
-    </ul>
-  {/if}
+  <EquipmentItemList
+    items={shipInventoryRows}
+    emptyMessage="CARGO HOLD EMPTY"
+    rowActions={itemActions}
+  />
 </TerminalPanel>

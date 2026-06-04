@@ -20,17 +20,17 @@
 <div class="gm-grid">
   <div class="col-stack">
     <ShipLogisticsPanel />
-    <CargoSpawnerPanel />
     <WorldControlPanel />
   </div>
 
   <div class="col-stack">
     <ShipOverridePanel />
-    <SystemDamagePanel />
+    <CharacterEditorPanel />
   </div>
 
   <div class="col-stack">
-    <CharacterEditorPanel />
+    <CargoSpawnerPanel />
+    <SystemDamagePanel />
   </div>
 </div>
 
@@ -91,7 +91,7 @@
 
   .gm-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
     gap: 2rem;
   }
   :global(.input-group) {

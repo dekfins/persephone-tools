@@ -1,462 +1,1722 @@
 {
   "Barbarian": {
     "name": "Barbarian",
-    "freeSkill": "Survive",
-    "quickSkills": ["Survive", "Notice", "Any Combat"],
+    "description": "You came from somewhere the system calls \"underdeveloped\", and everyone else calls \"fucked.\" Dirt colony, failed hab, post-collapse dome, feral station, prison moon, or some forgotten rock where the machines broke and people remembered knives. You know how to survive without the system's permission.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Survive"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "special",
+        "value": "Any Combat"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Punch" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Survive" }
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Punch"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      }
     ]
   },
   "Clergy": {
     "name": "Clergy",
-    "freeSkill": "Talk",
-    "quickSkills": ["Talk", "Perform", "Know"],
+    "description": "You served something bigger than yourself: a god, a doctrine, a martyr, a machine-saint, a dead Earth religion, or some Belt-born cult with bad lighting and excellent bookkeeping. Maybe you still believe. Maybe you just know how badly people need something to believe in when the hull starts leaking.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Talk"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Courtesan": {
     "name": "Courtesan",
-    "freeSkill": "Perform",
-    "quickSkills": ["Perform", "Notice", "Connect"],
+    "description": "You made a living being wanted. Companion, escort, court favorite, pleasure worker, emotional specialist, status ornament, or professional listener to rich people with ugly secrets. You learned that intimacy is currency, attention is leverage, and everyone says too much when they think they're safe.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Perform"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Survive" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Criminal": {
     "name": "Criminal",
-    "freeSkill": "Sneak",
-    "quickSkills": ["Sneak", "Connect", "Talk"],
+    "description": "Smuggler, thief, document forger, black-market courier, corporate spy, or Ceres-born problem solver: you survived outside the clean lanes of legal society. Maybe you were a monster, maybe you just broke the wrong rule for the right reason. Either way, you know how to find people who do not exist on paper, move cargo that should not move, and stay useful when DAVE starts asking questions.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Sneak"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Program" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Program"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Dilettante": {
     "name": "Dilettante",
-    "freeSkill": "Connect",
-    "quickSkills": ["Connect", "Know", "Talk"],
+    "description": "You had money, access, and absolutely no survival instincts until the money ran out. Corporate heir, station socialite, trust-fund tourist, idle noble, art patron, or useless nephew of someone important. Now the champagne is gone, the creditors are real, and your expensive hobbies are about to become practical skills.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Connect"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Skill" },
-      { "type": "special", "value": "Any Skill" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "special",
+        "value": "Any Skill"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Entertainer": {
     "name": "Entertainer",
-    "freeSkill": "Perform",
-    "quickSkills": ["Perform", "Talk", "Connect"],
+    "description": "You lived on applause, attention, and the desperate human need to feel something in a tin can full of recycled air. Singer, actor, streamer, dancer, poet, Hive personality, propaganda mascot, dive-bar regular, or washed-up star of a show nobody admits they watched. You know how to work a room, fake a smile, and make people look where you want.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Perform"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Merchant": {
     "name": "Merchant",
-    "freeSkill": "Trade",
-    "quickSkills": ["Trade", "Talk", "Connect"],
+    "description": "You bought low, sold high, lied politely, and learned that every shipment has three prices: official, real, and we both pretend this never happened. Maybe you ran kibble out of Earth orbit, fuel out of Titan, parts through Ceres, or luxury produce to people rich enough to taste weather. Cargo is never just cargo. It is leverage with a manifest.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Trade"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Trade"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Trade" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Noble": {
     "name": "Noble",
-    "freeSkill": "Lead",
-    "quickSkills": ["Lead", "Connect", "Administer"],
+    "description": "You were born above someone, or managed to convince society that you were. Bloodline brat, corporate dynasty child, hab aristocrat, station celebrity, old-money Earthling, or social climber with excellent teeth and better enemies. Then something cracked: the fortune, the family, the court, or you. Now you get to discover what your name is worth without the room bending around it.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Lead"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Administer"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Official": {
     "name": "Official",
-    "freeSkill": "Administer",
-    "quickSkills": ["Administer", "Talk", "Connect"],
+    "description": "You were a cog in the machine, and the machine was enormous. DAVE clerk, customs inspector, safety auditor, permit handler, tax parasite, Mars licensing officer, Jovian compliance drone, or some other uniformed obstacle between people and what they wanted. You know the sacred truth of civilization: everything illegal is legal with the right form.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Administer"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Skill" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Peasant": {
     "name": "Peasant",
-    "freeSkill": "Exert",
-    "quickSkills": ["Exert", "Sneak", "Survive"],
+    "description": "You came from the bottom of the food chain, possibly literally. Terragrow dirt laborer, hydroponics hand, algae-vat tender, bot supervisor, bonded farmer, ice cutter, or indentured body attached to land, contract, or oxygen supply. You know what feeds the system, and you know the system does not thank the people who feed it.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Exert"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Survive" },
-      { "type": "skill", "value": "Trade" },
-      { "type": "skill", "value": "Work" }
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      },
+      {
+        "type": "skill",
+        "value": "Work"
+      }
     ]
   },
   "Physician": {
     "name": "Physician",
-    "freeSkill": "Heal",
-    "quickSkills": ["Heal", "Know", "Notice"],
+    "description": "You kept bodies working in places where bodies were never meant to be. Ship medic, black-clinic surgeon, radiation nurse, combat sawbones, psychiatric handler, cybernetics patcher, or the only person on the station who knew which end of the injector went in. People break. You learned how to delay the invoice.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Heal"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Heal"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Heal" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Heal"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Pilot": {
     "name": "Pilot",
-    "freeSkill": "Pilot",
-    "quickSkills": ["Pilot", "Fix", "Shoot or Trade"],
+    "description": "You drove things that should not be trusted with human lives. Torchship, skimmer, shuttle, crawler, tug, drone swarm, xenon barge, or coffin with a throttle. You know burns, vectors, warning lights, and the sacred cockpit prayer: That sound was probably normal.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Pilot"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "special",
+        "value": "Shoot or Trade"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Shoot" },
-      { "type": "skill", "value": "Trade" }
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Shoot"
+      },
+      {
+        "type": "skill",
+        "value": "Trade"
+      }
     ]
   },
   "Politician": {
     "name": "Politician",
-    "freeSkill": "Talk",
-    "quickSkills": ["Talk", "Lead", "Connect"],
+    "description": "You made people move without touching them. Union organizer, hab councilor, corporate negotiator, protest leader, faction mouthpiece, ward boss, campaign rat, or professional liar with a public service budget. You know ideals matter, but votes, favors, blackmail, and oxygen allocation matter on a deadline.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Talk"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Talk" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Scholar": {
     "name": "Scholar",
-    "freeSkill": "Know",
-    "quickSkills": ["Know", "Connect", "Administer"],
+    "description": "You studied the universe until the universe became a workplace hazard. Academic, archivist, xenobiologist, reactor theorist, historian, data archaeologist, Persephone crank, or disgraced researcher with one paper too many and one sponsor too few. Knowledge is power, sure. It is also radioactive, classified, expensive, and usually trying to kill you.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Know"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Administer"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Program" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Program"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Soldier": {
     "name": "Soldier",
-    "freeSkill": "Any Combat",
-    "quickSkills": ["Any Combat", "Exert", "Survive"],
+    "description": "You were trained to apply violence on schedule. Conscription, corporate security, station militia, mercenary outfit, prison pacification unit, boarding marine, or someone's private army with cleaner uniforms than morals. Maybe you believed in the cause. Maybe you believed in the paycheck. Either way, the gun still knows you.",
+    "freeSkill": {
+      "type": "special",
+      "value": "Any Combat"
+    },
+    "quickSkills": [
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Lead" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Survive" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Lead"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      }
     ]
   },
   "Spacer": {
     "name": "Spacer",
-    "freeSkill": "Fix",
-    "quickSkills": ["Fix", "Pilot", "Program"],
+    "description": "You grew up where outside meant vacuum. Deep-space hab, mining rig, rotating cylinder, refinery stack, salvage tug, relay station, or some rusted can between planets that called itself a home. You know the smell of scrubbers, the sound of bad bearings, and why nobody jokes about hull integrity twice.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Fix"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Program"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Program" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Program"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Technician": {
     "name": "Technician",
-    "freeSkill": "Fix",
-    "quickSkills": ["Fix", "Exert", "Notice"],
+    "description": "You fixed the things everyone else prayed over. Engineer, mechanic, machinist, fabricator, reactor tech, drone wrangler, coolant plumber, station maintenance rat, or the poor bastard holding the wrench when the alarm started screaming. The system runs on miracles, but most miracles are just tired technicians with insufficient parts.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Fix"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Know" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Pilot" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Know"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      }
     ]
   },
   "Thug": {
     "name": "Thug",
-    "freeSkill": "Any Combat",
-    "quickSkills": ["Any Combat", "Talk", "Connect"],
+    "description": "You were muscle. Gang bruiser, debt collector, strikebreaker, union enforcer, pirate boarder, neighborhood protector, prison heavy, or the person people called when talking stopped working. Violence is ugly, but it is honest in a way contracts are not. You know what fear does to a room.",
+    "freeSkill": {
+      "type": "special",
+      "value": "Any Combat"
+    },
+    "quickSkills": [
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "skill", "value": "Connect" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Stab or Shoot" },
-      { "type": "skill", "value": "Survive" },
-      { "type": "skill", "value": "Talk" }
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "special",
+        "value": "Stab or Shoot"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Talk"
+      }
     ]
   },
   "Vagabond": {
     "name": "Vagabond",
-    "freeSkill": "Survive",
-    "quickSkills": ["Survive", "Sneak", "Notice"],
+    "description": "You belong nowhere, which means nowhere can fully get rid of you. Drifter, runaway, station rat, hitchhiker, failed colonist, exiled crewman, belt-roamer, or someone who learned to sleep light and leave early. You know routes, rumors, cheap meals, bad shelters, and which smiles mean trap.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Survive"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "physical", "bonus": 2 },
-      { "type": "stat", "category": "mental", "bonus": 2 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "physical",
+        "bonus": 2
+      },
+      {
+        "type": "stat",
+        "category": "mental",
+        "bonus": 2
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "special", "value": "Any Combat" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Notice" },
-      { "type": "skill", "value": "Perform" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Sneak" },
-      { "type": "skill", "value": "Survive" },
-      { "type": "skill", "value": "Work" }
+      {
+        "type": "special",
+        "value": "Any Combat"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Notice"
+      },
+      {
+        "type": "skill",
+        "value": "Perform"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Sneak"
+      },
+      {
+        "type": "skill",
+        "value": "Survive"
+      },
+      {
+        "type": "skill",
+        "value": "Work"
+      }
     ]
   },
   "Worker": {
     "name": "Worker",
-    "freeSkill": "Work",
-    "quickSkills": ["Work", "Connect", "Exert"],
+    "description": "You did the work that kept civilization pretending it was civilized. Factory hand, dock loader, office drone, cook, cleaner, miner, clerk, coder, lawyer, courier, call-center ghost, or day laborer paid just enough to keep breathing company air. You were replaceable until you left. Funny how useful replaceable people become when everything breaks.",
+    "freeSkill": {
+      "type": "skill",
+      "value": "Work"
+    },
+    "quickSkills": [
+      {
+        "type": "skill",
+        "value": "Work"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      }
+    ],
     "growth": [
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "stat", "category": "any", "bonus": 1 },
-      { "type": "skill", "value": "Exert" },
-      { "type": "special", "value": "Any Skill" }
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "stat",
+        "category": "any",
+        "bonus": 1
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      }
     ],
     "learning": [
-      { "type": "skill", "value": "Administer" },
-      { "type": "special", "value": "Any Skill" },
-      { "type": "skill", "value": "Connect" },
-      { "type": "skill", "value": "Exert" },
-      { "type": "skill", "value": "Fix" },
-      { "type": "skill", "value": "Pilot" },
-      { "type": "skill", "value": "Program" },
-      { "type": "skill", "value": "Work" }
+      {
+        "type": "skill",
+        "value": "Administer"
+      },
+      {
+        "type": "special",
+        "value": "Any Skill"
+      },
+      {
+        "type": "skill",
+        "value": "Connect"
+      },
+      {
+        "type": "skill",
+        "value": "Exert"
+      },
+      {
+        "type": "skill",
+        "value": "Fix"
+      },
+      {
+        "type": "skill",
+        "value": "Pilot"
+      },
+      {
+        "type": "skill",
+        "value": "Program"
+      },
+      {
+        "type": "skill",
+        "value": "Work"
+      }
     ]
   }
 }

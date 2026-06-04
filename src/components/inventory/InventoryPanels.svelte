@@ -69,7 +69,7 @@
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
   }
-  
+
   :global(.item-list) {
     list-style: none;
     padding: 0;
@@ -78,22 +78,45 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+
   :global(.item-row) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    gap: 0.5rem;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 0.75rem;
   }
+
+  :global(.item-row-main) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0;
+  }
+
+  :global(.item-row-main.no-toggle) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   :global(.item-details) {
     display: flex;
     flex-direction: column;
     font-family: var(--font-terminal, monospace);
+    min-width: 0;
   }
-  :global(.item-name) { font-weight: bold; font-size: 0.9rem; }
-  :global(.item-meta) { color: var(--text-dim); font-size: 0.75rem; margin-top: 0.2rem; }
 
+  :global(.item-name) {
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  :global(.item-meta) {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+  }
+  
   :global(.empty-state) {
     color: var(--text-dim) !important;
     border: none !important;
@@ -110,5 +133,21 @@
   :global(.btn-action-red:hover) {
     background: var(--accent-red);
     color: var(--bg-dark, #0b0e14);
+  }
+
+  @media (max-width: 900px) {
+    .inventory-header {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .inventory-grid {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.item-row-main),
+    :global(.item-row-main.no-toggle) {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

@@ -1,0 +1,356 @@
+{
+  "gunslinger": {
+    "id": "gunslinger",
+    "name": "Gunslinger",
+    "credits": 100,
+    "items": [
+      {
+        "equipmentId": "laser_pistol",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "power_cell_type_a",
+        "quantity": 8
+      },
+      {
+        "equipmentId": "armored_undersuit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_advanced_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      }
+    ]
+  },
+  "soldier": {
+    "id": "soldier",
+    "name": "Soldier",
+    "credits": 100,
+    "items": [
+      {
+        "equipmentId": "combat_rifle",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "ammo_20_rounds",
+        "quantity": 4
+      },
+      {
+        "equipmentId": "woven_body_armor",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_primitive_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      }
+    ]
+  },
+  "scout": {
+    "id": "scout",
+    "name": "Scout",
+    "credits": 25,
+    "items": [
+      {
+        "equipmentId": "laser_rifle",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "power_cell_type_a",
+        "quantity": 8
+      },
+      {
+        "equipmentId": "armored_vacc_suit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_primitive_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "survey_scanner",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "survival_kit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "binoculars_optical",
+        "quantity": 1
+      }
+    ]
+  },
+  "medic": {
+    "id": "medic",
+    "name": "Medic",
+    "credits": 25,
+    "items": [
+      {
+        "equipmentId": "laser_pistol",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "secure_clothing",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "medkit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "lazarus_patch",
+        "quantity": 4
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "lift_stim",
+        "quantity": 2
+      },
+      {
+        "equipmentId": "bioscanner",
+        "quantity": 1
+      }
+    ]
+  },
+  "civilian": {
+    "id": "civilian",
+    "name": "Civilian",
+    "credits": 700,
+    "items": [
+      {
+        "equipmentId": "secure_clothing",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      }
+    ]
+  },
+  "technician": {
+    "id": "technician",
+    "name": "Technician",
+    "credits": 200,
+    "items": [
+      {
+        "equipmentId": "laser_pistol",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "power_cell_type_a",
+        "quantity": 4
+      },
+      {
+        "equipmentId": "armored_undersuit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_advanced_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "dataslab",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "toolkit_postech",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "metatool",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "spare_parts",
+        "quantity": 6
+      }
+    ]
+  },
+  "barbarian": {
+    "id": "barbarian",
+    "name": "Barbarian",
+    "credits": 500,
+    "items": [
+      {
+        "equipmentId": "medium_primitive_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "leather_jacks",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "rations_1_day",
+        "quantity": 7
+      },
+      {
+        "equipmentId": "primitive_shield",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "rope_plain",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_primitive_weapon",
+        "quantity": 1
+      }
+    ]
+  },
+  "blade": {
+    "id": "blade",
+    "name": "Blade",
+    "credits": 50,
+    "items": [
+      {
+        "equipmentId": "medium_advanced_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "woven_body_armor",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "secure_clothing",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "lazarus_patch",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_advanced_weapon",
+        "quantity": 1
+      }
+    ]
+  },
+  "thief": {
+    "id": "thief",
+    "name": "Thief",
+    "credits": 25,
+    "items": [
+      {
+        "equipmentId": "laser_pistol",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "power_cell_type_a",
+        "quantity": 2
+      },
+      {
+        "equipmentId": "armored_undersuit",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "backpack_primitive",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "small_advanced_weapon",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "compad",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "climbing_harness",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "metatool",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "low_light_goggles",
+        "quantity": 1
+      }
+    ]
+  },
+  "hacker": {
+    "id": "hacker",
+    "name": "Hacker",
+    "credits": 100,
+    "items": [
+      {
+        "equipmentId": "laser_pistol",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "power_cell_type_a",
+        "quantity": 2
+      },
+      {
+        "equipmentId": "secure_clothing",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "dataslab",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "toolkit_postech",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "metatool",
+        "quantity": 1
+      },
+      {
+        "equipmentId": "spare_parts",
+        "quantity": 3
+      },
+      {
+        "equipmentId": "line_shunt",
+        "quantity": 2
+      }
+    ]
+  }
+}
