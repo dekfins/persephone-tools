@@ -8,13 +8,14 @@
   } from '../../lib/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { EquipmentCatalogItem, EquipmentPackageId, StartingEquipmentItem } from '../../lib/types';
-  import EquipmentItemList, { type EquipmentItemListRow } from '../shared/EquipmentItemList.svelte';
+  import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';
 
   type PackageOption = {
     label: string;
-    value: EquipmentPackageId;
+    value: EquipmentPackageId | null;
     description: string;
   };
 
@@ -49,6 +50,14 @@
   ));
   let packageRows = $derived(toEquipmentRows(characterCreatorState.startingEquipmentItems, 'package'));
   let cartRows = $derived(toEquipmentRows(characterCreatorState.purchasedEquipmentItems, 'cart'));
+  let selectedCatalogDetailRows = $derived(selectedCatalogItem ? [
+    { label: 'TYPE', value: formatEquipmentCategory(selectedCatalogItem.category) },
+    { label: 'INVENTORY', value: getEquipmentInventoryCategory(selectedCatalogItem).toUpperCase() },
+    { label: 'RARITY', value: getEquipmentInventoryRarity(selectedCatalogItem).toUpperCase() },
+    { label: 'ENC', value: getEquipmentInventoryMass(selectedCatalogItem) },
+    { label: 'TECH', value: formatTechLevel(selectedCatalogItem) },
+    { label: 'LINE TOTAL', value: `${purchaseTotal.toLocaleString()} CR` }
+  ] : []);
 
   function choosePackage(option: PackageOption) {
     characterCreatorState.chooseEquipmentPackage(option.value);
@@ -86,7 +95,7 @@
     return weapon?.damage;
   }
 
-  function toEquipmentRows(items: StartingEquipmentItem[], prefix: string): EquipmentItemListRow[] {
+  function toEquipmentRows(items: StartingEquipmentItem[], prefix: string): TerminalItemListRow[] {
     return items.map((entry, index) => {
       const item = getEquipmentById(entry.equipmentId);
       return {
@@ -183,7 +192,7 @@
           bind:value={selectedCatalogOption}
           onSelect={selectCatalog}
           placeholder="SELECT ITEM"
-          showPopup={false}
+          popupSide="left"
         />
       </div>
       <div class="form-group qty-field">
@@ -198,32 +207,7 @@
           <strong>{selectedCatalogItem.name.toUpperCase()}</strong>
           <span>{formatCost(selectedCatalogItem)}</span>
         </div>
-        <div class="detail-grid">
-          <div>
-            <span>TYPE</span>
-            <strong>{formatEquipmentCategory(selectedCatalogItem.category)}</strong>
-          </div>
-          <div>
-            <span>INVENTORY</span>
-            <strong>{getEquipmentInventoryCategory(selectedCatalogItem).toUpperCase()}</strong>
-          </div>
-          <div>
-            <span>RARITY</span>
-            <strong>{getEquipmentInventoryRarity(selectedCatalogItem).toUpperCase()}</strong>
-          </div>
-          <div>
-            <span>ENC</span>
-            <strong>{getEquipmentInventoryMass(selectedCatalogItem)}</strong>
-          </div>
-          <div>
-            <span>TECH</span>
-            <strong>{formatTechLevel(selectedCatalogItem)}</strong>
-          </div>
-          <div>
-            <span>LINE TOTAL</span>
-            <strong>{purchaseTotal.toLocaleString()} CR</strong>
-          </div>
-        </div>
+        <TerminalStatGrid items={selectedCatalogDetailRows} columns={3} dense />
         <p>{selectedCatalogItem.description}</p>
         {#if selectedCatalogItem.mechanics}
           <p class="mechanics">{selectedCatalogItem.mechanics}</p>
@@ -238,7 +222,7 @@
 
   {#if characterCreatorState.draft.equipmentMode === 'package'}
     <h4>PACKAGE ITEMS</h4>
-    <EquipmentItemList
+    <TerminalItemList
       items={packageRows}
       emptyMessage="NO PACKAGE ITEMS SELECTED"
     />
@@ -246,7 +230,7 @@
 
   {#if characterCreatorState.draft.equipmentMode === 'rolled_credits'}
     <h4>CART</h4>
-    {#snippet cartActions(entry: EquipmentItemListRow)}
+    {#snippet cartActions(entry: TerminalItemListRow)}
       <div class="cart-controls">
         <input
           class="terminal-input qty-input"
@@ -262,7 +246,7 @@
       </div>
     {/snippet}
 
-    <EquipmentItemList
+    <TerminalItemList
       items={cartRows}
       emptyMessage="NO PURCHASED GEAR IN CART"
       rowActions={cartActions}
@@ -279,8 +263,7 @@
   .package-grid,
   .equipment-overview,
   .summary-grid,
-  .purchase-grid,
-  .detail-grid {
+  .purchase-grid {
     display: grid;
     gap: 0.65rem;
   }
@@ -307,28 +290,12 @@
     grid-template-columns: minmax(8rem, 0.8fr) minmax(12rem, 2fr) 5.5rem;
   }
 
-  .detail-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .package-grid,
   .equipment-overview,
   .purchase-grid,
   .terminal-alert,
-  h4,
-  .catalog-detail {
+  h4 {
     margin-top: 0.85rem;
-  }
-
-  .btn-action.active {
-    background: var(--ui-cyan, #00aacc);
-    color: var(--bg-dark, #0b0e14) !important;
-    border: 1px solid var(--ui-cyan, #00aacc);
-  }
-
-  .btn-action:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
   }
 
   .roll-button {
@@ -341,37 +308,11 @@
     gap: 0.35rem;
   }
 
-  label,
-  .summary-card span,
-  .detail-grid span {
+  label {
     color: var(--text-dim);
     font-family: var(--font-terminal);
     font-size: 0.75rem;
     text-transform: uppercase;
-  }
-
-  .summary-card,
-  .catalog-detail {
-    background: var(--bg-void);
-    border: var(--border-subtle);
-    font-family: var(--font-terminal);
-  }
-
-  .summary-card,
-  .catalog-detail {
-    display: grid;
-    gap: 0.35rem;
-    padding: 0.65rem;
-  }
-
-  .summary-card strong,
-  .detail-grid strong {
-    color: var(--accent-amber);
-  }
-
-  .summary-card.danger strong,
-  .terminal-alert.error {
-    color: var(--accent-red);
   }
 
   h4 {
@@ -382,31 +323,10 @@
     text-transform: uppercase;
   }
 
-  .detail-header,
   .cart-controls {
     display: grid;
     gap: 0.65rem;
     align-items: center;
-  }
-
-  .detail-header {
-    grid-template-columns: minmax(0, 1fr) auto;
-    color: var(--accent-amber);
-  }
-
-  .detail-header strong {
-    font-weight: 700;
-  }
-
-  .catalog-detail p {
-    margin: 0.35rem 0 0;
-    color: var(--text-main);
-    font-size: 0.8rem;
-    line-height: 1.4;
-  }
-
-  .catalog-detail .mechanics {
-    color: var(--accent-amber);
   }
 
   .cart-controls {
@@ -417,23 +337,12 @@
     width: 5rem;
   }
 
-  .btn-danger {
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-  }
-
-  .btn-danger:hover {
-    background: var(--accent-red);
-    color: var(--bg-void);
-  }
-
   @media (max-width: 900px) {
     .mode-grid,
     .package-grid,
     .equipment-overview.with-roll,
     .summary-grid,
-    .purchase-grid,
-    .detail-grid {
+    .purchase-grid {
       grid-template-columns: 1fr;
     }
 

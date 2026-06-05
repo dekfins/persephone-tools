@@ -1,18 +1,25 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
   import type { ItemRecord } from '../../lib/types';
-  import EquipmentItemList, { type EquipmentItemListRow } from '../shared/EquipmentItemList.svelte';
+  import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';
 
   let personalInventoryRows = $derived(dbState.personalInventory.map(toEquipmentRow));
   let totalEncumbrance = $derived(
     dbState.personalInventory.reduce((total, item) => total + item.mass * item.quantity, 0)
   );
+  let loadoutStats = $derived(dbState.activeCharacter ? [
+    { label: 'WALLET', value: `${dbState.activeCharacter.personal_credits.toLocaleString()} CR` },
+    { label: 'ITEMS', value: personalInventoryRows.length },
+    { label: 'ENC', value: totalEncumbrance }
+  ] : []);
 
-  function toEquipmentRow(item: ItemRecord): EquipmentItemListRow {
+  function toEquipmentRow(item: ItemRecord): TerminalItemListRow {
     return {
       id: item.id,
       equipmentId: item.equipment_id,
+      itemState: item.item_state,
       name: item.name,
       category: item.category,
       rarity: item.rarity,
@@ -24,26 +31,13 @@
 
 <TerminalPanel title="PERSONAL LOADOUT" extraClass="player-panel">
   {#if dbState.activeCharacter}
-    <div class="loadout-stats">
-      <div>
-        <span>WALLET</span>
-        <strong>{dbState.activeCharacter.personal_credits.toLocaleString()} CR</strong>
-      </div>
-      <div>
-        <span>ITEMS</span>
-        <strong>{personalInventoryRows.length}</strong>
-      </div>
-      <div>
-        <span>ENC</span>
-        <strong>{totalEncumbrance}</strong>
-      </div>
-    </div>
+    <TerminalStatGrid items={loadoutStats} columns={3} />
 
     {#if dbState.isLocalCharacterPreview}
       <div class="terminal-alert">ARCHIVE PREVIEW LOADOUT - NOT SYNCED TO CARGO</div>
     {/if}
 
-    <EquipmentItemList
+    <TerminalItemList
       items={personalInventoryRows}
       emptyMessage="PERSONAL LOADOUT EMPTY"
     />
@@ -53,34 +47,4 @@
 </TerminalPanel>
 
 <style>
-  .loadout-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.5rem;
-  }
-
-  .loadout-stats div {
-    display: grid;
-    gap: 0.25rem;
-    background: var(--bg-void);
-    border: var(--border-subtle);
-    padding: 0.55rem;
-    font-family: var(--font-terminal);
-  }
-
-  span {
-    color: var(--text-dim);
-    font-size: 0.72rem;
-  }
-
-  strong {
-    color: var(--accent-amber);
-    overflow-wrap: anywhere;
-  }
-
-  @media (max-width: 700px) {
-    .loadout-stats {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>

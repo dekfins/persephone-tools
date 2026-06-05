@@ -13,11 +13,22 @@ label {
 input[type="text"], button {
   font-family: var(--font-terminal);
   text-transform: uppercase;
-  padding: 0.75rem;
+  padding: var(--control-padding);
   border: var(--border-subtle);
   background: var(--bg-void);
   color: var(--text-main);
   transition: all 0.2s ease;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 input[type="text"]:focus {
@@ -33,7 +44,28 @@ button:disabled {
 
 .terminal-input {
   width: 100%;
+  box-sizing: border-box;
+  background-color: var(--bg-void);
+  border: var(--border-subtle);
   color: var(--accent-amber) !important;
+  font-family: var(--font-terminal);
+  font-size: var(--control-font-size);
+  min-height: var(--control-height);
+  outline: none;
+  padding: var(--control-padding);
+  transition: all 0.2s ease;
+}
+
+.terminal-input:focus {
+  border-color: var(--accent-amber);
+  background-color: rgba(245, 158, 11, 0.05);
+  box-shadow: 0 0 5px rgba(255, 191, 0, 0.3);
+}
+
+.terminal-input::placeholder {
+  color: var(--text-dim);
+  opacity: 0.7;
+  text-transform: uppercase;
 }
 
 input[type="range"] {
@@ -83,5 +115,9 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .btn-compact {
-  padding: 0.5rem 0.75rem; /* Reduced padding for a smaller button */
+  display: inline-grid;
+  place-items: center;
+  width: flex;
+  height: 3rem;
+  padding: 0;
 }

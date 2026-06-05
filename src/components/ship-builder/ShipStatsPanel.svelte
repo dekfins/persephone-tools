@@ -1,15 +1,35 @@
 <script lang="ts">
   import { createShipState } from '../../lib/states/shipState.svelte';
   import { shipCodec } from '../../lib/shipCodec';
+  import type { MasterShipState } from '../../lib/states/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';
   
-  // Create local state instance for this component
-  const localState = createShipState();
+  let {
+    shipyardState: localState = createShipState()
+  }: {
+    shipyardState?: MasterShipState;
+  } = $props();
 
   const shipyardStats = $derived([
     { label: 'POWER', used: localState.blueprint.usedPower, total: localState.blueprint.totalPower, id: 'power-grid' },
     { label: 'MASS', used: localState.blueprint.usedMass, total: localState.blueprint.totalMass, id: 'mass-grid' },
     { label: 'HARDPOINTS', used: localState.blueprint.usedHardpoints, total: localState.blueprint.totalHardpoints, id: 'hardpoint-grid' }
+  ]);
+
+  const crewLabel = $derived(
+    localState.blueprint.currentMinCrew === localState.blueprint.currentMaxCrew 
+      ? `${localState.blueprint.currentMinCrew}`
+      : `${localState.blueprint.currentMinCrew}/${localState.blueprint.currentMaxCrew}`
+  );
+
+  const shipStatGrid = $derived([
+    { label: 'HP', value: `${localState.blueprint.totalHealth}` },
+    { label: 'AC', value: `${localState.blueprint.totalArmorClass}` },
+    { label: 'ARMOR', value: `${localState.blueprint.totalArmor}` },
+    { label: 'SPEED', value: `${localState.blueprint.totalSpeed}` },
+    { label: 'CREW', value: crewLabel },
+    { label: 'COST', value: `${localState.blueprint.totalCost.toLocaleString()} CR` }
   ]);
 
   let fileInput: HTMLInputElement;
@@ -24,42 +44,31 @@
 </script>
 
 <TerminalPanel title={localState.blueprint.name}>
-  {#each shipyardStats as stat}
-    <div class="progress-bar">
-      <div class="progress-header">
-        <span>{stat.label}</span>
-        <span class="value-readout" class:error={stat.used > stat.total}>
-          {stat.used}/{stat.total}
-        </span>
-      </div>
+  <div class="shipyard-progress">
+    {#each shipyardStats as stat}
+      <div class="progress-bar">
+        <div class="progress-header">
+          <span>{stat.label}</span>
+          <span class="value-readout" class:error={stat.used > stat.total}>
+            {stat.used}/{stat.total}
+          </span>
+        </div>
 
-      <div class="progress-container">
-        <div 
-          class="progress-fill" 
-          id={stat.id}
-          style="width: {Math.min((stat.used / (stat.total || 1)) * 100, 100)}%"
-          class:overloaded={stat.used > stat.total}
-        ></div>
+        <div class="progress-container">
+          <div 
+            class="progress-fill" 
+            id={stat.id}
+            style="width: {Math.min((stat.used / (stat.total || 1)) * 100, 100)}%"
+            class:overloaded={stat.used > stat.total}
+          ></div>
+        </div>
       </div>
-    </div>
-  {/each}
-
-  <div class="terminal-alert {localState.blueprint.remainingMass < 0 || localState.blueprint.remainingPower < 0 || localState.blueprint.remainingHardpoints < 0 ? 'error' : ''}">
-    STATUS: {localState.blueprint.remainingMass < 0 || localState.blueprint.remainingPower < 0 || localState.blueprint.remainingHardpoints < 0 ? 'OVERLOAD' : 'NOMINAL'}
+    {/each}
   </div>
 
-  <ul>
-    <li>HP: {localState.blueprint.totalHealth}</li>
-    <li>COST: {localState.blueprint.totalCost.toLocaleString()} CR</li>
-    <li>ARMOR: {localState.blueprint.totalArmor}</li>
-    <li>AC: {localState.blueprint.totalArmorClass}</li>
-    <li>
-      CREW: {localState.blueprint.currentMinCrew === localState.blueprint.currentMaxCrew 
-        ? localState.blueprint.currentMinCrew 
-        : `${localState.blueprint.currentMinCrew}/${localState.blueprint.currentMaxCrew}`}
-    </li>
-    <li>SPEED: {localState.blueprint.totalSpeed}</li>
-  </ul>
+  <div class="stats-wrap">
+    <TerminalStatGrid items={shipStatGrid} columns={2} />
+  </div>
   
 <div class="terminal-controls">
   <button class="btn-action" onclick={() => shipCodec.exportToFile(localState)}>
@@ -82,7 +91,14 @@
 </TerminalPanel>
 
 <style>
-  /* The track (background) */
+  .shipyard-progress {
+    display: grid;
+    gap: 1.5rem;
+    padding: 0.75rem;
+    background: var(--bg-void);
+    border: var(--border-subtle);
+  }
+
   .progress-container {
     width: 100%;
     height: 12px;
@@ -99,13 +115,13 @@
   }
 
   .progress-bar {
-    margin-bottom: 1.2rem;
+    display: grid;
+    gap: 0.3rem;
   }
 
   .progress-header {
     display: flex;
-    justify-content: flex;
-    margin-bottom: 0.rem;
+    justify-content: space-between;
     font-size: 0.9rem;
   }
 
@@ -125,27 +141,10 @@
   .terminal-controls {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 1.5rem;
   }
 
-  /* --- LAYOUT SPACING FIXES --- */
-  
-  /* Un-squish the progress bars */
-  .progress-bar {
-    margin-bottom: 0.5rem;
-  }
-
-  /* Spread the label and the [used/total] numbers apart */
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.3rem;
-  }
-
-  /* Un-squish the stat list at the bottom */
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0; /* Adds space above and below the list */
+  .stats-wrap {
+    margin-top: 1.5rem;
   }
 </style>

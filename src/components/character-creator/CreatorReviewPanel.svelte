@@ -8,7 +8,7 @@
   } from '../../lib/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { AttributeKey, EquipmentCatalogItem, Skill, StartingEquipmentItem } from '../../lib/types';
-  import EquipmentItemList, { type EquipmentItemListRow } from '../shared/EquipmentItemList.svelte';
+  import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let archivePreview = $derived(characterCreatorState.buildArchive());
@@ -54,7 +54,7 @@
     return weapon?.damage;
   }
 
-  function toEquipmentRows(items: StartingEquipmentItem[]): EquipmentItemListRow[] {
+  function toEquipmentRows(items: StartingEquipmentItem[]): TerminalItemListRow[] {
     return items.map((entry, index) => {
       const item = getEquipmentById(entry.equipmentId);
       return {
@@ -190,7 +190,7 @@
         </div>
       </div>
 
-      <EquipmentItemList
+      <TerminalItemList
         items={reviewEquipmentRows}
         emptyMessage="NO STARTING ITEMS. BUY GEAR WITH ROLLED CREDITS AFTER EXPORT."
       />

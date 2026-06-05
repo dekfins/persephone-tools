@@ -1,97 +1,97 @@
 {
   "Administer": {
     "name": "Administer",
-    "description": "Handle bureaucracy, organizations, logistics, legal process, and formal systems.",
+    "description": "Manage an organization, handle paperwork, analyze records, and keep an institution functioning on a daily basis. Roll it for bureaucratic expertise, organizational management, legal knowledge, dealing with government agencies, and understanding how institutions really work.",
     "defaultAttribute": "int"
   },
   "Connect": {
     "name": "Connect",
-    "description": "Find people, favors, contacts, and useful introductions in a social network.",
+    "description": "Find people who can be helpful to your purposes and get them to cooperate with you. Roll it to make useful connections with others, find people you know, know where to get illicit goods and services, and be familiar with foreign cultures and languages. You can use it in place of Talk for persuading people you find via this skill.",
     "defaultAttribute": "cha"
   },
   "Exert": {
     "name": "Exert",
-    "description": "Climb, swim, run, lift, jump, endure exertion, and perform demanding physical work.",
+    "description": "Apply trained speed, strength, or stamina in some feat of physical exertion. Roll it to run, jump, lift, swim, climb, throw, and so forth. You can use it as a combat skill when throwing things, though it doesn't qualify as a combat skill for other ends.",
     "defaultAttribute": "str"
   },
   "Fix": {
     "name": "Fix",
-    "description": "Repair, sabotage, jury-rig, maintain, and understand machines or technical hardware.",
+    "description": "Create and repair devices both simple and complex. How complex will depend on your character's background; a lostworlder blacksmith is going to need some study time before he's ready to fix that broken fusion reactor, though he can do it eventually. Roll it to fix things, build things, and identify what something is supposed to do.",
     "defaultAttribute": "int"
   },
   "Heal": {
     "name": "Heal",
-    "description": "Stabilize injuries, treat disease, use medical gear, and understand biological hazards.",
+    "description": "Employ medical and psychological treatment for the injured or disturbed. Roll it to cure diseases, stabilize the critically injured, treat psychological disorders, or diagnose illnesses.",
     "defaultAttribute": "int"
   },
   "Know": {
     "name": "Know",
-    "description": "Recall facts, reason from education, research records, and understand academic fields.",
+    "description": "Know facts about academic or scientific fields. Roll it to understand planetary ecologies, remember relevant history, solve science mysteries, and know the basic facts about rare or esoteric topics.",
     "defaultAttribute": "int"
   },
   "Lead": {
     "name": "Lead",
-    "description": "Command groups, manage morale, coordinate crews, and impose discipline under stress.",
+    "description": "Convince others to also do whatever it is you're trying to do. Talk might persuade them that following you is smart, but Lead can make them do it even when they think it's a bad idea. Roll it to lead troops in combat, convince others to follow you, or maintain morale and discipline.",
     "defaultAttribute": "cha"
   },
   "Notice": {
     "name": "Notice",
-    "description": "Spot ambushes, read details, detect hidden threats, and stay aware under pressure.",
+    "description": "Spot anomalies or interesting facts about your environment. Roll it for searching places, detecting ambushes, spotting things, and reading the emotional state of other people.",
     "defaultAttribute": "wis"
   },
   "Perform": {
     "name": "Perform",
-    "description": "Create, entertain, persuade through art, and handle performance-facing work.",
+    "description": "Exhibit some performative skill. Roll it to dance, sing, orate, act, or otherwise put on a convincing or emotionally moving performance.",
     "defaultAttribute": "cha"
   },
   "Pilot": {
     "name": "Pilot",
-    "description": "Fly, drive, dock, evade, and operate vehicles or spacecraft under difficult conditions.",
+    "description": "Use this skill to pilot vehicles or ride beasts. Roll it to fly spaceships, drive vehicles, ride animals, or tend to basic vehicle repair. This skill doesn't help you with things entirely outside the scope of your background or experience, though with some practice a PC can expand their expertise.",
     "defaultAttribute": "dex"
   },
   "Program": {
     "name": "Program",
-    "description": "Write code, breach systems, handle security, and understand digital infrastructure.",
+    "description": "Operating or hacking computing and communications hardware. Roll it to program or hack computers, control computer-operated hardware, operate communications tech, or decrypt things.",
     "defaultAttribute": "int"
   },
   "Punch": {
     "name": "Punch",
-    "description": "Fight unarmed, grapple, brawl, and use natural weapons or close body leverage.",
+    "description": "Use it as a combat skill when fighting unarmed. If your PC means to make a habit of this rather than as a recourse of desperation, you should take the Unarmed Fighter focus described later.",
     "defaultAttribute": "str"
   },
   "Shoot": {
     "name": "Shoot",
-    "description": "Use ranged weapons, handle firefights, aim under stress, and judge firing conditions.",
+    "description": "Use it as a combat skill when using ranged weaponry, whether hurled rocks, bows, laser pistols, combat rifles, or ship's gunnery.",
     "defaultAttribute": "dex"
   },
   "Sneak": {
     "name": "Sneak",
-    "description": "Move quietly, hide, infiltrate, conceal objects, and bypass attention.",
+    "description": "Move without drawing notice. Roll it for stealth, disguise, infiltration, manual legerdemain, pickpocketing, and the defeat of security measures.",
     "defaultAttribute": "dex"
   },
   "Stab": {
     "name": "Stab",
-    "description": "Fight with melee weapons, thrown weapons, close weapons, and direct violence.",
+    "description": "Use it as a combat skill when wielding melee weapons, whether primitive or complex.",
     "defaultAttribute": "str"
   },
   "Survive": {
     "name": "Survive",
-    "description": "Navigate hostile terrain, forage, handle wilderness threats, and endure exposure.",
+    "description": "Obtain the basics of food, water, and shelter in hostile environments, along with avoiding their natural perils. Roll it to handle animals, navigate difficult terrain, scrounge urban resources, make basic tools, and avoid wild beasts or gangs.",
     "defaultAttribute": "wis"
   },
   "Talk": {
     "name": "Talk",
-    "description": "Persuade, deceive, negotiate, read a conversation, and handle direct social pressure.",
+    "description": "Convince other people of the facts you want them to believe. What they do with that conviction may not be completely predictable. Roll it to persuade, charm, or deceive others in conversation.",
     "defaultAttribute": "cha"
   },
   "Trade": {
     "name": "Trade",
-    "description": "Buy, sell, appraise, haggle, evaluate markets, and manage commercial deals.",
+    "description": "Find what you need on the market and sell what you have. Roll it to sell or buy things, figure out where to purchase hard-to-get or illicit goods, deal with customs agents, or run a business.",
     "defaultAttribute": "cha"
   },
   "Work": {
     "name": "Work",
-    "description": "Practice a profession, craft, labor specialty, or practical civilian trade.",
-    "defaultAttribute": "int"
+    "description": "This is a catch-all skill for professions not represented by other skills. Roll it to work at a particular profession, art, or trade.",
+    "defaultAttribute": "str"
   }
 }

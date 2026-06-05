@@ -210,13 +210,6 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .mode-option.active,
-  .mode-option.active:hover {
-    background: var(--ui-cyan, #00aacc);
-    color: var(--bg-void) !important;
-    border-color: var(--ui-cyan, #00aacc);
-  }
-
   .progress-line,
   .choice-entry {
     border: var(--border-subtle);
@@ -275,19 +268,8 @@
     text-transform: uppercase;
   }
 
-  .btn-danger {
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-  }
-
   .reset-background {
     width: 100%;
-  }
-
-  .btn-danger:hover {
-    background: var(--accent-red);
-    color: var(--bg-void);
-    border-color: var(--accent-red);
   }
 
   .btn-amber {

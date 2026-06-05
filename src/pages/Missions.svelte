@@ -1,6 +1,5 @@
 <script lang="ts">
   import JobBoardPanel from '../components/missions/JobBoardPanel.svelte';
-  import '../styles/layout.css'; 
 </script>
 
 <div class="page-container">

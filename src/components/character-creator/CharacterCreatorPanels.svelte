@@ -73,7 +73,7 @@
 <style>
   .creator-layout {
     display: grid;
-    grid-template-columns: minmax(0, 780px) 340px;
+    grid-template-columns: minmax(0, 780px) 340px;  
     gap: var(--layout-gap);
     align-items: start;
     justify-content: center;

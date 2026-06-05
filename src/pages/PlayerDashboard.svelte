@@ -1,7 +1,6 @@
 <script lang="ts">
   import { dbState } from '../lib/states/dbState.svelte';
   import PlayerDashboardPanels from '../components/player/PlayerDashboardPanels.svelte';
-  import '../styles/layout.css';
 </script>
 
 <div class="page-container">

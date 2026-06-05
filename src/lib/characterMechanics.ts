@@ -14,6 +14,7 @@ export type ClassAbilityDefinition = {
   feature: string;
   hpImpact: string;
   bullets: string[];
+  rules: string[];
 };
 
 export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
@@ -26,6 +27,11 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'EXTRA NON-COMBAT FOCUS',
       'MORE SKILL POINTS',
       'STANDARD ATTACK / HP'
+    ],
+    rules: [
+      'Once per scene, reroll a failed skill check that is not a combat skill check.',
+      'Gain a non-combat focus as a bonus focus at first level.',
+      'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.'
     ]
   },
   warrior: {
@@ -37,6 +43,11 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'EXTRA COMBAT FOCUS',
       'IMPROVED ATTACK BONUS',
       '+2 HP / LEVEL'
+    ],
+    rules: [
+      'Once per scene, the warrior may automatically negate a successful combat hit against them, turning it into a miss.',
+      'Gain a combat focus as a bonus focus at first level.',
+      'Warriors roll 1d6+2 for hit points, and add +2 to their Constitution modifier (if any) for this purpose.'
     ]
   },
   adventurer: {
@@ -49,6 +60,13 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'EXTRA COMBAT FOCUS',
       'SKILL POINTS AND ATTACK BONUS',
       '+2 HP / LEVEL'
+    ],
+    rules: [
+      'Gain a non-combat focus as a bonus focus at first level.',
+      'When you advance a level, you gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
+      'Gain a combat focus as a bonus focus at first level.',
+      'Roll 1d6+2 for hit points at every level (the same bonus as a full Warrior).',
+      'Your attack bonus improves slightly faster than other non-Warriors.'
     ]
   }
 };

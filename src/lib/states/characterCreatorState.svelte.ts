@@ -112,8 +112,10 @@ export type CharacterCreatorDraft = {
   hpRoll: number;
   startingCredits: number;
   equipmentMode: CreatorEquipmentMode;
-  selectedPackageId: EquipmentPackageId;
+  selectedPackageId: EquipmentPackageId | null;
   creditRoll?: [number, number];
+  customCreditRoll?: [number, number];
+  customStartingCredits?: number;
   purchasedItems: PurchasedEquipmentItem[];
 };
 
@@ -147,10 +149,12 @@ function createDefaultDraft(): CharacterCreatorDraft {
     skills: {},
     backgroundProgress: {},
     hpRoll: 1,
-    startingCredits: 100,
+    startingCredits: 0,
     equipmentMode: 'package',
-    selectedPackageId: 'gunslinger',
+    selectedPackageId: null,
     creditRoll: undefined,
+    customCreditRoll: undefined,
+    customStartingCredits: undefined,
     purchasedItems: []
   };
 }
@@ -379,14 +383,22 @@ class CharacterCreatorStateManager {
   }
 
   get packageOptions() {
-    return ALL_EQUIPMENT_PACKAGES.map((pack) => ({
-      label: pack.name.toUpperCase(),
-      value: pack.id,
-      description: `${pack.credits} CR / ${pack.items.length} ITEMS`
-    }));
+    return [
+      {
+        label: 'SELECT...',
+        value: null,
+        description: 'NO EQUIPMENT PACKAGE SELECTED'
+      },
+      ...ALL_EQUIPMENT_PACKAGES.map((pack) => ({
+        label: pack.name.toUpperCase(),
+        value: pack.id,
+        description: `${pack.credits} CR / ${pack.items.length} ITEMS`
+      }))
+    ];
   }
 
   get selectedEquipmentPackage(): EquipmentPackageDefinition | null {
+    if (!this.draft.selectedPackageId) return null;
     return ALL_EQUIPMENT_PACKAGES.find((pack) => pack.id === this.draft.selectedPackageId) ?? null;
   }
 
@@ -407,6 +419,8 @@ class CharacterCreatorStateManager {
   }
 
   get purchasedEquipmentItems(): StartingEquipmentItem[] {
+    if (this.draft.equipmentMode !== 'rolled_credits') return [];
+
     return this.draft.purchasedItems.map((entry) => {
       const item = getEquipmentById(entry.equipmentId);
       return {
@@ -480,6 +494,8 @@ class CharacterCreatorStateManager {
   }
 
   get purchasedEquipmentCost() {
+    if (this.draft.equipmentMode !== 'rolled_credits') return 0;
+
     return this.draft.purchasedItems.reduce((total, entry) => {
       const item = getEquipmentById(entry.equipmentId);
       return total + (item?.cost ?? 0) * normalizeQuantity(entry.quantity);
@@ -492,6 +508,7 @@ class CharacterCreatorStateManager {
 
   get purchasedEquipmentValidationMessages() {
     const messages: string[] = [];
+    if (this.draft.equipmentMode !== 'rolled_credits') return messages;
 
     this.draft.purchasedItems.forEach((entry) => {
       const item = getEquipmentById(entry.equipmentId);
@@ -728,6 +745,8 @@ class CharacterCreatorStateManager {
     this.draft.equipmentMode = 'rolled_credits';
     this.draft.creditRoll = [first, second];
     this.draft.startingCredits = (first + second) * 100;
+    this.draft.customCreditRoll = [first, second];
+    this.draft.customStartingCredits = this.draft.startingCredits;
     this.lastMessage = this.remainingStartingCredits < 0
       ? `STARTING CREDITS ${first}+${second} ROLLED - CART OVERSPENT`
       : `STARTING CREDITS ${first}+${second} ROLLED`;
@@ -737,16 +756,28 @@ class CharacterCreatorStateManager {
     this.draft.equipmentMode = 'rolled_credits';
     this.draft.creditRoll = undefined;
     this.draft.startingCredits = Math.max(0, Math.round(value));
+    this.draft.customCreditRoll = undefined;
+    this.draft.customStartingCredits = this.draft.startingCredits;
     this.lastMessage = this.remainingStartingCredits < 0
       ? 'STARTING CREDITS UPDATED - CART OVERSPENT'
       : 'STARTING CREDITS UPDATED';
   }
 
-  chooseEquipmentPackage(packageId: EquipmentPackageId) {
+  chooseEquipmentPackage(packageId: EquipmentPackageId | null) {
+    this.cacheCustomLoadoutCredits();
+    this.draft.equipmentMode = 'package';
+
+    if (!packageId) {
+      this.draft.selectedPackageId = null;
+      this.draft.creditRoll = undefined;
+      this.draft.startingCredits = 0;
+      this.lastMessage = 'EQUIPMENT PACKAGE CLEARED';
+      return;
+    }
+
     const pack = ALL_EQUIPMENT_PACKAGES.find((candidate) => candidate.id === packageId);
     if (!pack) return;
 
-    this.draft.equipmentMode = 'package';
     this.draft.selectedPackageId = packageId;
     this.draft.creditRoll = undefined;
     this.draft.startingCredits = pack.credits;
@@ -757,14 +788,18 @@ class CharacterCreatorStateManager {
     if (this.draft.equipmentMode === 'rolled_credits') return;
 
     this.draft.equipmentMode = 'rolled_credits';
-    this.draft.creditRoll = undefined;
-    this.draft.startingCredits = 0;
+    this.draft.creditRoll = this.draft.customCreditRoll
+      ? [...this.draft.customCreditRoll] as [number, number]
+      : undefined;
+    this.draft.startingCredits = this.draft.customStartingCredits ?? 0;
     this.lastMessage = this.remainingStartingCredits < 0
       ? 'BUY GEAR MODE SELECTED - CART OVERSPENT'
       : 'BUY GEAR MODE SELECTED';
   }
 
   addPurchasedItem(equipmentId: string, quantity: number) {
+    if (this.draft.equipmentMode !== 'rolled_credits') return false;
+
     const item = getEquipmentById(equipmentId);
     if (!item || !isBuyableEquipment(item)) return false;
 
@@ -787,6 +822,8 @@ class CharacterCreatorStateManager {
   }
 
   updatePurchasedItemQuantity(equipmentId: string, quantity: number) {
+    if (this.draft.equipmentMode !== 'rolled_credits') return;
+
     const item = getEquipmentById(equipmentId);
     const normalizedQuantity = normalizeQuantity(quantity);
 
@@ -801,6 +838,8 @@ class CharacterCreatorStateManager {
   }
 
   removePurchasedItem(equipmentId: string) {
+    if (this.draft.equipmentMode !== 'rolled_credits') return;
+
     const item = getEquipmentById(equipmentId);
     this.draft.purchasedItems = this.draft.purchasedItems.filter((entry) => entry.equipmentId !== equipmentId);
     this.lastMessage = item
@@ -1358,19 +1397,34 @@ class CharacterCreatorStateManager {
   private buildEquipmentChoice(): CreatorEquipmentChoice {
     return {
       mode: this.draft.equipmentMode,
-      packageId: this.draft.equipmentMode === 'package' ? this.draft.selectedPackageId : undefined,
-      creditRoll: this.draft.creditRoll ? [...this.draft.creditRoll] as [number, number] : undefined,
+      packageId: this.draft.equipmentMode === 'package'
+        ? this.draft.selectedPackageId ?? undefined
+        : undefined,
+      creditRoll: this.draft.equipmentMode === 'rolled_credits' && this.draft.creditRoll
+        ? [...this.draft.creditRoll] as [number, number]
+        : undefined,
       startingCredits: this.draft.startingCredits,
       items: this.startingEquipmentItems.map((entry) => ({
         equipmentId: entry.equipmentId,
         quantity: normalizeQuantity(entry.quantity),
         packageId: entry.packageId
       })),
-      purchasedItems: this.draft.purchasedItems.map((entry) => ({
-        equipmentId: entry.equipmentId,
-        quantity: normalizeQuantity(entry.quantity)
-      }))
+      purchasedItems: this.draft.equipmentMode === 'rolled_credits'
+        ? this.draft.purchasedItems.map((entry) => ({
+            equipmentId: entry.equipmentId,
+            quantity: normalizeQuantity(entry.quantity)
+          }))
+        : []
     };
+  }
+
+  private cacheCustomLoadoutCredits() {
+    if (this.draft.equipmentMode !== 'rolled_credits') return;
+
+    this.draft.customCreditRoll = this.draft.creditRoll
+      ? [...this.draft.creditRoll] as [number, number]
+      : undefined;
+    this.draft.customStartingCredits = this.draft.startingCredits;
   }
 
   private getWeaponAttributeModifier(weapon: EquipmentWeaponStats) {

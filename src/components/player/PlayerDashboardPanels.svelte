@@ -8,24 +8,19 @@
   import ClassAbilitiesPanel from './ClassAbilitiesPanel.svelte';
   import FociPanel from './FociPanel.svelte';
   import PersonalLoadoutSummaryPanel from './PersonalLoadoutSummaryPanel.svelte';
-  import CharacterArchiveImportPanel from './CharacterArchiveImportPanel.svelte';
 </script>
 
 <div class="player-grid">
   <div class="col-stack">
-    <CharacterArchiveImportPanel />
     <IdentityPanel />
     <VitalsPanel />
-    <ConditionsPanel />
-  </div>
-
-  <div class="col-stack">
     <AttributesPanel />
     <SavingThrowsPanel />
-    <ClassAbilitiesPanel />
+    <ClassAbilitiesPanel /> 
   </div>
 
   <div class="col-stack">
+    <ConditionsPanel />
     <SkillsPanel />
     <FociPanel />
     <PersonalLoadoutSummaryPanel />
@@ -35,7 +30,7 @@
 <style>
   .player-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: 2rem;
   }
   .col-stack {

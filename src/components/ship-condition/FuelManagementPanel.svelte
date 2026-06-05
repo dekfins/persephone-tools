@@ -146,7 +146,7 @@
   {:else}
     <div class="telemetry-row">
       <span class="eng-label">ACTIVE MIX:</span>
-      <span class="telemetry-value" style="color: var(--ui-cyan);">{localState.propulsion.activeFuel?.toUpperCase() || 'NONE'}</span>
+      <span class="telemetry-value">{localState.propulsion.activeFuel?.toUpperCase() || 'NONE'}</span>
     </div>
 
     <div class="telemetry-row">

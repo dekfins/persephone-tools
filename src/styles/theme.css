@@ -10,14 +10,21 @@
   
   --bg-void: #0a0a0c;        /* Deepest background */
   --bg-panel: #141417;       /* Slightly lighter for cards/sections */
+  --bg-dark: var(--bg-void);
   --text-main: #d1d5db;      /* Muted light grey for readability */
   --text-dim: #6b7280;       /* Darker grey for secondary info */
   --accent-amber: #f59e0b;   /* The hero color from your wiki headers */
   --accent-red: #ef4444;     /* For errors/overloads */
+  --ui-cyan: #00aacc;
   --fighter-green: #4ade80;
   --frigate-blue: #60a5fa;
   --cruiser-purple: #c084fc;
   --capital-red: #f87171;
+  --loot-common: #94a3b8;
+  --loot-uncommon: #4ade80;
+  --loot-rare: #60a5fa;
+  --loot-epic: #c084fc;
+  --loot-legendary: var(--accent-amber);
   
   /* BORDERS */
   --border-subtle: 1px solid #27272a;
@@ -26,6 +33,22 @@
   /* TYPOGRAPHY */
   --font-color: var(--text-main);
   --font-terminal: 'Fira Code', 'Roboto Mono', monospace; /* Or whatever Google font you use */
+
+  /* COMPONENT DIMENSIONS */
+  --panel-padding: 1.5rem;
+  --panel-gap: 1rem;
+  --component-gap-xs: 0.35rem;
+  --component-gap-sm: 0.55rem;
+  --component-gap: 0.75rem;
+  --component-gap-lg: 0.85rem;
+  --control-padding: 0.75rem;
+  --control-height: 2.65rem;
+  --control-font-size: 0.8rem;
+  --row-padding: 0.75rem;
+  --detail-grid-gap: 0.55rem;
+  --alert-padding: 0.5rem;
+  --list-gap: 0.45rem;
+  --mobile-breakpoint: 900px;
 }
 
 body {
@@ -65,10 +88,10 @@ ul {
   background-color: var(--bg-panel);
   border: var(--border-subtle);
   border-radius: 0;
-  padding: 1.5rem;
+  padding: var(--panel-padding);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--panel-gap);
   height: max-content;
 }
 

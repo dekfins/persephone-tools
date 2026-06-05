@@ -5,9 +5,13 @@
   import engines from '../../data/ship/engines.json';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
+  import type { MasterShipState } from '../../lib/states/shipState.svelte';
   
-  // Create local state instance for this component
-  const localState = createShipState();
+  let {
+    shipyardState: localState = createShipState()
+  }: {
+    shipyardState?: MasterShipState;
+  } = $props();
 
   let availableReactors = $derived(
     reactors.filter(r => localState.blueprint.getTier(r.class) <= localState.blueprint.multipliers.classTier)
@@ -42,7 +46,8 @@
     id="hull-dropdown"
     options={hulls} 
     bind:value={localState.blueprint.hull} 
-    labelKey="hullType" 
+    labelKey="hullType"
+    tooltipScale={localState.blueprint.multipliers}
   />
 </div>
 
@@ -52,7 +57,8 @@
     id="reactor-select"
     options={availableReactors} 
     bind:value={localState.blueprint.reactor} 
-    labelKey="reactorType" 
+    labelKey="reactorType"
+    tooltipScale={localState.blueprint.multipliers}
   />
 </div>
 
@@ -62,6 +68,8 @@
     id="engine-select"
     options={availableEngines} 
     bind:value={localState.blueprint.engine} 
-    labelKey="engineName" />
+    labelKey="engineName"
+    tooltipScale={localState.blueprint.multipliers}
+  />
 </div>
 </TerminalPanel>

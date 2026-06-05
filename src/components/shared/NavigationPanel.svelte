@@ -94,7 +94,7 @@
   }
 
   .nav-link {
-    color: var(--ui-cyan);
+    color: var(--text-main);
     text-decoration: none;
     padding: 0.5rem 0;
     letter-spacing: 0.05em;
@@ -140,7 +140,7 @@
   .profile-chip:focus-visible,
   .profile-chip[aria-expanded="true"] {
     background: var(--bg-panel);
-    border-color: var(--ui-cyan);
+    border-color: var(--accent-amber);
     opacity: 1;
     outline: none;
   }
@@ -155,7 +155,7 @@
   .profile-name {
     min-width: 0;
     overflow: hidden;
-    color: var(--ui-cyan);
+    color: var(--text-main);
     font-size: 0.82rem;
     font-weight: bold;
     text-overflow: ellipsis;
@@ -189,8 +189,8 @@
   .auth-select {
     width: 100%;
     background: rgba(0, 0, 0, 0.3);
-    color: var(--ui-cyan);
-    border: 1px solid var(--ui-cyan);
+    color: var(--text-main);
+    border: 1px solid var(--accent-amber);
     padding: 0.45rem;
     font-family: var(--font-terminal);
     font-size: 0.8rem;
@@ -200,6 +200,6 @@
   .auth-select:focus {
     outline: none;
     border-color: var(--ui-bright);
-    box-shadow: 0 0 5px rgba(6, 182, 212, 0.3);
+    box-shadow: 0 0 0 2px var(--ui-bright);
   }
 </style>

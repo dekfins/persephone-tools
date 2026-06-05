@@ -173,7 +173,7 @@
   }
   .terminal-input {
     background: #020617;
-    border: 1px solid var(--ui-cyan, #06b6d4);
+    border: 1px solid var(--ui-cyan);
     padding: 4px 8px;
     color: #fff;
     font-family: monospace;

@@ -97,14 +97,4 @@
     font-size: 0.85rem;
   }
 
-  /* Override the global btn-action colors for the emergency button */
-  .btn-danger {
-    color: var(--accent-red, #ef4444);
-    border-color: var(--accent-red, #ef4444);
-  }
-
-  .btn-danger:hover {
-    background: var(--accent-red, #ef4444) !important;
-    color: #000 !important;
-  }
 </style>

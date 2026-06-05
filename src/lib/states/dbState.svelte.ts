@@ -14,6 +14,7 @@ import type {
   FinalizeCharacterArchiveResult,
   FinalizeInventoryItemFailure,
   ItemRecord,
+  ItemState,
   PurchasedEquipmentItem,
   Skill
 } from '../types';
@@ -39,6 +40,7 @@ type FinalizeInventoryDraft = {
   name: string;
   quantity: number;
   equipment_id?: string | null;
+  item_state: ItemState;
   category: string;
   rarity: string;
   mass: number;
@@ -93,7 +95,10 @@ class DatabaseStateManager {
   }
 
   get shipInventory() {
-    return this.items.filter(item => item.owner_id === SHIP_INVENTORY_OWNER_ID);
+    return this.items.filter(item =>
+      item.owner_id === SHIP_INVENTORY_OWNER_ID &&
+      item.item_state === 'stored'
+    );
   }
 
   get personalInventory() {
@@ -109,6 +114,7 @@ class DatabaseStateManager {
           id: `preview-${archive.core.id}-${index}-${entry.equipmentId}`,
           owner_id: archive.core.id,
           equipment_id: entry.equipmentId,
+          item_state: 'stowed',
           name: getEquipmentDisplayName(catalogItem, entry.equipmentId),
           category: getEquipmentInventoryCategory(catalogItem),
           rarity: getEquipmentInventoryRarity(catalogItem),
@@ -125,6 +131,7 @@ class DatabaseStateManager {
           id: `preview-${archive.core.id}-purchase-${index}-${entry.equipmentId}`,
           owner_id: archive.core.id,
           equipment_id: entry.equipmentId,
+          item_state: 'stowed',
           name: catalogItem.name,
           category: getEquipmentInventoryCategory(catalogItem),
           rarity: getEquipmentInventoryRarity(catalogItem),
@@ -136,7 +143,10 @@ class DatabaseStateManager {
       return previewItems;
     }
 
-    return this.items.filter(item => item.owner_id === this.activeUserId);
+    return this.items.filter(item =>
+      item.owner_id === this.activeUserId &&
+      (item.item_state === 'readied' || item.item_state === 'stowed')
+    );
   }
 
   getCharacterById(characterId: string) {
@@ -148,7 +158,16 @@ class DatabaseStateManager {
     return Math.max(1, Math.floor(Number(quantity)) || 1);
   }
 
+  normalizeItemRecord(item: ItemRecord): ItemRecord {
+    const itemState = item.item_state ?? (item.owner_id === SHIP_INVENTORY_OWNER_ID ? 'stored' : 'stowed');
+    return {
+      ...item,
+      item_state: itemState
+    };
+  }
+
   itemsCanStack(candidate: ItemRecord, target: ItemRecord) {
+    if (candidate.item_state !== target.item_state) return false;
     if (target.equipment_id) return candidate.equipment_id === target.equipment_id;
 
     return !candidate.equipment_id &&
@@ -180,7 +199,7 @@ class DatabaseStateManager {
 
     // Fetch Items
     const { data: itemData, error: itemErr } = await supabase.from('items').select('*');
-    if (itemData) this.items = itemData;
+    if (itemData) this.items = (itemData as ItemRecord[]).map((item) => this.normalizeItemRecord(item));
     if (itemErr) console.error("Error loading items:", itemErr);
 
     // Fetch Ship Ledger (Hull & Fuel)
@@ -250,10 +269,10 @@ class DatabaseStateManager {
           
           if (payload.eventType === 'UPDATE') {
             const index = this.items.findIndex(i => i.id === payload.new.id);
-            if (index !== -1) this.items[index] = payload.new as ItemRecord;
+            if (index !== -1) this.items[index] = this.normalizeItemRecord(payload.new as ItemRecord);
           } 
           else if (payload.eventType === 'INSERT') {
-            this.items.push(payload.new as ItemRecord);
+            this.items.push(this.normalizeItemRecord(payload.new as ItemRecord));
           } 
           else if (payload.eventType === 'DELETE') {
             this.items = this.items.filter(i => i.id !== payload.old.id);
@@ -300,11 +319,18 @@ class DatabaseStateManager {
     const localItem = this.items.find(i => i.id === itemId);
     if (!localItem) return;
 
+    const nextItemState: ItemState = newOwnerId === SHIP_INVENTORY_OWNER_ID ? 'stored' : 'stowed';
+    const transferCandidate = {
+      ...localItem,
+      owner_id: newOwnerId,
+      item_state: nextItemState
+    };
+
     // 1. Check if the destination owner already has this exact item
     const existingStack = this.items.find(i => 
       i.id !== itemId && // Don't match against itself
       i.owner_id === newOwnerId &&
-      this.itemsCanStack(i, localItem)
+      this.itemsCanStack(i, transferCandidate)
     );
 
     if (existingStack) {
@@ -322,13 +348,49 @@ class DatabaseStateManager {
     } else {
       // 2b. NO STACK EXISTS: Just move the item
       localItem.owner_id = newOwnerId; // Optimistic local update
+      localItem.item_state = nextItemState;
       const { error } = await supabase
         .from('items')
-        .update({ owner_id: newOwnerId })
+        .update({ owner_id: newOwnerId, item_state: nextItemState })
         .eq('id', itemId);
 
       if (error) console.error("Failed to transfer item:", error);
     }
+  }
+
+  async updateItemState(itemId: string, itemState: ItemState) {
+    const localItem = this.items.find(i => i.id === itemId);
+    if (!localItem || itemState === 'stored') return;
+
+    const stateCandidate = {
+      ...localItem,
+      item_state: itemState
+    };
+
+    const existingStack = this.items.find(i =>
+      i.id !== itemId &&
+      i.owner_id === localItem.owner_id &&
+      this.itemsCanStack(i, stateCandidate)
+    );
+
+    if (existingStack) {
+      const combinedQty = existingStack.quantity + localItem.quantity;
+      existingStack.quantity = combinedQty;
+      this.items = this.items.filter(i => i.id !== itemId);
+
+      await supabase.from('items').update({ quantity: combinedQty }).eq('id', existingStack.id);
+      await supabase.from('items').delete().eq('id', itemId);
+      return;
+    }
+
+    localItem.item_state = itemState;
+
+    const { error } = await supabase
+      .from('items')
+      .update({ item_state: itemState })
+      .eq('id', itemId);
+
+    if (error) console.error("Failed to update item state:", error);
   }
 
   async updatePersonalCredits(characterId: string, amountToAdd: number) {
@@ -354,6 +416,7 @@ class DatabaseStateManager {
     // 1. Look for an exact match already in the ship's cargo
     const existingItem = this.items.find(i => 
       i.owner_id === SHIP_INVENTORY_OWNER_ID &&
+      i.item_state === 'stored' &&
       !i.equipment_id &&
       i.name.toLowerCase() === name.toLowerCase() &&
       i.category === category &&
@@ -379,6 +442,7 @@ class DatabaseStateManager {
         .from('items')
         .insert({
           owner_id: SHIP_INVENTORY_OWNER_ID,
+          item_state: 'stored',
           name,
           category,
           rarity,
@@ -397,6 +461,7 @@ class DatabaseStateManager {
     const normalizedQuantity = this.normalizeSpawnQuantity(quantity);
     const existingItem = this.items.find(i =>
       i.owner_id === SHIP_INVENTORY_OWNER_ID &&
+      i.item_state === 'stored' &&
       i.equipment_id === equipmentId
     );
 
@@ -416,6 +481,7 @@ class DatabaseStateManager {
       .insert({
         equipment_id: equipmentId,
         owner_id: SHIP_INVENTORY_OWNER_ID,
+        item_state: 'stored',
         name: catalogItem.name,
         category: getEquipmentInventoryCategory(catalogItem),
         rarity: getEquipmentInventoryRarity(catalogItem),
@@ -497,6 +563,7 @@ class DatabaseStateManager {
         equipmentId: entry.equipmentId,
         equipment_id: entry.equipmentId,
         name: getEquipmentDisplayName(catalogItem, entry.equipmentId),
+        item_state: 'stowed',
         category: getEquipmentInventoryCategory(catalogItem),
         rarity: getEquipmentInventoryRarity(catalogItem),
         quantity: this.normalizeSpawnQuantity(entry.quantity),
@@ -512,6 +579,7 @@ class DatabaseStateManager {
         equipmentId: entry.equipmentId,
         equipment_id: entry.equipmentId,
         name: catalogItem.name,
+        item_state: 'stowed',
         category: getEquipmentInventoryCategory(catalogItem),
         rarity: getEquipmentInventoryRarity(catalogItem),
         quantity: this.normalizeSpawnQuantity(entry.quantity),
@@ -549,6 +617,7 @@ class DatabaseStateManager {
           id: 'finalize-candidate',
           owner_id: characterId,
           equipment_id: draft.equipment_id,
+          item_state: draft.item_state,
           name: draft.name,
           category: draft.category,
           rarity: draft.rarity,
@@ -584,6 +653,7 @@ class DatabaseStateManager {
         .insert({
           equipment_id: draft.equipment_id,
           owner_id: characterId,
+          item_state: draft.item_state,
           name: draft.name,
           category: draft.category,
           rarity: draft.rarity,

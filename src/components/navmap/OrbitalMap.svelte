@@ -318,6 +318,6 @@
 <style>
   .navmap-container { position: relative; width: 100%; height: 100%; min-height: 600px; background-color: #0a0a0c; overflow: hidden; cursor: grab; }
   .navmap-container:active { cursor: grabbing; }
-  .hud-top-left { position: absolute; top: 100px; left: 20px; color: var(--ui-cyan, #06b6d4); font-family: var(--font-terminal, monospace); pointer-events: none; z-index: 100; }
+  .hud-top-left { position: absolute; top: 100px; left: 20px; color: var(--ui-cyan); font-family: var(--font-terminal, monospace); pointer-events: none; z-index: 100; }
   .floating-panel-wrapper { position: absolute; top: 100px; right: 20px; width: 300px; z-index: 100; }
 </style>

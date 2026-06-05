@@ -1,57 +1,30 @@
 <script lang="ts">
-  import { shipState } from '../../lib/states/shipState.svelte';
-  import { dbState } from '../../lib/states/dbState.svelte.ts';
+  import defenses from '../../data/ship/defenses.json';
   import fittings from '../../data/ship/fittings.json';
   import weapons from '../../data/ship/weapons.json';
-  import defenses from '../../data/ship/defenses.json';
+  import { dbState } from '../../lib/states/dbState.svelte.ts';
+  import { shipState } from '../../lib/states/shipState.svelte';
+  import { toShipComponentRow } from '../../lib/terminalItems';
+  import type { InstalledComponent } from '../../lib/types';
+  import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
   
-  // Create local state instance for this component
   const localState = shipState;
 
-  async function cycleStatus(comp: any) {
-    const currentStatus = comp.status || "Online"; 
-    
-    if (currentStatus === "Online") comp.status = "Damaged";
-    else if (currentStatus === "Damaged") comp.status = "Destroyed";
-    else comp.status = "Online";
-
-    await dbState.syncShipStateToCloud();
-  }
-
-  function getClassTag(className: string) {
-    if (!className) return 'unknown';
-    return className.toLowerCase().trim();
-  }
-
-  function getLiveAttribute(comp: any) {
-    const masterList = [...fittings, ...weapons, ...defenses] as any[];
-    
-    const targetName = comp.item.fittingName || comp.item.weaponName || comp.item.defenseName;
-
-    const liveItem = masterList.find(i => {
-      const masterName = i.fittingName || i.weaponName || i.defenseName;
-      return masterName === targetName;
-    });
-
-    return liveItem?.attribute || comp.item.attribute || "DATA LINK SEVERED";
-  }
-
-  // --- MID-FLIGHT MARKET LOGIC ---
   let isMarketOpen = $state(false);
 
   const marketInventories = {
-    Fitting: fittings.map(f => ({ ...f, displayName: f.fittingName})),
-    Weapon: weapons.map(w => ({ ...w, displayName: w.weaponName})),
-    Defense: defenses.map(d => ({ ...d, displayName: d.defenseName}))
+    Fitting: fittings.map(f => ({ ...f, displayName: f.fittingName })),
+    Weapon: weapons.map(w => ({ ...w, displayName: w.weaponName })),
+    Defense: defenses.map(d => ({ ...d, displayName: d.defenseName }))
   };
 
   const categoryOptions = [
     { label: 'FITTINGS', value: 'Fitting' },
     { label: 'DEFENSES', value: 'Defense' },
     { label: 'WEAPONS', value: 'Weapon' }
-      ];
+  ];
 
   let selectedCategoryObj = $state(categoryOptions[0]);
   let selectedItem = $state<any>(null);
@@ -61,11 +34,57 @@
     const currentTier = localState.blueprint.multipliers.classTier;
     return rawList.filter((item: any) => localState.blueprint.getTier(item.class) <= currentTier);
   });
+  let componentRows = $derived(
+    localState.blueprint.components.map((component) => {
+      const row = toShipComponentRow(component as InstalledComponent, localState.blueprint.multipliers);
+      return {
+        ...row,
+        mechanics: getLiveAttribute(component)
+      };
+    })
+  );
 
   $effect(() => {
-    selectedCategoryObj; // Track dependency
+    selectedCategoryObj;
     selectedItem = null;
   });
+
+  async function cycleStatus(comp: any) {
+    const currentStatus = comp.status || 'Online'; 
+    
+    if (currentStatus === 'Online') comp.status = 'Damaged';
+    else if (currentStatus === 'Damaged') comp.status = 'Destroyed';
+    else comp.status = 'Online';
+
+    await dbState.syncShipStateToCloud();
+  }
+
+  function getLiveAttribute(comp: any) {
+    const masterList = [...fittings, ...weapons, ...defenses] as any[];
+    const targetName = comp.item.fittingName || comp.item.weaponName || comp.item.defenseName;
+
+    const liveItem = masterList.find(i => {
+      const masterName = i.fittingName || i.weaponName || i.defenseName;
+      return masterName === targetName;
+    });
+
+    return liveItem?.attribute || comp.item.attribute || 'DATA LINK SEVERED';
+  }
+
+  function getComponent(row: TerminalItemListRow) {
+    return localState.blueprint.components.find(component => component.id === row.id);
+  }
+
+  async function cycleRowStatus(row: TerminalItemListRow) {
+    const component = getComponent(row);
+    if (!component) return;
+    await cycleStatus(component);
+  }
+
+  async function removeRow(row: TerminalItemListRow) {
+    localState.blueprint.removeComponent(row.id);
+    await dbState.syncShipStateToCloud();
+  }
 
   async function handleAddItem() {
     if (selectedItem) {
@@ -77,50 +96,34 @@
   }
 </script>
 
+{#snippet systemActions(row: TerminalItemListRow)}
+  <div class="item-actions">
+    <button 
+      class="status-btn status-{row.statusClass ?? 'online'}"
+      onclick={() => cycleRowStatus(row)}
+    >
+      {(row.statusLabel || 'Online').toUpperCase()}
+    </button>
+    
+    <button 
+      class="btn-action-red btn-compact" 
+      onclick={() => removeRow(row)}
+      title="Remove Component"
+    >
+      X
+    </button>
+  </div>
+{/snippet}
+
 <TerminalPanel title="Internal Systems">
-<div class="systems-list">
-  {#each localState.blueprint.components as comp}
-    <div class="system-row is-{comp.status?.toLowerCase() || 'online'}">
-      <div class="sys-primary">
-        <span class="cat-label">[{comp.category.substring(0,3).toUpperCase()}]</span> 
-        <span class="item-label {getClassTag(comp.item.class)}">
-          {comp.item.fittingName || comp.item.defenseName || comp.item.weaponName}
-          {#if comp.quantity > 1} 
-            <span class="qty-badge">x{comp.quantity}</span>
-          {/if}
-        </span>
-      </div>
-
-      <div class="sys-secondary">
-        <span class="sys-desc">
-          {getLiveAttribute(comp)}
-        </span>
-      </div>
-
-      <div class="sys-action">
-        <button 
-          class="status-btn status-{(comp.status || 'Online').toLowerCase()}"
-          onclick={() => cycleStatus(comp)}
-        >
-          {(comp.status || 'Online').toUpperCase()}
-        </button>
-        
-        <button 
-          class="btn-remove" 
-          onclick={async () => {
-            localState.blueprint.removeComponent(comp.id);
-            await dbState.syncShipStateToCloud();
-          }}
-          title="Remove Component"
-        >
-          X
-        </button>
-      </div>
-    </div>
-  {/each}
+  <TerminalItemList
+    items={componentRows}
+    emptyMessage="NO INTERNAL SYSTEMS INSTALLED"
+    rowActions={systemActions}
+  />
 
   <button class="btn-add-item" onclick={() => isMarketOpen = !isMarketOpen}>
-    {isMarketOpen ? "- Cancel installation..." : "+ Add item..."}
+    {isMarketOpen ? '- Cancel installation...' : '+ Add item...'}
   </button>
 
   {#if isMarketOpen}
@@ -136,7 +139,7 @@
             showPopup={false}
           />
         </div>
-        <div class="market-field" style="flex: 2;">
+        <div class="market-field component-field">
           <label for="available-components">AVAILABLE COMPONENTS</label>
           <TerminalSelect
             id="market-item-select"
@@ -144,6 +147,7 @@
             bind:value={selectedItem}
             labelKey="displayName"
             popupSide="left"
+            tooltipScale={localState.blueprint.multipliers}
           />
         </div>
       </div>
@@ -157,148 +161,32 @@
       </button>
     </div>
   {/if}
-</div>
 </TerminalPanel>
 
 <style>
-  /* PULLS THE LIST UP HIGHER */
-  .systems-list {
-    margin-top: -0.5rem; 
-  }
-
-  .systems-list::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .systems-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-left: 1px dashed var(--border-subtle, #333);
-  }
-
-  .systems-list::-webkit-scrollbar-thumb {
-    background: var(--ui-cyan, #00aacc);
-    border-radius: 2px;
-  }
-
-  .systems-list::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-amber, #ffb000);
-  }
-
-  .system-row { 
-    display: grid;
-    grid-template-columns: 2.5fr 3.5fr 120px; /* Changed from 100px */
-    gap: 1.5rem; 
-    align-items: center; 
-    border-bottom: 1px dashed var(--border-subtle); 
-    padding: 0.2rem 0;
-    min-width: 0;
-  }
-
-  /* Align the buttons together */
-  .sys-action {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* Style the new remove button */
-  .btn-remove {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    font-size: 1.4rem;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 0.2rem;
-    transition: color 0.2s;
-  }
-
-  .btn-remove:hover {
-    color: var(--accent-red);
-  }
-
-  .system-row.is-destroyed .sys-primary,
-  .system-row.is-destroyed .sys-secondary {
-    opacity: 0.3;
-    text-decoration: line-through;
-  }
-
-  .system-row.is-damaged .sys-secondary {
-    opacity: 0.7;
-    color: var(--accent-amber);
-  }
-
-  /* COLUMN 1 */
-  .sys-primary { 
-    display: flex;
-    gap: 0.5rem; 
-    align-items: baseline; 
-    min-width: 0;
-    font-size: 0.8rem;
-  }
-  .cat-label {
-    font-size: 0.8em;
-    opacity: 0.8;
-    color: var(--text-dim);
-  }
-  .item-label { 
-    font-weight: 500; 
-    text-transform: uppercase; 
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; 
-  }
-  .qty-badge {
-    color: var(--ui-cyan);
-    margin-left: 0.25rem;
-  }
-
-  .sys-secondary {
-    font-family: var(--font-terminal, monospace);
-    font-size: 0.8rem;
-    color: var(--text-main);
-    line-height: 1.4;
-  }
-  .sys-desc {
-    display: block;
-  }
-
-  /* COLUMN 3 */
-  .sys-action {
-    display: flex;
-    justify-content: flex-end;
-  }
   .status-btn {
     font-family: monospace;
     font-size: 0.8rem;
     padding: 0.3rem 0.5rem;
     cursor: pointer;
-    border: 1px solid;
+    border: 1px solid transparent;
     background: transparent;
-    width: 100%;
+    min-width: 6.8rem;
   }
+
   .status-online {
-    color: var(--ui-cyan);
-    border-color: transparent;
+    color: var(--text-main);
   }
+
   .status-damaged {
     color: var(--accent-amber);
-    border-color: transparent;
   }
+
   .status-destroyed {
     color: var(--accent-red);
-    border-color: transparent;
     text-decoration: line-through;
   }
 
-  .item-label.fighter { color: var(--fighter-green); }
-  .item-label.frigate { color: var(--frigate-blue); }
-  .item-label.cruiser { color: var(--cruiser-purple); }
-  .item-label.capital { color: var(--capital-red); }
-
-  /* --- MID-FLIGHT MARKET STYLES --- */
   .btn-add-item {
     background: transparent;
     border: none;
@@ -319,7 +207,7 @@
     margin-top: 0.5rem;
     padding: 1rem;
     border: 1px solid var(--accent-amber);
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -335,6 +223,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+  }
+
+  .component-field {
+    flex: 2;
   }
 
   .market-field label {
@@ -363,5 +255,11 @@
     border-color: var(--text-dim);
     color: var(--text-dim);
     cursor: not-allowed;
+  }
+
+  @media (max-width: 900px) {
+    .market-row {
+      flex-direction: column;
+    }
   }
 </style>

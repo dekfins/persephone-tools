@@ -71,12 +71,12 @@
     justify-content: space-between;
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
-    color: var(--ui-cyan, #06b6d4);
+    color: var(--ui-cyan);
     font-family: var(--font-terminal, monospace);
   }
 
   .text-highlight {
-    color: var(--text-main, #e2e8f0);
+    color: var(--text-main);
     text-align: right;
   }
 
@@ -85,9 +85,9 @@
     color: var(--ui-cyan) !important;
   }
 
-  .loot-common { color: #94a3b8; }
-  .loot-uncommon { color: #4ade80; }
-  .loot-rare { color: #60a5fa; }
-  .loot-epic { color: #c084fc; }
-  .loot-legendary { color: var(--accent-amber, #f59e0b); }
+  .loot-common { color: var(--loot-common); }
+  .loot-uncommon { color: var(--loot-uncommon); }
+  .loot-rare { color: var(--loot-rare); }
+  .loot-epic { color: var(--loot-epic); }
+  .loot-legendary { color: var(--loot-legendary); }
 </style>

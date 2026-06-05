@@ -136,7 +136,7 @@
           options={filteredCatalogOptions}
           bind:value={selectedCatalogOption}
           id="catalog-item"
-          showPopup={false}
+          popupSide="left"
         />
       </div>
 
@@ -235,81 +235,12 @@
     margin-bottom: 1rem;
   }
 
-  .mode-button.active,
-  .mode-button.active:hover {
-    background: var(--ui-cyan, #00aacc);
-    border-color: var(--ui-cyan, #00aacc);
-    color: var(--bg-void) !important;
-  }
-
   .qty-field {
     width: 5.5rem;
   }
 
-  .catalog-detail {
-    display: grid;
-    gap: 0.75rem;
-    border: var(--border-subtle);
-    background: var(--bg-void);
-    color: var(--text-main);
-    font-family: var(--font-terminal);
-    padding: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  .detail-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.75rem;
-    align-items: baseline;
-    color: var(--accent-amber);
-    font-size: 0.9rem;
-  }
-
-  .detail-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem 0.85rem;
-  }
-
-  .detail-grid div {
-    display: grid;
-    gap: 0.2rem;
-    min-width: 0;
-    font-size: 0.76rem;
-    text-transform: uppercase;
-  }
-
-  .detail-label {
-    color: var(--text-dim);
-  }
-
-  .catalog-detail p {
-    margin: 0;
-    color: var(--text-main);
-    font-size: 0.8rem;
-    line-height: 1.45;
-  }
-
-  .catalog-detail .mechanics {
-    color: var(--accent-amber);
-  }
-
-  .tag-line {
-    color: var(--text-dim);
-    font-size: 0.72rem;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .btn-action:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-  }
-
   @media (max-width: 900px) {
-    .mode-grid,
-    .detail-grid {
+    .mode-grid {
       grid-template-columns: 1fr;
     }
 

@@ -96,10 +96,7 @@
   {#if char}
     <div class="skill-list">
       {#each ALL_SKILLS as skill}
-        {@const definition = skillDefinition(skill)}
         {@const expanded = expandedSkill === skill}
-        {@const attribute = selectedAttribute(skill)}
-        {@const result = rollResults[skill]}
         <div class="skill-row" class:expanded>
           <button
             class="skill-toggle"
@@ -110,38 +107,42 @@
             <span>{skill.toUpperCase()}</span>
             <strong>{skillLevel(skill)}</strong>
           </button>
-
-          {#if expanded}
-            <div class="skill-detail">
-              <p>{definition.description}</p>
-              <div class="roll-controls">
-                <div class="attribute-control">
-                  <span>SUGGESTED ATTRIBUTE</span>
-                  <TerminalSelect
-                    options={attributeOptions}
-                    value={selectedAttributeOption(skill)}
-                    id={`skill-attribute-${skill}`}
-                    showPopup={false}
-                    onSelect={(option: AttributeOption) => setSkillAttribute(skill, option)}
-                  />
-                </div>
-                <button class="btn-action" onclick={() => rollSkill(skill)}>
-                  ROLL 2D6
-                </button>
-              </div>
-
-              <div class="formula-line">
-                2D6 + {skillLevel(skill)} SKILL + {formatModifier(attributeModifier(attribute))} {attribute.toUpperCase()}
-              </div>
-
-              {#if result}
-                <div class="roll-result">{rollSummary(result)}</div>
-              {/if}
-            </div>
-          {/if}
         </div>
       {/each}
     </div>
+
+    {#if expandedSkill}
+      {@const skill = expandedSkill}
+      {@const definition = skillDefinition(skill)}
+      {@const attribute = selectedAttribute(skill)}
+      {@const result = rollResults[skill]}
+      <div class="skill-detail">
+        <p>{definition.description}</p>
+        <div class="roll-controls">
+          <div class="attribute-control">
+            <span>SUGGESTED ATTRIBUTE</span>
+            <TerminalSelect
+              options={attributeOptions}
+              value={selectedAttributeOption(skill)}
+              id={`skill-attribute-${skill}`}
+              showPopup={false}
+              onSelect={(option: AttributeOption) => setSkillAttribute(skill, option)}
+            />
+          </div>
+          <button class="btn-action" onclick={() => rollSkill(skill)}>
+            ROLL 2D6
+          </button>
+        </div>
+
+        <div class="formula-line">
+          2D6 + {skillLevel(skill)} SKILL + {formatModifier(attributeModifier(attribute))} {attribute.toUpperCase()}
+        </div>
+
+        {#if result}
+          <div class="roll-result">{rollSummary(result)}</div>
+        {/if}
+      </div>
+    {/if}
   {:else}
     <div class="terminal-alert">AWAITING CREW DATA...</div>
   {/if}
@@ -150,6 +151,7 @@
 <style>
   .skill-list {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.45rem;
   }
 
@@ -166,7 +168,7 @@
 
   .skill-toggle {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 3rem;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.5rem;
     width: 100%;
@@ -186,16 +188,18 @@
 
   .skill-toggle strong {
     color: var(--accent-amber);
-    border: var(--border-subtle);
-    padding: 0.3rem;
+    padding: 0 0.1rem;
     text-align: center;
   }
 
   .skill-detail {
     display: grid;
     gap: 0.6rem;
-    border-top: var(--border-subtle);
+    margin-top: 0.65rem;
+    background: var(--bg-void);
+    border: var(--border-subtle);
     padding: 0.65rem;
+    font-family: var(--font-terminal);
   }
 
   p {
@@ -235,8 +239,18 @@
   }
 
   @media (max-width: 700px) {
+    .skill-list {
+      grid-template-columns: 1fr;
+    }
+
     .roll-controls {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 701px) and (max-width: 1050px) {
+    .skill-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
