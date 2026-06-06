@@ -10,6 +10,8 @@ import {
 import type {
   AdventurerPartial,
   AttributeKey,
+  CharacterActiveCondition,
+  CharacterConditionCategory,
   CharacterCreationArchive,
   CharacterFocusPick,
   CharacterRecord,
@@ -26,6 +28,7 @@ const ATTRIBUTE_KEYS: AttributeKey[] = ['str', 'dex', 'con', 'int', 'wis', 'cha'
 const ADVENTURER_PARTIALS: AdventurerPartial[] = ['partial_expert', 'partial_warrior'];
 const FOCUS_SOURCES = ['base', 'expert', 'warrior'];
 const EQUIPMENT_PACKAGE_IDS = ALL_EQUIPMENT_PACKAGES.map((pack) => pack.id);
+const CONDITION_CATEGORIES: CharacterConditionCategory[] = ['combat', 'hazard', 'custom'];
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -60,6 +63,29 @@ function normalizeFocusPicks(value: unknown): CharacterFocusPick[] | null {
 
   if (picks.some((pick) => pick === null)) return null;
   return picks as CharacterFocusPick[];
+}
+
+function normalizeActiveConditions(value: unknown): CharacterActiveCondition[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((condition) => {
+    if (!isObject(condition)) return [];
+    if (typeof condition.id !== 'string') return [];
+    if (typeof condition.category !== 'string' || !CONDITION_CATEGORIES.includes(condition.category as CharacterConditionCategory)) return [];
+    if (typeof condition.name !== 'string') return [];
+    if (typeof condition.summary !== 'string') return [];
+    if (typeof condition.createdAt !== 'string') return [];
+    if (condition.templateId !== undefined && typeof condition.templateId !== 'string') return [];
+
+    return [{
+      id: condition.id,
+      category: condition.category as CharacterConditionCategory,
+      name: condition.name,
+      summary: condition.summary,
+      templateId: condition.templateId,
+      createdAt: condition.createdAt
+    } as CharacterActiveCondition];
+  });
 }
 
 function hasValidAttributes(value: unknown) {
@@ -104,7 +130,8 @@ function hasValidCharacterCore(value: unknown): value is CharacterRecord {
     typeof value.max_system_strain === 'number' &&
     typeof value.rads === 'number' &&
     typeof value.max_rads === 'number' &&
-    typeof value.base_ac === 'number'
+    typeof value.base_ac === 'number' &&
+    Array.isArray(value.active_conditions)
   );
 }
 
@@ -195,6 +222,7 @@ function normalizeArchivePayload(value: unknown) {
   value.core.xp = typeof value.core.xp === 'number'
     ? value.core.xp
     : 0;
+  value.core.active_conditions = normalizeActiveConditions(value.core.active_conditions);
 
   const coreFocusPicks = normalizeFocusPicks(value.core.foci);
   const creationFocusPicks = normalizeFocusPicks(value.creation.focusPicks ?? value.creation.focus);

@@ -2,6 +2,7 @@ import hulls from '../../data/ship/hulls.json';
 import constants from '../../data/constants.json';
 import reactors from '../../data/ship/reactors.json';
 import rawEngines from '../../data/ship/engines.json'; 
+import { calculateShipItemCost } from '../shipMechanics';
 import type { ActiveCondition, Engine } from '../types'; 
 
 const engines = rawEngines as unknown as Engine[];
@@ -92,11 +93,7 @@ export class ShipBlueprint {
 
   calculateItemCost(item: any): number {
     if (!item) return 0;
-    const rawValue = item.cost ?? item.baseCost ?? item.weaponCost ?? 0;
-    const baseItemCost = typeof rawValue === 'string' ? parseInt(rawValue.replace(/,/g, '')) : rawValue;
-    const isCoreSystem = 'reactorType' in item || 'engineName' in item || 'parentEngine' in item;
-    const scales = isCoreSystem || item.hasScaleCost === "TRUE" || item.hasScaleCost === true;
-    return scales ? baseItemCost * this.multipliers.costMult : baseItemCost;
+    return calculateShipItemCost(item, this.multipliers);
   }
 
   get availableEngines() { return engines.filter((e: any) => this.getTier(e.class) <= this.multipliers.classTier); }

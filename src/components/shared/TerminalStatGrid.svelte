@@ -12,7 +12,7 @@
 <script lang="ts">
   type Props = {
     items: TerminalStatGridItem[];
-    columns?: 2 | 3 | 4;
+    columns?: 2 | 3 | 4 | 6;
     dense?: boolean;
     valueTone?: 'amber' | 'main';
     scaleValues?: boolean;
@@ -29,6 +29,10 @@
   function valueLength(value: string | number) {
     return `${value}`.length;
   }
+
+  function valueWidthFactor(value: string | number) {
+    return 1.55 / Math.max(valueLength(value), 1);
+  }
 </script>
 
 <div
@@ -41,7 +45,7 @@
     <div class="terminal-stat-cell {item.tone ?? ''}">
       <div class="stat-content">
         <span>{item.label}</span>
-        <strong class={item.tone ?? ''} style:--value-length={valueLength(item.value)}>
+        <strong class={item.tone ?? ''} style:--value-width-factor={valueWidthFactor(item.value)}>
           {item.value}
         </strong>
         {#if item.detail}
@@ -85,6 +89,10 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .terminal-stat-grid.columns-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
   .terminal-stat-cell {
     display: grid;
     gap: 0.25rem;
@@ -107,6 +115,7 @@
     display: grid;
     gap: 0.25rem;
     min-width: 0;
+    container-type: inline-size;
   }
 
   .stat-controls {
@@ -155,7 +164,7 @@
   strong {
     min-width: 0;
     color: var(--accent-amber);
-    font-size: clamp(0.7rem, calc(1.45rem - (var(--value-length) * 0.055rem)), 1.25rem);
+    font-size: clamp(0.7rem, calc(100cqw * var(--value-width-factor)), 1.25rem);
     line-height: 1;
     white-space: nowrap;
   }
@@ -169,7 +178,7 @@
   }
 
   .terminal-stat-grid.dense strong {
-    font-size: clamp(0.7rem, calc(0.95rem - (var(--value-length) * 0.018rem)), 0.82rem);
+    font-size: clamp(0.7rem, calc(100cqw * var(--value-width-factor)), 0.82rem);
   }
 
   strong.error,
@@ -185,6 +194,14 @@
 
   strong.accent {
     color: var(--accent-amber);
+  }
+
+  .terminal-stat-cell.positive em {
+    color: var(--fighter-green);
+  }
+
+  .terminal-stat-cell.negative em {
+    color: var(--accent-red);
   }
 
   .terminal-stat-cell.error,
@@ -207,13 +224,18 @@
     .terminal-stat-grid.columns-4 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .terminal-stat-grid.columns-6 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 700px) {
     .terminal-stat-grid,
     .terminal-stat-grid.columns-2,
     .terminal-stat-grid.columns-3,
-    .terminal-stat-grid.columns-4 {
+    .terminal-stat-grid.columns-4,
+    .terminal-stat-grid.columns-6 {
       grid-template-columns: 1fr;
     }
 

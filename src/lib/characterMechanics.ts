@@ -29,9 +29,11 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'STANDARD ATTACK / HP'
     ],
     rules: [
-      'Once per scene, reroll a failed skill check that is not a combat skill check.',
+      'Once per scene, reroll a failed skill check and keep the better result. This does not apply to attack rolls.',
       'Gain a non-combat focus as a bonus focus at first level.',
-      'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.'
+      'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
+      'Starting maximum hit points: 1d6+Con Mod, minimum 1.',
+      'Attack bonus: half your character level, rounded down, so +0 at first level.'
     ]
   },
   warrior: {
@@ -45,9 +47,11 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       '+2 HP / LEVEL'
     ],
     rules: [
-      'Once per scene, the warrior may automatically negate a successful combat hit against them, turning it into a miss.',
+      'Once per scene, as an Instant ability after dice are rolled, either turn your missed attack into a hit or negate a successful attack against you. This does not apply to environmental damage, effects without attack rolls, or hits against a vehicle you occupy.',
       'Gain a combat focus as a bonus focus at first level.',
-      'Warriors roll 1d6+2 for hit points, and add +2 to their Constitution modifier (if any) for this purpose.'
+      'You gain two extra maximum hit points at each character level.',
+      'Starting maximum hit points: 1d6+2+Con Mod, minimum 1.',
+      'Attack bonus: equal to your character level, so +1 at first level.'
     ]
   },
   adventurer: {
@@ -63,10 +67,12 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
     ],
     rules: [
       'Gain a non-combat focus as a bonus focus at first level.',
-      'When you advance a level, you gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
+      'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
       'Gain a combat focus as a bonus focus at first level.',
-      'Roll 1d6+2 for hit points at every level (the same bonus as a full Warrior).',
-      'Your attack bonus improves slightly faster than other non-Warriors.'
+      'You gain two extra maximum hit points at each character level.',
+      'Starting maximum hit points: 1d6+2+Con Mod, minimum 1.',
+      'Attack bonus: half your character level, rounded down, plus +1 at first and fifth levels.',
+      'You do not gain the Expert reroll or the Warrior once-per-scene combat ability.'
     ]
   }
 };

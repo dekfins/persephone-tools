@@ -4,6 +4,7 @@ import {
   getEquipmentInventoryMass,
   getEquipmentInventoryRarity
 } from './characterConstants';
+import { calculateShipItemCost, isCoreSystem, numericValue } from './shipMechanics';
 import type { EquipmentCatalogItem, InstalledComponent, InstallableItem } from './types';
 
 export type TerminalItemDetail = {
@@ -75,23 +76,8 @@ function booleanFlag(value: unknown) {
   return value === true || value === 'TRUE';
 }
 
-function numericValue(value: unknown) {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value.replace(/,/g, ''));
-    return Number.isFinite(parsed) ? parsed : undefined;
-  }
-  return undefined;
-}
-
-function isCoreSystem(item: Record<string, unknown>) {
-  return 'reactorType' in item || 'engineName' in item || 'parentEngine' in item;
-}
-
 export function getShipComponentCost(item: Record<string, unknown>, scale: TerminalTooltipScale) {
-  const baseCost = numericValue(item.cost ?? item.baseCost ?? item.weaponCost) ?? 0;
-  const scales = isCoreSystem(item) || booleanFlag(item.hasScaleCost);
-  return scales ? baseCost * scale.costMult : baseCost;
+  return calculateShipItemCost(item, scale);
 }
 
 export function getShipScaledMassPowerValue(
@@ -148,7 +134,6 @@ export function getShipComponentDetailRows(
   if (mass !== undefined) details.push({ label: 'MASS', value: mass });
   if (item.hardpoints !== undefined) details.push({ label: 'HARDPOINTS', value: String(item.hardpoints) });
   if (item.damage) details.push({ label: 'DAMAGE', value: String(item.damage) });
-  if (item.attribute) details.push({ label: 'EFFECT', value: String(item.attribute) });
 
   return details;
 }
@@ -224,7 +209,6 @@ export function getShipComponentTooltip(
   scale: TerminalTooltipScale
 ): TerminalSelectTooltip {
   const stats = getShipComponentDetailRows(item, undefined, scale)
-    .filter((detail) => detail.label !== 'EFFECT')
     .map((detail) => ({ label: detail.label, value: detail.value }));
 
   return {

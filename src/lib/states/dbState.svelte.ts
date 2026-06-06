@@ -2,6 +2,8 @@ import { supabase } from '../supabaseClient';
 import backgrounds from '../../data/character/backgrounds.json';
 import type {
   AttributeKey,
+  CharacterActiveCondition,
+  CharacterConditionTemplate,
   BackgroundDefinitions,
   BackgroundProgress,
   BackgroundProgressGrant,
@@ -34,6 +36,7 @@ import { crewState } from './crewState.svelte';
 
 const BACKGROUNDS = backgrounds as BackgroundDefinitions;
 const SHIP_INVENTORY_OWNER_ID = 'SHIP_INVENTORY';
+const CONDITION_CATEGORIES = ['combat', 'hazard', 'custom'] as const;
 
 type FinalizeInventoryDraft = {
   equipmentId: string;
@@ -166,6 +169,37 @@ class DatabaseStateManager {
     };
   }
 
+  normalizeActiveConditions(value: unknown): CharacterActiveCondition[] {
+    if (!Array.isArray(value)) return [];
+
+    return value.flatMap((condition) => {
+      if (!condition || typeof condition !== 'object' || Array.isArray(condition)) return [];
+      const entry = condition as Partial<CharacterActiveCondition>;
+      if (typeof entry.id !== 'string') return [];
+      if (!CONDITION_CATEGORIES.includes(entry.category as never)) return [];
+      if (typeof entry.name !== 'string') return [];
+      if (typeof entry.summary !== 'string') return [];
+      if (typeof entry.createdAt !== 'string') return [];
+
+      return [{
+        id: entry.id,
+        category: entry.category,
+        name: entry.name,
+        summary: entry.summary,
+        templateId: entry.templateId,
+        createdAt: entry.createdAt
+      } as CharacterActiveCondition];
+    });
+  }
+
+  normalizeCharacterRecord(char: CharacterRecord): CharacterRecord {
+    return {
+      ...char,
+      xp: typeof char.xp === 'number' ? char.xp : 0,
+      active_conditions: this.normalizeActiveConditions(char.active_conditions)
+    };
+  }
+
   itemsCanStack(candidate: ItemRecord, target: ItemRecord) {
     if (candidate.item_state !== target.item_state) return false;
     if (target.equipment_id) return candidate.equipment_id === target.equipment_id;
@@ -194,7 +228,7 @@ class DatabaseStateManager {
   async loadData() {
     // Fetch Characters
     const { data: charData, error: charErr } = await supabase.from('characters').select('*');
-    if (charData) this.characters = charData.map((char) => ({ xp: 0, ...char })) as CharacterRecord[];
+    if (charData) this.characters = (charData as CharacterRecord[]).map((char) => this.normalizeCharacterRecord(char));
     if (charErr) console.error("Error loading characters:", charErr);
 
     // Fetch Items
@@ -285,7 +319,7 @@ class DatabaseStateManager {
         (payload) => {
           console.log('Real-time Character Change:', payload);
           const index = this.characters.findIndex(c => c.id === payload.new.id);
-          if (index !== -1) this.characters[index] = payload.new as CharacterRecord;
+          if (index !== -1) this.characters[index] = this.normalizeCharacterRecord(payload.new as CharacterRecord);
         }
       )
       .on(
@@ -741,7 +775,7 @@ class DatabaseStateManager {
       };
     }
 
-    if (insertedCharacter) this.characters.push(insertedCharacter as CharacterRecord);
+    if (insertedCharacter) this.characters.push(this.normalizeCharacterRecord(insertedCharacter as CharacterRecord));
 
     const inventory = await this.finalizeInventoryForCharacter(characterId, this.buildFinalizeInventoryDrafts(archive));
     const complete = inventory.failures.length === 0;
@@ -885,6 +919,33 @@ class DatabaseStateManager {
       .eq('id', characterId);
 
     if (error) console.error("GM Error - Failed to update XP:", error);
+  }
+
+  async addCharacterCondition(characterId: string, condition: CharacterConditionTemplate | Pick<CharacterActiveCondition, 'category' | 'name' | 'summary'>) {
+    const char = this.getCharacterById(characterId);
+    if (!char) return;
+
+    const nextCondition: CharacterActiveCondition = {
+      id: crypto.randomUUID(),
+      category: condition.category,
+      name: condition.name,
+      summary: condition.summary,
+      templateId: 'id' in condition ? condition.id : undefined,
+      createdAt: new Date().toISOString()
+    };
+
+    await this.updateCharacter(characterId, {
+      active_conditions: [...this.normalizeActiveConditions(char.active_conditions), nextCondition]
+    });
+  }
+
+  async removeCharacterCondition(characterId: string, conditionId: string) {
+    const char = this.getCharacterById(characterId);
+    if (!char) return;
+
+    await this.updateCharacter(characterId, {
+      active_conditions: this.normalizeActiveConditions(char.active_conditions).filter((condition) => condition.id !== conditionId)
+    });
   }
 
   async updateCharacterSkill(characterId: string, skill: Skill, level: number) {

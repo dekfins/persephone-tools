@@ -3,7 +3,7 @@
   import VitalsPanel from './PlayerVitalsPanel.svelte';
   import AttributesPanel from './AttributesPanel.svelte';
   import SkillsPanel from './SkillsPanel.svelte';
-  import ConditionsPanel from './ConditionsPanel.svelte';
+  import ConditionsPanel from './PlayerConditionsPanel.svelte';
   import SavingThrowsPanel from './SavingThrowsPanel.svelte';
   import ClassAbilitiesPanel from './ClassAbilitiesPanel.svelte';
   import FociPanel from './FociPanel.svelte';

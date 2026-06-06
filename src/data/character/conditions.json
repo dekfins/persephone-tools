@@ -1,0 +1,74 @@
+{
+  "prone": {
+    "id": "prone",
+    "category": "combat",
+    "name": "Prone",
+    "summary": "+2 AC vs ranged, -2 AC vs melee. Melee attacks made while prone take -4. Standing up costs a Move action."
+  },
+  "cover_half": {
+    "id": "cover_half",
+    "category": "combat",
+    "name": "In Cover (Half)",
+    "summary": "+2 AC vs ranged attacks. Ignored by melee."
+  },
+  "cover_total": {
+    "id": "cover_total",
+    "category": "combat",
+    "name": "In Cover (Total)",
+    "summary": "+4 AC vs ranged attacks. Ignored by melee."
+  },
+  "total_defense": {
+    "id": "total_defense",
+    "category": "combat",
+    "name": "Total Defense",
+    "summary": "+2 AC and immune to Shock damage for the round. Costs Main Action."
+  },
+  "surprised": {
+    "id": "surprised",
+    "category": "combat",
+    "name": "Surprised",
+    "summary": "Cannot act normally in the first round. May only take Instant actions until initiative begins."
+  },
+  "stunned": {
+    "id": "stunned",
+    "category": "combat",
+    "name": "Stunned",
+    "summary": "Cannot take actions. Re-roll initiative (d8) when stun ends."
+  },
+  "mortally_wounded": {
+    "id": "mortally_wounded",
+    "category": "combat",
+    "name": "Mortally Wounded",
+    "summary": "At 0 HP from lethal damage. Must be stabilized within 6 rounds or die; further damage kills immediately."
+  },
+  "poisoned": {
+    "id": "poisoned",
+    "category": "hazard",
+    "name": "Poisoned",
+    "summary": "Physical save to resist. Onset, interval, and effects vary by toxin."
+  },
+  "diseased": {
+    "id": "diseased",
+    "category": "hazard",
+    "name": "Diseased",
+    "summary": "Physical save to resist infection. Symptoms and follow-up saves vary by disease."
+  },
+  "acute_radiation": {
+    "id": "acute_radiation",
+    "category": "hazard",
+    "name": "Acute Radiation",
+    "summary": "Failed Physical save vs high-dose exposure: lose 1 CON. Below half original CON = death in 1d6 weeks; below CON 3 = instant death."
+  },
+  "chronic_radiation": {
+    "id": "chronic_radiation",
+    "category": "hazard",
+    "name": "Chronic Radiation",
+    "summary": "Rads: 4-5 = -1 Phys checks/saves; 6-7 = -1 all checks/saves; 8-10 = -2 all checks/saves. At 10, fail daily Phys save = -1 CON."
+  },
+  "xenoallergy": {
+    "id": "xenoallergy",
+    "category": "hazard",
+    "name": "Xenoallergy",
+    "summary": "Daily Physical save while exposed. Each failure adds cumulative -1 to hit rolls and skill checks. Six failures = death."
+  }
+}

@@ -1,11 +1,14 @@
 import equipmentCatalog from '../data/character/equipment.json';
 import equipmentPackages from '../data/character/equipmentPackages.json';
+import conditionCatalog from '../data/character/conditions.json';
 import skillMetadata from '../data/character/skills.json';
 import type {
   AttributeCategory,
   AttributeKey,
   Background,
   BackgroundChoiceToken,
+  CharacterConditionCatalog,
+  CharacterConditionTemplate,
   CharacterFocusPick,
   EquipmentPackageCatalog,
   EquipmentPackageDefinition,
@@ -123,6 +126,14 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   'restricted_tech'
 ];
 
+function validateConditionCatalog(catalog: CharacterConditionCatalog) {
+  Object.entries(catalog).forEach(([key, condition]) => {
+    if (key !== condition.id) {
+      throw new Error(`Condition catalog key "${key}" does not match condition id "${condition.id}".`);
+    }
+  });
+}
+
 function validateEquipmentCatalog(catalog: EquipmentCatalog) {
   Object.entries(catalog).forEach(([key, item]) => {
     if (key !== item.id) {
@@ -147,6 +158,10 @@ function validateSkillDefinitions(definitions: SkillDefinitions) {
 }
 
 validateSkillDefinitions(SKILL_DEFINITIONS);
+
+export const CHARACTER_CONDITIONS_BY_ID = conditionCatalog as CharacterConditionCatalog;
+validateConditionCatalog(CHARACTER_CONDITIONS_BY_ID);
+export const ALL_CHARACTER_CONDITIONS: CharacterConditionTemplate[] = Object.values(CHARACTER_CONDITIONS_BY_ID);
 
 export const EQUIPMENT_BY_ID = equipmentCatalog as EquipmentCatalog;
 validateEquipmentCatalog(EQUIPMENT_BY_ID);

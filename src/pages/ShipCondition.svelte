@@ -2,7 +2,7 @@
   import ShipVitalsPanel from '../components/ship-condition/ShipVitalsPanel.svelte';
   import FuelManagementPanel from '../components/ship-condition/FuelManagementPanel.svelte';
   import SystemsPanel from '../components/ship-condition/SystemsPanel.svelte';
-  import ConditionsPanel from '../components/ship-condition/ConditionsPanel.svelte';
+  import ConditionsPanel from '../components/ship-condition/ShipConditionsPanel.svelte';
 </script>
 
 <div class="page-container">

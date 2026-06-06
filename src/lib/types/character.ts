@@ -265,6 +265,40 @@ export interface CharacterCreationArchive {
   creation: CharacterCreationDetails;
 }
 
+export type CharacterConditionCategory = 'combat' | 'hazard' | 'custom';
+
+export type CharacterConditionTemplateId =
+  | 'prone'
+  | 'cover_half'
+  | 'cover_total'
+  | 'total_defense'
+  | 'surprised'
+  | 'stunned'
+  | 'mortally_wounded'
+  | 'poisoned'
+  | 'diseased'
+  | 'acute_radiation'
+  | 'chronic_radiation'
+  | 'xenoallergy';
+
+export interface CharacterConditionTemplate {
+  id: CharacterConditionTemplateId;
+  category: Exclude<CharacterConditionCategory, 'custom'>;
+  name: string;
+  summary: string;
+}
+
+export type CharacterConditionCatalog = Record<CharacterConditionTemplateId, CharacterConditionTemplate>;
+
+export interface CharacterActiveCondition {
+  id: string;
+  category: CharacterConditionCategory;
+  name: string;
+  summary: string;
+  templateId?: CharacterConditionTemplateId;
+  createdAt: string;
+}
+
 export interface FinalizeInventoryItemFailure {
   equipmentId: string;
   name: string;
@@ -316,4 +350,5 @@ export interface CharacterRecord {
   rads: number;
   max_rads: number;
   base_ac: number;
+  active_conditions: CharacterActiveCondition[];
 }

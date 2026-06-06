@@ -70,7 +70,7 @@
       {/if}
     {:else}
       <div class="archive-import">
-        <label for="character-archive-import" class="archive-label">IMPORT DEIMOS CHARACTER</label>
+        <label for="character-archive-import" class="archive-label">IMPORT CHARACTER</label>
         <input
           id="character-archive-import"
           class="terminal-input archive-input"

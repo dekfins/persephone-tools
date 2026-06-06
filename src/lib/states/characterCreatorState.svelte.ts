@@ -1476,7 +1476,8 @@ class CharacterCreatorStateManager {
       max_system_strain: this.draft.attributes.con,
       rads: 0,
       max_rads: 10,
-      base_ac: this.armorClass
+      base_ac: this.armorClass,
+      active_conditions: []
     };
   }
 }

@@ -473,8 +473,8 @@
 .item-row {
   display: grid;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-void);
+  border: var(--border-subtle);
   padding: var(--row-padding);
   font-family: var(--font-terminal);
 }
