@@ -159,7 +159,7 @@
       <Invite />
     </Route>
 
-    <Route path="/home" fallback>
+    <Route path="/home">
       <Home />
     </Route>
 
@@ -198,6 +198,8 @@
     <Route path="/settings">
       <Settings />
     </Route>
+
+    <Route fallback redirect="/home" />
 
     {#if showCampaignLog}
       <CampaignLogPanel />
