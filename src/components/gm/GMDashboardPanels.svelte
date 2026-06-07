@@ -8,6 +8,7 @@
   import SystemDamagePanel from './SystemDamagePanel.svelte';
   import CharacterEditorPanel from './CharacterEditorPanel.svelte';
   import WorldControlPanel from './WorldControlPanel.svelte';
+  import NpcSummaryPanel from './NpcSummaryPanel.svelte';
 </script>
 
 {#if toastState.show}
@@ -26,6 +27,7 @@
   <div class="col-stack">
     <ShipOverridePanel />
     <CharacterEditorPanel />
+    <NpcSummaryPanel />
   </div>
 
   <div class="col-stack">

@@ -1,14 +1,17 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
-  import { getBaseAttackBonus } from '../../lib/characterMechanics';
+  import { canLevelUp, getBaseAttackBonus, getNextLevelThreshold } from '../../lib/characterMechanics';
+  import LevelUpModal from './LevelUpModal.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';
 
   let char = $derived(dbState.activeCharacter);
   let creation = $derived(dbState.localCharacterCreation);
+  let showLevelUp = $state(false);
 
-  let attackBonus = $derived(char ? creation?.baseAttackBonus ?? getBaseAttackBonus(char.character_class) : 0);
+  let attackBonus = $derived(char ? creation?.baseAttackBonus ?? getBaseAttackBonus(char.character_class, char.level) : 0);
   let armorClass = $derived(char ? creation?.armorClass ?? char.base_ac : 10);
+  let canAdvanceLevel = $derived(Boolean(char && !dbState.isLocalCharacterPreview && canLevelUp(char)));
   let vitalsItems = $derived<TerminalStatGridItem[]>(char ? [
     {
       label: 'HIT POINTS',
@@ -33,7 +36,7 @@
     { label: 'ARMOR CLASS', value: armorClass },
     {
       label: 'XP',
-      value: char.xp ?? 0,
+      value: `${char.xp ?? 0}/${getNextLevelThreshold(char.level)}`,
       onDecrement: () => adjustXP(-1),
       onIncrement: () => adjustXP(1)
     }
@@ -73,6 +76,14 @@
   {#if char}
     <TerminalStatGrid items={vitalsItems} columns={3} />
 
+    {#if canAdvanceLevel}
+      <div class="level-action">
+        <button class="btn-action btn-amber" type="button" onclick={() => showLevelUp = true}>
+          LEVEL UP
+        </button>
+      </div>
+    {/if}
+
     {#if dbState.isLocalCharacterPreview}
       <div class="terminal-alert">ARCHIVE PREVIEW VITALS - NOT SYNCED TO CLOUD</div>
     {/if}
@@ -80,3 +91,15 @@
     <div class="terminal-alert">AWAITING CREW DATA...</div>
   {/if}
 </TerminalPanel>
+
+{#if showLevelUp}
+  <LevelUpModal onClose={() => showLevelUp = false} />
+{/if}
+
+<style>
+  .level-action {
+    display: grid;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+</style>

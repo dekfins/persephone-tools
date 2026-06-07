@@ -19,7 +19,9 @@
   ]);
 
   function moveToPlayer(itemId: string) {
-    dbState.transferItem(itemId, dbState.activeUserId);
+    const activeCharacterId = dbState.activeCharacter?.id;
+    if (!activeCharacterId) return;
+    dbState.transferItem(itemId, activeCharacterId);
   }
 
   function toEquipmentRow(item: ItemRecord): TerminalItemListRow {

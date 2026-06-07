@@ -29,7 +29,7 @@
     <div class="input-group flex-1 no-margin">
       <label for="apply-override">&nbsp;</label>
       <button class="btn-action btn-full-amber" onclick={applyShipOverrides}>
-        APPLY OVERRIDE
+        APPLY
       </button>
     </div>
   </div>

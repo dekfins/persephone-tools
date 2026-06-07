@@ -1,64 +1,114 @@
 <script lang="ts">
   import { active, router } from 'tinro';
+  import { authState } from '../../lib/states/authState.svelte';
   import { dbState } from '../../lib/states/dbState.svelte';
+  import TerminalSelect from './TerminalSelect.svelte';
+
+  type SelectOption = { label: string; value: string };
 
   let isProfileExpanded = $state(false);
   let isOverviewActive = $derived(!$router?.path || $router.path === '/overview' || $router.path === '/');
-  let activeProfile = $derived(dbState.activeCharacter);
+  let isLoginRoute = $derived($router?.path === '/login');
+  let campaignOptions = $derived<SelectOption[]>(
+    dbState.campaigns.map(campaign => ({ label: campaign.name, value: campaign.id }))
+  );
+  let selectedCampaign = $derived(
+    campaignOptions.find(option => option.value === dbState.activeCampaignId) ?? null
+  );
+  let characterOptions = $derived<SelectOption[]>(
+    dbState.playerCharacters.map(character => ({ label: character.name, value: character.id }))
+  );
+  let selectedCharacter = $derived(
+    characterOptions.find(option => option.value === dbState.activeCharacter?.id) ?? null
+  );
+  let profileName = $derived(
+    authState.profile?.display_name ?? authState.profile?.email ?? 'SIGNED OUT'
+  );
+
+  function handleCampaignSelect(option: SelectOption) {
+    void dbState.setActiveCampaign(option.value);
+  }
+
+  function handleCharacterSelect(option: SelectOption) {
+    void dbState.setActiveCharacter(option.value);
+  }
 </script>
 
 <header class="top-bar">
   <div class="bar-content">
-    <div class="brand">DEIMOS</div>
+    <a href="/home" class="brand">DEIMOS</a>
     
-    <nav class="navbar">
-      <a href="/overview" class="nav-link" class:active={isOverviewActive}>OVERVIEW</a>
-      <a href="/character-creator" class="nav-link" use:active>CREATOR</a>
-      <a href="/ship-builder" class="nav-link" exact use:active>SHIP BUILDER</a>
-      <a href="/ship-condition" class="nav-link" use:active>SHIP CONDITION</a>
-      <a href="/inventory" class="nav-link" use:active>INVENTORY</a>
-      <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
-      {#if dbState.activeCharacter?.role === 'GM'}
-        <a href="/missions" class="nav-link" use:active>JOB BOARD</a> 
-        <a href="/gm" class="nav-link" use:active>GM TOOLS</a>
-      {/if}
-      <a href="/settings" class="nav-link" use:active>SETTINGS</a>
-    </nav>
+    {#if authState.isSignedIn && dbState.activeCampaignId}
+      <nav class="navbar">
+        <a href="/home" class="nav-link" use:active>HOME</a>
+        <a href="/overview" class="nav-link" class:active={isOverviewActive}>OVERVIEW</a>
+        <a href="/character-creator" class="nav-link" use:active>CREATOR</a>
+        <a href="/ship-builder" class="nav-link" exact use:active>SHIP BUILDER</a>
+        <a href="/ship-condition" class="nav-link" use:active>SHIP CONDITION</a>
+        <a href="/inventory" class="nav-link" use:active>INVENTORY</a>
+        <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
+        {#if dbState.isGM}
+          <a href="/missions" class="nav-link" use:active>JOB BOARD</a> 
+          <a href="/gm" class="nav-link" use:active>GM TOOLS</a>
+        {/if}
+        <a href="/settings" class="nav-link" use:active>SETTINGS</a>
+      </nav>
+    {:else if !isLoginRoute}
+      <nav class="navbar">
+        <a href="/login" class="nav-link" use:active>LOGIN</a>
+      </nav>
+    {/if}
   </div>
 </header>
 
-<div class="floating-auth">
-  <button
-    type="button"
-    class="profile-chip"
-    aria-expanded={isProfileExpanded}
-    aria-controls="profile-selector"
-    onclick={() => isProfileExpanded = !isProfileExpanded}
-  >
-    <span class="profile-kicker">PROFILE</span>
-    <span class="profile-name">{activeProfile?.name ?? 'NO ACTIVE USER'}</span>
-    <span class="profile-role">{activeProfile?.role ?? 'UNSET'}</span>
-  </button>
+{#if authState.isSignedIn}
+  <div class="floating-auth">
+    <button
+      type="button"
+      class="profile-chip"
+      aria-expanded={isProfileExpanded}
+      aria-controls="profile-selector"
+      onclick={() => isProfileExpanded = !isProfileExpanded}
+    >
+      <span class="profile-kicker">PROFILE</span>
+      <span class="profile-name">{profileName}</span>
+      <span class="profile-role">{dbState.activeMembership?.role ?? 'NO CAMPAIGN'}</span>
+    </button>
 
-  {#if isProfileExpanded}
-    <div class="auth-content">
-      <span class="auth-label">ACTIVE USER</span>
-      <select 
-        id="profile-selector"
-        bind:value={dbState.activeUserId} 
-        class="auth-select"
-        onchange={() => isProfileExpanded = false}
-      >
-        {#each dbState.characters as char}
-          <option value={char.id}>{char.name} ({char.role})</option>
-        {/each}
-      </select>
-    </div>
-  {/if}
-</div>
+    {#if isProfileExpanded}
+      <div class="auth-content" id="profile-selector">
+        {#if campaignOptions.length > 0}
+          <span class="auth-label">CAMPAIGN</span>
+          <TerminalSelect
+            id="campaign-selector"
+            options={campaignOptions}
+            value={selectedCampaign}
+            onSelect={handleCampaignSelect}
+            showPopup={false}
+          />
+
+          <span class="auth-label">ACTIVE CHARACTER</span>
+          <TerminalSelect
+            id="character-selector"
+            options={characterOptions}
+            value={selectedCharacter}
+            placeholder="NO CHARACTER"
+            onSelect={handleCharacterSelect}
+            showPopup={false}
+          />
+        {:else}
+          <div class="dim-message">NO CAMPAIGN INVITE</div>
+        {/if}
+
+        <button class="btn-action btn-danger btn-compact" onclick={() => authState.signOut()}>
+          LOG OUT
+        </button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 <style>
-  /* --- NAVBAR STYLES --- */
   .top-bar {
     position: fixed;
     top: 0;
@@ -86,10 +136,12 @@
     letter-spacing: 0.15em;
     padding-top: 0.5rem;
     padding-left: 2rem;
+    text-decoration: none;
   }
 
   .navbar {
     display: flex;
+    flex-wrap: wrap;
     gap: 2rem; 
   }
 
@@ -110,13 +162,12 @@
     color: var(--accent-amber) !important;
   }
 
-  /* --- FLOATING AUTH STYLES --- */
   .floating-auth {
     position: fixed;
     bottom: 1rem;
     left: 1rem;
     z-index: 1000;
-    width: min(240px, calc(100vw - 2rem));
+    width: min(270px, calc(100vw - 2rem));
     font-family: var(--font-terminal);
   }
 
@@ -132,7 +183,7 @@
     font-family: var(--font-terminal);
     text-align: left;
     cursor: pointer;
-    opacity: 0.82;
+    opacity: 0.88;
     transition: border-color 0.2s ease, opacity 0.2s ease, background 0.2s ease;
   }
 
@@ -171,9 +222,8 @@
   }
 
   .auth-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+    display: grid;
+    gap: 0.45rem;
     margin-top: 0.35rem;
     padding: 0.5rem;
     background: var(--bg-panel);
@@ -184,22 +234,5 @@
     color: var(--text-dim);
     font-size: 0.65rem;
     letter-spacing: 0.05em;
-  }
-
-  .auth-select {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    color: var(--text-main);
-    border: 1px solid var(--accent-amber);
-    padding: 0.45rem;
-    font-family: var(--font-terminal);
-    font-size: 0.8rem;
-    cursor: pointer;
-  }
-  
-  .auth-select:focus {
-    outline: none;
-    border-color: var(--ui-bright);
-    box-shadow: 0 0 0 2px var(--ui-bright);
   }
 </style>

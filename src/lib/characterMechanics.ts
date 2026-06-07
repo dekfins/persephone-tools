@@ -1,12 +1,16 @@
 import type {
   AttributeKey,
   Attributes,
+  CharacterAdvancementProgress,
   CharacterClass,
   CharacterFocusPick,
+  CharacterRecord,
   CharacterSaveScores,
   Foci,
-  FocusLevel
+  FocusLevel,
+  Skill
 } from './types';
+import { COMBAT_SKILLS } from './characterConstants';
 
 export type ClassAbilityDefinition = {
   label: string;
@@ -77,6 +81,125 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
   }
 };
 
+export const XP_THRESHOLDS = [0, 3, 6, 12, 18, 27, 39, 54, 72, 93] as const;
+export const FOCUS_ADVANCEMENT_LEVELS = [2, 5, 7, 10] as const;
+
+export const SKILL_ADVANCEMENT_RULES: Record<number, { cost: number; minLevel: number }> = {
+  0: { cost: 1, minLevel: 1 },
+  1: { cost: 2, minLevel: 1 },
+  2: { cost: 3, minLevel: 3 },
+  3: { cost: 4, minLevel: 6 },
+  4: { cost: 5, minLevel: 9 }
+};
+
+export const ATTRIBUTE_BOOST_RULES = [
+  { cost: 1, minLevel: 1 },
+  { cost: 2, minLevel: 1 },
+  { cost: 3, minLevel: 3 },
+  { cost: 4, minLevel: 6 },
+  { cost: 5, minLevel: 9 }
+] as const;
+
+export const EMPTY_ADVANCEMENT_PROGRESS: CharacterAdvancementProgress = {
+  generalSkillPoints: 0,
+  nonCombatSkillPoints: 0,
+  skillInvestments: {},
+  attributeBoostCount: 0
+};
+
+export function normalizeAdvancementProgress(value: unknown): CharacterAdvancementProgress {
+  const source = typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? value as Partial<CharacterAdvancementProgress>
+    : {};
+  const rawInvestments = source.skillInvestments &&
+    typeof source.skillInvestments === 'object' &&
+    !Array.isArray(source.skillInvestments)
+      ? source.skillInvestments
+      : {};
+
+  const skillInvestments = Object.entries(rawInvestments).reduce((investments, [skill, amount]) => {
+    if (typeof amount === 'number' && amount > 0) {
+      investments[skill as Skill] = Math.floor(amount);
+    }
+    return investments;
+  }, {} as Partial<Record<Skill, number>>);
+
+  return {
+    generalSkillPoints: Math.max(0, Math.floor(Number(source.generalSkillPoints) || 0)),
+    nonCombatSkillPoints: Math.max(0, Math.floor(Number(source.nonCombatSkillPoints) || 0)),
+    skillInvestments,
+    attributeBoostCount: Math.max(0, Math.min(5, Math.floor(Number(source.attributeBoostCount) || 0)))
+  };
+}
+
+export function getTotalExperienceRequired(level: number) {
+  const normalizedLevel = Math.max(1, Math.floor(level));
+  if (normalizedLevel <= XP_THRESHOLDS.length) return XP_THRESHOLDS[normalizedLevel - 1];
+  return XP_THRESHOLDS[XP_THRESHOLDS.length - 1] + (normalizedLevel - XP_THRESHOLDS.length) * 24;
+}
+
+export function getNextLevelThreshold(level: number) {
+  return getTotalExperienceRequired(Math.max(1, Math.floor(level)) + 1);
+}
+
+export function getLevelForXP(xp: number) {
+  const normalizedXP = Math.max(0, Math.floor(Number(xp) || 0));
+  let level = 1;
+
+  while (normalizedXP >= getTotalExperienceRequired(level + 1)) {
+    level += 1;
+  }
+
+  return level;
+}
+
+export function canLevelUp(character: Pick<CharacterRecord, 'level' | 'xp'>) {
+  return Math.max(0, character.xp ?? 0) >= getNextLevelThreshold(character.level);
+}
+
+export function hasExpertTraining(characterClass: CharacterClass) {
+  return characterClass === 'expert' || characterClass === 'adventurer';
+}
+
+export function hasWarriorTraining(characterClass: CharacterClass) {
+  return characterClass === 'warrior' || characterClass === 'adventurer';
+}
+
+export function hasFocusLevel(picks: CharacterFocusPick[], focus: Foci) {
+  return (getHighestFocusLevels(picks)[focus] ?? 0) > 0;
+}
+
+export function getSkillRankCap(characterLevel: number) {
+  const level = Math.max(1, Math.floor(characterLevel));
+  if (level >= 9) return 4;
+  if (level >= 6) return 3;
+  if (level >= 3) return 2;
+  return 1;
+}
+
+export function getNextSkillRankCost(currentRank: number) {
+  const nextRank = currentRank + 1;
+  return SKILL_ADVANCEMENT_RULES[nextRank]?.cost ?? null;
+}
+
+export function canAdvanceSkill(currentRank: number, characterLevel: number) {
+  const nextRank = currentRank + 1;
+  const rule = SKILL_ADVANCEMENT_RULES[nextRank];
+  return Boolean(rule && nextRank <= 4 && characterLevel >= rule.minLevel);
+}
+
+export function isCombatSkill(skill: Skill) {
+  return COMBAT_SKILLS.includes(skill);
+}
+
+export function grantsFocusAtLevel(level: number) {
+  return FOCUS_ADVANCEMENT_LEVELS.includes(level as never);
+}
+
+export function getAttributeBoostRule(attributeBoostCount: number) {
+  return ATTRIBUTE_BOOST_RULES[attributeBoostCount] ?? null;
+}
+
 export function getAttributeModifier(score: number) {
   if (score <= 3) return -2;
   if (score <= 7) return -1;
@@ -100,17 +223,23 @@ export function getAttributeModifiers(attributes: Attributes): Record<AttributeK
   };
 }
 
-export function getSavingThrows(attributes: Attributes): CharacterSaveScores {
+export function getSavingThrows(attributes: Attributes, level = 1): CharacterSaveScores {
   const mods = getAttributeModifiers(attributes);
+  const levelAdjustment = Math.max(0, Math.floor(level) - 1);
   return {
-    physical: 15 - Math.max(mods.str, mods.con),
-    evasion: 15 - Math.max(mods.int, mods.dex),
-    mental: 15 - Math.max(mods.wis, mods.cha)
+    physical: 15 - levelAdjustment - Math.max(mods.str, mods.con),
+    evasion: 15 - levelAdjustment - Math.max(mods.int, mods.dex),
+    mental: 15 - levelAdjustment - Math.max(mods.wis, mods.cha)
   };
 }
 
-export function getBaseAttackBonus(characterClass: CharacterClass) {
-  return characterClass === 'warrior' || characterClass === 'adventurer' ? 1 : 0;
+export function getBaseAttackBonus(characterClass: CharacterClass, level = 1) {
+  const normalizedLevel = Math.max(1, Math.floor(level));
+  if (characterClass === 'warrior') return normalizedLevel;
+  if (characterClass === 'adventurer') {
+    return Math.floor(normalizedLevel / 2) + 1 + (normalizedLevel >= 5 ? 1 : 0);
+  }
+  return Math.floor(normalizedLevel / 2);
 }
 
 export function getClassAbility(characterClass: CharacterClass) {

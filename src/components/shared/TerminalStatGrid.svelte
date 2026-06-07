@@ -97,7 +97,7 @@
     display: grid;
     gap: 0.25rem;
     min-width: 0;
-    min-height: 5.5rem;
+    min-height: 4rem;
     padding: 0.65rem;
     background: var(--bg-void);
     border: var(--border-subtle);

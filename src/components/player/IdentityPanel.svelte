@@ -1,11 +1,13 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
   import { toastState } from '../../lib/states/toastState.svelte';
+  import { characterCodec } from '../../lib/characterCodec';
   import type { FinalizeCharacterArchiveResult } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let char = $derived(dbState.activeCharacter);
   let finalizeResult = $state<FinalizeCharacterArchiveResult | null>(null);
+  let fileInput: HTMLInputElement;
 
   function classLabel() {
     if (!char) return 'OPEN';
@@ -27,6 +29,15 @@
     input.value = '';
   }
 
+  function exportArchive() {
+    if (!dbState.localCharacterArchive) {
+      toastState.notify('NO CHARACTER ARCHIVE AVAILABLE');
+      return;
+    }
+
+    characterCodec.exportToFile(dbState.localCharacterArchive);
+  }
+
   function clearPreview() {
     dbState.clearLocalCharacterPreview();
     finalizeResult = null;
@@ -36,6 +47,9 @@
   async function finalizeArchive() {
     finalizeResult = await dbState.finalizeLocalCharacterArchive();
     toastState.notify(finalizeResult.success ? 'CHARACTER FINALIZED' : finalizeResult.message.toUpperCase());
+    if (finalizeResult.success) {
+      dbState.clearLocalCharacterPreview();
+    }
   }
 </script>
 
@@ -48,7 +62,7 @@
         <span>{heritageBackgroundLabel()}</span>
       </div>
     {:else}
-      <div class="terminal-alert">AWAITING CREW DATA...</div>
+      <div class="dim-message">AWAITING CREW DATA...</div>
     {/if}
 
     {#if dbState.isLocalCharacterPreview}
@@ -66,20 +80,32 @@
               {finalizeResult.inventory.failures.length} FAILED
             </span>
           {/if}
+          {#if finalizeResult.inventory.failures.length > 0}
+            <div class="failure-list">
+              {#each finalizeResult.inventory.failures.slice(0, 4) as failure}
+                <span>{failure.name.toUpperCase()} x{failure.quantity}: {failure.reason}</span>
+              {/each}
+              {#if finalizeResult.inventory.failures.length > 4}
+                <span>+{finalizeResult.inventory.failures.length - 4} MORE ITEM FAILURES</span>
+              {/if}
+            </div>
+          {/if}
         </div>
       {/if}
-    {:else}
-      <div class="archive-import">
-        <label for="character-archive-import" class="archive-label">IMPORT CHARACTER</label>
-        <input
-          id="character-archive-import"
-          class="terminal-input archive-input"
-          type="file"
-          accept=".deimos-character,.deimos,text/plain"
-          onchange={importArchive}
-        />
-      </div>
     {/if}
+
+    <div class="io-controls">
+      <button class="btn-action" onclick={exportArchive} disabled={!dbState.localCharacterArchive}>EXPORT CHARACTER</button>
+      <button class="btn-action" onclick={() => fileInput.click()}>IMPORT CHARACTER</button>
+
+      <input
+        type="file"
+        accept=".deimos-character,.deimos,text/plain"
+        bind:this={fileInput}
+        onchange={importArchive}
+        style="display: none;"
+      />
+    </div>
   </div>
 </TerminalPanel>
 
@@ -111,37 +137,15 @@
     overflow-wrap: anywhere;
   }
 
-  .archive-label {
-    display: block;
-    color: var(--text-dim);
-    font-family: var(--font-terminal);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.5rem;
-  }
-
-  .archive-input {
+  .io-controls {
+    display: flex;
+    gap: 1rem;
     width: 100%;
-    color: var(--text-main);
-    font-family: var(--font-terminal);
+    justify-content: center;
   }
 
-  .archive-input::file-selector-button {
-    background: transparent;
-    color: var(--ui-cyan);
-    border: 1px solid var(--ui-cyan);
-    padding: 0.6rem 0.85rem;
-    margin-right: 0.85rem;
-    font-family: var(--font-terminal);
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-
-  .archive-input::file-selector-button:hover {
-    background: var(--ui-cyan);
-    color: var(--bg-dark);
-    border-color: var(--ui-cyan);
+  .io-controls .btn-action {
+    flex: 1;
   }
 
   .btn-finalize,
@@ -166,5 +170,13 @@
 
   .result-box.error strong {
     color: var(--accent-red);
+  }
+
+  .failure-list {
+    display: grid;
+    gap: 0.25rem;
+    padding-top: 0.35rem;
+    color: var(--accent-red);
+    overflow-wrap: anywhere;
   }
 </style>

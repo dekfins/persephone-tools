@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dbState } from '../../lib/states/dbState.svelte';
   import IdentityPanel from './IdentityPanel.svelte';
   import VitalsPanel from './PlayerVitalsPanel.svelte';
   import AttributesPanel from './AttributesPanel.svelte';
@@ -8,23 +9,29 @@
   import ClassAbilitiesPanel from './ClassAbilitiesPanel.svelte';
   import FociPanel from './FociPanel.svelte';
   import PersonalLoadoutSummaryPanel from './PersonalLoadoutSummaryPanel.svelte';
+
+  let hasLoadedCharacter = $derived(Boolean(dbState.activeCharacter));
 </script>
 
-<div class="player-grid">
+<div class="player-grid" class:identity-only={!hasLoadedCharacter}>
   <div class="col-stack">
     <IdentityPanel />
-    <VitalsPanel />
-    <AttributesPanel />
-    <SavingThrowsPanel />
-    <ClassAbilitiesPanel /> 
+    {#if hasLoadedCharacter}
+      <VitalsPanel />
+      <AttributesPanel />
+      <SavingThrowsPanel />
+      <ClassAbilitiesPanel />
+    {/if}
   </div>
 
-  <div class="col-stack">
-    <ConditionsPanel />
-    <SkillsPanel />
-    <FociPanel />
-    <PersonalLoadoutSummaryPanel />
-  </div>
+  {#if hasLoadedCharacter}
+    <div class="col-stack">
+      <ConditionsPanel />
+      <SkillsPanel />
+      <FociPanel />
+      <PersonalLoadoutSummaryPanel />
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -37,6 +44,11 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .player-grid.identity-only {
+    grid-template-columns: minmax(280px, 520px);
+    justify-content: center;
   }
 
   @media (max-width: 1100px) {

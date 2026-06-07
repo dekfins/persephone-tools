@@ -1,4 +1,5 @@
 import type { CreatorEquipmentChoice } from './equipment';
+import type { CharacterKind } from './campaign';
 
 export interface Attributes {
   str: number;
@@ -169,7 +170,7 @@ export type Foci =
 
 export type FocusCategory = 'combat' | 'noncombat';
 export type FocusSkillToken = 'Any Combat' | 'Any Non-Combat' | 'Punch or Stab';
-export type FocusPickSource = 'base' | 'expert' | 'warrior';
+export type FocusPickSource = 'base' | 'expert' | 'warrior' | 'advancement';
 export type FocusLevel = 1 | 2;
 
 export interface FocusSkillGrantEntry {
@@ -234,6 +235,34 @@ export interface CharacterSaveScores {
   physical: number;
   evasion: number;
   mental: number;
+}
+
+export interface CharacterAdvancementProgress {
+  generalSkillPoints: number;
+  nonCombatSkillPoints: number;
+  skillInvestments: Partial<Record<Skill, number>>;
+  attributeBoostCount: number;
+}
+
+export type CharacterSkillPointPool = 'general' | 'noncombat';
+
+export interface CharacterSkillPointSpend {
+  skill: Skill;
+  pool: CharacterSkillPointPool;
+}
+
+export interface CharacterLevelUpFocusChoice {
+  focus: Foci;
+  level: FocusLevel;
+  bonusSkill?: Skill;
+}
+
+export interface CharacterLevelUpPayload {
+  targetLevel: number;
+  hpRolls: number[];
+  skillSpends: CharacterSkillPointSpend[];
+  attributeBoosts: AttributeKey[];
+  focusChoice?: CharacterLevelUpFocusChoice;
 }
 
 export interface CharacterCreationDetails {
@@ -331,6 +360,9 @@ export interface CharacterRecord {
   id: string;
   name: string;
   role: 'PLAYER' | 'GM';
+  campaign_id?: string | null;
+  owner_user_id?: string | null;
+  character_kind?: CharacterKind;
   personal_credits: number;
 
   attributes: Attributes;
@@ -338,6 +370,7 @@ export interface CharacterRecord {
   background: Background;
   skills: Partial<Record<Skill, number>>; // e.g., { "Shoot": 1, "Pilot": 0, "Administer": -1 }
   background_progress: BackgroundProgress;
+  advancement_progress: CharacterAdvancementProgress;
   character_class: CharacterClass;
   foci: CharacterFocusPick[];
   

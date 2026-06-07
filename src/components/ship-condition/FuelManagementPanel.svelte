@@ -3,6 +3,7 @@
   import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';
   import fuelsData from '../../data/ship/fuels.json';
   
   // Create local state instance for this component
@@ -96,6 +97,32 @@
     if (upper === 'AM') return ' BOTTLES';
     return ' CELLS';
   }
+
+  function formatFuelLevel(name: string) {
+    return (localState.propulsion.currentFuel[name] ?? 0).toFixed(2);
+  }
+
+  let playerFuelGridItems = $derived<TerminalStatGridItem[]>([
+    {
+      label: 'ACTIVE MIX',
+      value: localState.propulsion.activeFuel?.toUpperCase() || 'NONE'
+    },
+    {
+      label: 'BURN MODE',
+      value: localState.propulsion.activeMode?.toUpperCase() || 'OFFLINE'
+    },
+    ...activePropellants.map((prop) => {
+      const capacity = fuelCapacities[prop.name] || 0;
+      const level = localState.propulsion.currentFuel[prop.name] ?? 0;
+
+      return {
+        label: prop.name.toUpperCase(),
+        value: `${formatFuelLevel(prop.name)}/${capacity}`,
+        detail: `${getFuelUnit(prop.name).trim() || 'UNITS'} REMAINING`,
+        tone: capacity > 0 && level <= capacity * 0.1 ? 'error' : 'accent'
+      } satisfies TerminalStatGridItem;
+    })
+  ]);
 </script>
 
 <TerminalPanel title="PROPULSION & FUEL">
@@ -144,39 +171,20 @@
       APPLY CHANGES
     </button>
   {:else}
-    <div class="telemetry-row">
-      <span class="eng-label">ACTIVE MIX:</span>
-      <span class="telemetry-value">{localState.propulsion.activeFuel?.toUpperCase() || 'NONE'}</span>
+    <div class="fuel-grid">
+      <TerminalStatGrid items={playerFuelGridItems} columns={2} valueTone="amber" />
     </div>
-
-    <div class="telemetry-row">
-      <span class="eng-label">BURN MODE:</span>
-      <span class="telemetry-value">{localState.propulsion.activeMode?.toUpperCase() || 'OFFLINE'}</span>
-    </div>
-
-    {#each activePropellants as prop}
-      <div class="telemetry-row">
-        <span class="eng-label">{prop.name.toUpperCase()} LEVEL:</span>
-        <div class="fuel-readout">
-          <span class="current-fuel">{localState.propulsion.currentFuel[prop.name]?.toFixed(2) || '0.00'}</span>
-          <span class="text-dim"> / {fuelCapacities[prop.name] || 0}</span>
-        </div>
-      </div>
-    {/each}
   {/if}
 
 </TerminalPanel>
 
 <style>
   /* --- BASE LAYOUT --- */
-  .eng-row, .telemetry-row {
+  .eng-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
-  }
-  .telemetry-row {
-    padding: 0.25rem 0;
   }
   .form-group {
     margin-bottom: 1rem;
@@ -188,20 +196,15 @@
     margin-bottom: 0.3rem;
   }
 
+  .fuel-grid {
+    margin-bottom: 0;
+  }
+
   /* --- TYPOGRAPHY --- */
   .eng-label {
     color: var(--text-dim);
     font-size: 0.85rem;
     letter-spacing: 0.05em;
-  }
-  .telemetry-value {
-    font-size: 0.85rem;
-    color: var(--accent-amber);
-    text-transform: uppercase;
-  }
-  .fuel-readout .current-fuel {
-    font-size: 0.85rem;
-    color: var(--accent-amber);
   }
   .fuel-label-group {
     display: flex;

@@ -1,4 +1,6 @@
-# ship-builder
+# Persephone VTT v0.1.0 alpha
+
+## Things might be broken, be warned.
 
 Campaign tooling for **Persephone**, a Stars Without Number campaign with enough homebrew rules 
 that every existing tool either doesn't support what we're doing or actively breaks it. So 
@@ -31,6 +33,8 @@ npm run dev
 ```
 
 ## Updates
+**6/8/2026**
+- Released version 0.1.0 alpha
 
 **5/25/2026**
 - Ported navmap rendering engine to PixiJS. Fixed infinite fuel issue

@@ -217,6 +217,7 @@ class CharacterCreatorStateManager {
   draft = $state<CharacterCreatorDraft>(createDefaultDraft());
   activeStep = $state<CharacterCreatorStep>('attributes');
   arrayAssignments = $state<Partial<Record<AttributeKey, number>>>({});
+  attributeSetTo14 = $state<{ attribute: AttributeKey; previousValue: number } | null>(null);
   queuedGrants = $state<QueuedCreatorGrant[]>([]);
   queuedFocusGrants = $state<QueuedFocusGrant[]>([]);
   pendingChoiceKind = $state<PendingChoiceKind | null>(null);
@@ -270,6 +271,10 @@ class CharacterCreatorStateManager {
     return STANDARD_ARRAY.filter((value) => {
       return !Object.values(this.arrayAssignments).includes(value);
     });
+  }
+
+  get activeAttributeSetTo14() {
+    return this.attributeSetTo14?.attribute ?? null;
   }
 
   get currentChoiceOptions() {
@@ -646,6 +651,7 @@ class CharacterCreatorStateManager {
     this.draft = createDefaultDraft();
     this.activeStep = 'attributes';
     this.arrayAssignments = {};
+    this.attributeSetTo14 = null;
     this.queuedGrants = [];
     this.queuedFocusGrants = [];
     this.pendingChoiceKind = null;
@@ -691,12 +697,14 @@ class CharacterCreatorStateManager {
   }
 
   setAttribute(attribute: AttributeKey, value: number) {
+    this.clearAttributeSetTo14(false);
     this.draft.attributes[attribute] = clampScore(value);
     this.draft.attributeMethod = 'manual';
     this.arrayAssignments = {};
   }
 
   useStandardArray() {
+    this.clearAttributeSetTo14(false);
     this.arrayAssignments = {};
     this.draft.attributeMethod = 'array';
   }
@@ -718,11 +726,59 @@ class CharacterCreatorStateManager {
   }
 
   rollAttributes() {
+    this.clearAttributeSetTo14(false);
     ALL_ATTRIBUTES.forEach((attribute) => {
       this.draft.attributes[attribute] = rollDie(6) + rollDie(6) + rollDie(6);
     });
     this.arrayAssignments = {};
     this.draft.attributeMethod = 'rolled';
+  }
+
+  clearAttributeSetTo14(restore = true) {
+    if (!this.attributeSetTo14) return;
+    const { attribute, previousValue } = this.attributeSetTo14;
+    if (restore) {
+      this.draft.attributes[attribute] = previousValue;
+    }
+    this.attributeSetTo14 = null;
+  }
+
+  setAttributeTo14(attribute: AttributeKey) {
+    if (this.attributeSetTo14?.attribute === attribute) {
+      this.clearAttributeSetTo14(true);
+      return;
+    }
+
+    this.clearAttributeSetTo14(true);
+    this.attributeSetTo14 = {
+      attribute,
+      previousValue: this.draft.attributes[attribute]
+    };
+    this.draft.attributes[attribute] = 14;
+    this.draft.attributeMethod = 'manual';
+    this.arrayAssignments = {};
+  }
+
+  swapAttributes(left: AttributeKey, right: AttributeKey) {
+    if (left === right) return;
+
+    const leftValue = this.draft.attributes[left];
+    this.draft.attributes[left] = this.draft.attributes[right];
+    this.draft.attributes[right] = leftValue;
+
+    if (this.arrayAssignments[left] !== undefined || this.arrayAssignments[right] !== undefined) {
+      this.arrayAssignments = {
+        ...this.arrayAssignments,
+        [left]: this.arrayAssignments[right],
+        [right]: this.arrayAssignments[left]
+      };
+    }
+
+    if (this.attributeSetTo14?.attribute === left) {
+      this.attributeSetTo14 = { ...this.attributeSetTo14, attribute: right };
+    } else if (this.attributeSetTo14?.attribute === right) {
+      this.attributeSetTo14 = { ...this.attributeSetTo14, attribute: left };
+    }
   }
 
   rollHp() {
@@ -1465,6 +1521,12 @@ class CharacterCreatorStateManager {
       background_progress: {
         ...this.draft.backgroundProgress,
         choices: [...(this.draft.backgroundProgress.choices ?? [])]
+      },
+      advancement_progress: {
+        generalSkillPoints: 0,
+        nonCombatSkillPoints: 0,
+        skillInvestments: {},
+        attributeBoostCount: 0
       },
       character_class: this.draft.characterClass,
       foci: this.cloneFocusPicks(),

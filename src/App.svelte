@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { Route } from 'tinro';
+  import { Route, router } from 'tinro';
   import { fly } from 'svelte/transition';
   import Navigation from './components/shared/NavigationPanel.svelte';
+  import CampaignLogPanel from './components/campaign/CampaignLogPanel.svelte';
   
   // Import your pages
+  import Login from './pages/Login.svelte';
+  import Home from './pages/Home.svelte';
+  import Invite from './pages/Invite.svelte';
   import CharacterCreator from './pages/CharacterCreator.svelte';
   import PlayerDashboard from './pages/PlayerDashboard.svelte';
   import ShipBuilder from './pages/ShipBuilder.svelte';
@@ -18,9 +22,11 @@
   import { shipState } from './lib/states/shipState.svelte';
   import { crewState } from './lib/states/crewState.svelte';
   import { dbState } from './lib/states/dbState.svelte';
+  import { authState } from './lib/states/authState.svelte';
   
   let showToast = $state(false);
   let isHydrated = $state(false); // The gatekeeper
+  let showCampaignLog = $derived(authState.isSignedIn && Boolean(dbState.activeCampaignId) && $router?.path !== '/login');
 
   onMount(async () => {
     const savedSession = localStorage.getItem('DEIMOS_ACTIVE_SESSION');
@@ -60,9 +66,29 @@
     
     isHydrated = true;
 
-    // Connect to your cloud database ONCE after hydration is complete
-    await dbState.loadData();
-    dbState.subscribeToChanges();
+    await authState.initialize();
+  });
+
+  $effect(() => {
+    if (authState.isInitializing) return;
+
+    const currentPath = $router?.path ?? '/';
+    const isInvitePath = currentPath.startsWith('/invite/');
+    const hasPendingInvite = Boolean(localStorage.getItem('DEIMOS_PENDING_INVITE_CODE'));
+
+    if (!authState.isSignedIn && currentPath !== '/login' && !isInvitePath) {
+      router.goto('/login');
+      return;
+    }
+
+    if (authState.isSignedIn && hasPendingInvite && !isInvitePath) {
+      router.goto(`/invite/${encodeURIComponent(localStorage.getItem('DEIMOS_PENDING_INVITE_CODE') ?? '')}`);
+      return;
+    }
+
+    if (authState.isSignedIn && (currentPath === '/' || currentPath === '/login') && !hasPendingInvite) {
+      router.goto('/home');
+    }
   });
 
   $effect(() => {
@@ -110,7 +136,19 @@
     <Navigation />
   </header>
 
-  <Route path="/overview" fallback>
+  <Route path="/login">
+    <Login />
+  </Route>
+
+  <Route path="/invite/:code">
+    <Invite />
+  </Route>
+
+  <Route path="/home" fallback>
+    <Home />
+  </Route>
+
+  <Route path="/overview">
     <PlayerDashboard />
   </Route>
 
@@ -145,6 +183,10 @@
   <Route path="/settings">
     <Settings />
   </Route>
+
+  {#if showCampaignLog}
+    <CampaignLogPanel />
+  {/if}
 </main>
 
 <style>
@@ -166,4 +208,5 @@
     text-align: right;
     box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
   }
+
 </style>

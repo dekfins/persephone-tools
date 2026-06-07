@@ -6,7 +6,7 @@
 
   let charOptions = $derived(
     dbState.characters
-      .filter(c => c.role === 'PLAYER')
+      .filter(c => (c.character_kind ?? c.role) === 'PLAYER')
       .map(c => ({ label: c.name, value: c.id }))
   );
 

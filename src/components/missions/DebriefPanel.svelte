@@ -20,8 +20,8 @@
     if (shipCut > 0) {
       await dbState.updateShipCredits(shipCut);
     }
-    if (personalCut > 0) {
-      await dbState.updatePersonalCredits(dbState.activeUserId, personalCut);
+    if (personalCut > 0 && dbState.activeCharacter) {
+      await dbState.updatePersonalCredits(dbState.activeCharacter.id, personalCut);
     }
 
     // 2. Spawn the loot directly into the Cloud Inventory!

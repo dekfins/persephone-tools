@@ -5,7 +5,7 @@
   import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';
 
   let char = $derived(dbState.activeCharacter);
-  let saves = $derived(char ? dbState.localCharacterCreation?.saves ?? getSavingThrows(char.attributes) : null);
+  let saves = $derived(char ? dbState.localCharacterCreation?.saves ?? getSavingThrows(char.attributes, char.level) : null);
   let saveItems = $derived(saves ? [
     { label: 'PHYSICAL', value: `${saves.physical}+`, detail: 'STR / CON' },
     { label: 'EVASION', value: `${saves.evasion}+`, detail: 'INT / DEX' },

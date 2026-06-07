@@ -20,13 +20,14 @@ import type {
   Foci,
   Skill
 } from './types';
+import { normalizeAdvancementProgress } from './characterMechanics';
 
 export const CHARACTER_FILE_HEADER = 'DEIMOS-CHARACTER-V1|';
 const FILE_EXTENSION = 'deimos-character';
 
 const ATTRIBUTE_KEYS: AttributeKey[] = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const ADVENTURER_PARTIALS: AdventurerPartial[] = ['partial_expert', 'partial_warrior'];
-const FOCUS_SOURCES = ['base', 'expert', 'warrior'];
+const FOCUS_SOURCES = ['base', 'expert', 'warrior', 'advancement'];
 const EQUIPMENT_PACKAGE_IDS = ALL_EQUIPMENT_PACKAGES.map((pack) => pack.id);
 const CONDITION_CATEGORIES: CharacterConditionCategory[] = ['combat', 'hazard', 'custom'];
 
@@ -120,6 +121,7 @@ function hasValidCharacterCore(value: unknown): value is CharacterRecord {
     (ALL_BACKGROUNDS as string[]).includes(value.background as string) &&
     hasValidSkills(value.skills) &&
     isObject(value.background_progress) &&
+    isObject(value.advancement_progress) &&
     classValues.includes(value.character_class as never) &&
     normalizeFocusPicks(value.foci) !== null &&
     typeof value.level === 'number' &&
@@ -222,6 +224,7 @@ function normalizeArchivePayload(value: unknown) {
   value.core.xp = typeof value.core.xp === 'number'
     ? value.core.xp
     : 0;
+  value.core.advancement_progress = normalizeAdvancementProgress(value.core.advancement_progress);
   value.core.active_conditions = normalizeActiveConditions(value.core.active_conditions);
 
   const coreFocusPicks = normalizeFocusPicks(value.core.foci);

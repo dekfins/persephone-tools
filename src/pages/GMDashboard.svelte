@@ -4,7 +4,7 @@
 </script>
 
 <div class="page-container">
-  {#if dbState.activeCharacter?.role === 'GM'}
+  {#if dbState.isGM}
     <GMDashboardPanel />
   {:else}
     <div class="terminal-alert error" style="margin-top: 4rem;">
