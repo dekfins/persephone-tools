@@ -27,6 +27,8 @@
   let showToast = $state(false);
   let isHydrated = $state(false); // The gatekeeper
   let showCampaignLog = $derived(authState.isSignedIn && Boolean(dbState.activeCampaignId) && $router?.path !== '/login');
+  let showBootScreen = $derived(!isHydrated || authState.isInitializing);
+  let bootStatus = $derived(!isHydrated ? 'RESTORING LOCAL SESSION' : 'SYNCING CREW DATA');
 
   onMount(async () => {
     const savedSession = localStorage.getItem('DEIMOS_ACTIVE_SESSION');
@@ -125,73 +127,157 @@
 </script>
 
 <main class="main-content">
-  {#if showToast}
-    <div class="terminal-toast" transition:fly={{ x: 200, duration: 300 }}>
-      <span style="opacity: 0.7; font-size: 0.8em;">[ SYSTEM NOTICE ]</span><br/>
-      PREVIOUS SESSION RESTORED
-    </div>
-  {/if}
+  {#if showBootScreen}
+    <section class="boot-screen" aria-live="polite" aria-busy="true">
+      <div class="boot-frame">
+        <span class="boot-kicker">DEIMOS CREW TERMINAL</span>
+        <h1>INITIALIZING</h1>
+        <div class="boot-scanline" aria-hidden="true"></div>
+        <div class="boot-status">
+          <span>{bootStatus}</span>
+          <span class="boot-dots" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+  {:else}
+    {#if showToast}
+      <div class="terminal-toast" transition:fly={{ x: 200, duration: 300 }}>
+        <span style="opacity: 0.7; font-size: 0.8em;">[ SYSTEM NOTICE ]</span><br/>
+        PREVIOUS SESSION RESTORED
+      </div>
+    {/if}
 
-  <header>
-    <Navigation />
-  </header>
+    <header>
+      <Navigation />
+    </header>
 
-  <Route path="/login">
-    <Login />
-  </Route>
+    <Route path="/login">
+      <Login />
+    </Route>
 
-  <Route path="/invite/:code">
-    <Invite />
-  </Route>
+    <Route path="/invite/:code">
+      <Invite />
+    </Route>
 
-  <Route path="/home" fallback>
-    <Home />
-  </Route>
+    <Route path="/home" fallback>
+      <Home />
+    </Route>
 
-  <Route path="/overview">
-    <PlayerDashboard />
-  </Route>
+    <Route path="/overview">
+      <PlayerDashboard />
+    </Route>
 
-  <Route path="/character-creator">
-    <CharacterCreator />
-  </Route>
+    <Route path="/character-creator">
+      <CharacterCreator />
+    </Route>
 
-  <Route path="/ship-builder">
-    <ShipBuilder />
-  </Route>
+    <Route path="/ship-builder">
+      <ShipBuilder />
+    </Route>
 
-  <Route path="/ship-condition">
-    <ShipCondition />
-  </Route>
+    <Route path="/ship-condition">
+      <ShipCondition />
+    </Route>
 
-  <Route path="/inventory">
-    <Inventory />
-  </Route>
+    <Route path="/inventory">
+      <Inventory />
+    </Route>
 
-  <Route path="/navmap">
-    <Navmap />
-  </Route>
+    <Route path="/navmap">
+      <Navmap />
+    </Route>
 
-  <Route path="/missions">
-    <Missions />
-  </Route>
+    <Route path="/missions">
+      <Missions />
+    </Route>
 
-  <Route path="/gm">
-    <GMDashboard />
-  </Route>
+    <Route path="/gm">
+      <GMDashboard />
+    </Route>
 
-  <Route path="/settings">
-    <Settings />
-  </Route>
+    <Route path="/settings">
+      <Settings />
+    </Route>
 
-  {#if showCampaignLog}
-    <CampaignLogPanel />
+    {#if showCampaignLog}
+      <CampaignLogPanel />
+    {/if}
   {/if}
 </main>
 
 <style>
   .main-content {
     padding-top: 80px; /* Keeps space clear for your fixed navbar */
+  }
+
+  .boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    background:
+      linear-gradient(rgba(0, 170, 204, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 170, 204, 0.035) 1px, transparent 1px),
+      var(--bg-void);
+    background-size: 42px 42px;
+    font-family: var(--font-terminal);
+  }
+
+  .boot-frame {
+    width: min(30rem, 100%);
+    display: grid;
+    gap: 1rem;
+    padding: 1.4rem;
+    background: rgba(20, 20, 23, 0.92);
+    border: var(--border-subtle);
+    box-shadow: 0 0 28px rgba(0, 170, 204, 0.08);
+  }
+
+  .boot-kicker {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .boot-frame h1 {
+    color: var(--accent-amber);
+    font-size: clamp(1.6rem, 8vw, 3rem);
+    line-height: 1;
+  }
+
+  .boot-scanline {
+    position: relative;
+    height: 0.45rem;
+    overflow: hidden;
+    background: var(--bg-void);
+    border: var(--border-subtle);
+  }
+
+  .boot-scanline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, var(--ui-cyan), transparent);
+    animation: boot-scan 1.15s linear infinite;
+  }
+
+  .boot-status {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    color: var(--ui-cyan);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .boot-dots::after {
+    content: "";
+    animation: boot-dots 1.2s steps(4, end) infinite;
   }
 
   .terminal-toast {
@@ -207,6 +293,48 @@
     z-index: 9999;
     text-align: right;
     box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+  }
+
+  @keyframes boot-scan {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+
+  @keyframes boot-dots {
+    0% {
+      content: "";
+    }
+    25% {
+      content: ".";
+    }
+    50% {
+      content: "..";
+    }
+    75%,
+    100% {
+      content: "...";
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boot-scanline::before,
+    .boot-dots::after {
+      animation: none;
+    }
+
+    .boot-scanline::before {
+      transform: none;
+      width: 100%;
+      opacity: 0.35;
+    }
+
+    .boot-dots::after {
+      content: "...";
+    }
   }
 
 </style>
