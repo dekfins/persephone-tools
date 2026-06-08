@@ -36,7 +36,7 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'Once per scene, reroll a failed skill check and keep the better result. This does not apply to attack rolls.',
       'Gain a non-combat focus as a bonus focus at first level.',
       'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
-      'Starting maximum hit points: 1d6+Con Mod, minimum 1.',
+      'Starting maximum HP: 1d6+Con Mod, minimum 1.',
       'Attack bonus: half your character level, rounded down, so +0 at first level.'
     ]
   },
@@ -54,7 +54,7 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'Once per scene, as an Instant ability after dice are rolled, either turn your missed attack into a hit or negate a successful attack against you. This does not apply to environmental damage, effects without attack rolls, or hits against a vehicle you occupy.',
       'Gain a combat focus as a bonus focus at first level.',
       'You gain two extra maximum hit points at each character level.',
-      'Starting maximum hit points: 1d6+2+Con Mod, minimum 1.',
+      'Starting maximum HP: 1d6+2+Con Mod, minimum 1.',
       'Attack bonus: equal to your character level, so +1 at first level.'
     ]
   },
@@ -74,7 +74,7 @@ export const CLASS_ABILITIES: Record<CharacterClass, ClassAbilityDefinition> = {
       'When you advance a level, gain a bonus skill point that must be spent on a non-combat, non-psychic skill.',
       'Gain a combat focus as a bonus focus at first level.',
       'You gain two extra maximum hit points at each character level.',
-      'Starting maximum hit points: 1d6+2+Con Mod, minimum 1.',
+      'Starting maximum HP: 1d6+2+Con Mod, minimum 1.',
       'Attack bonus: half your character level, rounded down, plus +1 at first and fifth levels.',
       'You do not gain the Expert reroll or the Warrior once-per-scene combat ability.'
     ]

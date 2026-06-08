@@ -184,6 +184,10 @@
     color: var(--accent-red);
   }
 
+  .rollback-button:hover {
+    background: var(--accent-red);
+  }
+
   @media (max-width: 700px) {
     .campaign-log {
       top: 72px;

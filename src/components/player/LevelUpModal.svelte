@@ -267,7 +267,7 @@
 
   function focusModeLabel(focus: Foci) {
     const ownedLevel = ownedFocusLevels[focus] ?? 0;
-    return ownedLevel === 1 ? 'UPGRADE TO LEVEL 2' : 'NEW LVL 1';
+    return ownedLevel === 1 ? 'UPGRADE TO LVL 2' : 'NEW LVL 1';
   }
 
   function focusOptionLevel(focus: Foci): 1 | 2 | null {

@@ -9,7 +9,7 @@
 <TerminalPanel title="ACTIVE SHIP CONDITIONS" extraClass="span-full">
   <div class="conditions-list">
     {#if localState.vitals.activeConditions.length === 0}
-      <div class="terminal-alert" style="border-color: var(--fighter-green); color: var(--fighter-green);">
+      <div class="dim-message">
         SHIP OPERATING NOMINALLY. NO ACTIVE DEBUFFS.
       </div>
     {:else}

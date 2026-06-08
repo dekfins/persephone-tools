@@ -79,7 +79,7 @@
 {#snippet itemActions(item: TerminalItemListRow)}
   {#if !dbState.isLocalCharacterPreview}
     <div class="item-actions">
-      {#if dbState.activeCharacter?.role === 'GM'}
+      {#if dbState.isGM}
         <button class="btn-action-red btn-compact" onclick={() => dbState.deleteItem(item.id)}>
           X
         </button>

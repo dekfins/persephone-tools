@@ -3,7 +3,7 @@
   import DebriefPanel from '../components/missions/DebriefPanel.svelte';
 </script>
 
-<div class="page-container">
+<div class="navmap-page">
   <OrbitalMap />
   <DebriefPanel />
 </div>
@@ -11,13 +11,13 @@
 
 
 <style>
-  .page-container {
-    position: fixed; /* Detaches from normal page layout */
-    top: 0;
-    left: 0;
+  .navmap-page {
+    position: fixed;
+    inset: 0;
     width: 100vw;
+    max-width: none;
     height: 100vh;
-    z-index: 10; /* High enough to cover the background, low enough to stay under the navbar */
+    z-index: 10;
     background: var(--bg-void);
     margin: 0;
     padding: 0;

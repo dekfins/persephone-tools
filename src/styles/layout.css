@@ -1,6 +1,6 @@
 :root {
   --page-padding-x: 4rem;
-  --page-padding-top: 0.5rem;
+  --page-padding-top: 0rem;
   --page-padding-bottom: 1rem;
   --layout-gap: 1.5rem; /* Unified spacing for both grids and columns */
   --max-width: 1600px;

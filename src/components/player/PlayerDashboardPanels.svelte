@@ -7,6 +7,7 @@
   import ConditionsPanel from './PlayerConditionsPanel.svelte';
   import SavingThrowsPanel from './SavingThrowsPanel.svelte';
   import ClassAbilitiesPanel from './ClassAbilitiesPanel.svelte';
+  import CharacterNotesPanel from './CharacterNotesPanel.svelte';
   import FociPanel from './FociPanel.svelte';
   import PersonalLoadoutSummaryPanel from './PersonalLoadoutSummaryPanel.svelte';
 
@@ -21,6 +22,7 @@
       <AttributesPanel />
       <SavingThrowsPanel />
       <ClassAbilitiesPanel />
+      <CharacterNotesPanel />
     {/if}
   </div>
 

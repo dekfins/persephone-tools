@@ -11,6 +11,7 @@ import type {
   CharacterAdvancementProgress,
   CharacterActiveCondition,
   CharacterConditionTemplate,
+  CharacterNotes,
   BackgroundDefinitions,
   BackgroundProgress,
   BackgroundProgressGrant,
@@ -268,12 +269,31 @@ class DatabaseStateManager {
     return normalizeAdvancementProgress(value);
   }
 
+  normalizeCharacterNotes(value: unknown): CharacterNotes {
+    if (!isRecord(value)) {
+      return {
+        homeworld: '',
+        employerAffiliation: '',
+        goal: '',
+        notes: ''
+      };
+    }
+
+    return {
+      homeworld: typeof value.homeworld === 'string' ? value.homeworld : '',
+      employerAffiliation: typeof value.employerAffiliation === 'string' ? value.employerAffiliation : '',
+      goal: typeof value.goal === 'string' ? value.goal : '',
+      notes: typeof value.notes === 'string' ? value.notes : ''
+    };
+  }
+
   normalizeCharacterRecord(char: CharacterRecord): CharacterRecord {
     return {
       ...char,
       campaign_id: char.campaign_id ?? this.activeCampaignId ?? DEFAULT_CAMPAIGN_ID,
       character_kind: char.character_kind ?? (char.role === 'GM' ? 'GM' : 'PLAYER'),
       xp: typeof char.xp === 'number' ? char.xp : 0,
+      character_notes: this.normalizeCharacterNotes(char.character_notes),
       advancement_progress: this.normalizeAdvancementProgress(char.advancement_progress),
       active_conditions: this.normalizeActiveConditions(char.active_conditions)
     };
@@ -1447,7 +1467,13 @@ class DatabaseStateManager {
       campaign_id: this.activeCampaignId,
       owner_user_id: this.activeUserProfile?.id ?? null,
       character_kind: archive.core.role === 'GM' ? 'GM' : 'PLAYER',
-      personal_credits: validation.remainingCredits
+      personal_credits: validation.remainingCredits,
+      character_notes: {
+        homeworld: archive.creation.homeworld,
+        employerAffiliation: archive.creation.employerAffiliation,
+        goal: archive.creation.goal,
+        notes: archive.creation.notes
+      }
     };
 
     const { data: insertedCharacter, error: insertError } = await supabase
@@ -1463,7 +1489,10 @@ class DatabaseStateManager {
       };
     }
 
-    if (insertedCharacter) this.characters.push(this.normalizeCharacterRecord(insertedCharacter as CharacterRecord));
+    if (insertedCharacter) {
+      this.characters.push(this.normalizeCharacterRecord(insertedCharacter as CharacterRecord));
+      this.activeUserId = characterId;
+    }
 
     const inventory = await this.finalizeInventoryForCharacter(characterId, this.buildFinalizeInventoryDrafts(archive));
     const complete = inventory.failures.length === 0;
@@ -1581,6 +1610,8 @@ class DatabaseStateManager {
   }
 
   async deleteItem(itemId: string) {
+    if (!this.isGM) return;
+
     const previousItem = this.items.find(i => i.id === itemId);
     // Optimistic local update
     this.items = this.items.filter(i => i.id !== itemId);

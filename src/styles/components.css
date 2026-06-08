@@ -9,11 +9,10 @@
   margin-top: 1rem;
   padding: var(--alert-padding);
   border: 1px solid var(--accent-amber);
-  box-shadow: 0 0 5px rgba(255, 191, 0, 0.1);
   background-color: var(--bg-dark);
   color: var(--accent-amber);
   text-align: center;
-  font-weight: bold;
+  font-size: 0.8rem;
 }
 
 .terminal-alert.error {

@@ -294,6 +294,13 @@ export interface CharacterCreationArchive {
   creation: CharacterCreationDetails;
 }
 
+export interface CharacterNotes {
+  homeworld: string;
+  employerAffiliation: string;
+  goal: string;
+  notes: string;
+}
+
 export type CharacterConditionCategory = 'combat' | 'hazard' | 'custom';
 
 export type CharacterConditionTemplateId =
@@ -364,6 +371,7 @@ export interface CharacterRecord {
   owner_user_id?: string | null;
   character_kind?: CharacterKind;
   personal_credits: number;
+  character_notes?: CharacterNotes;
 
   attributes: Attributes;
   heritage: Heritage;
