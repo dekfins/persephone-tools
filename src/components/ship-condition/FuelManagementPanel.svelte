@@ -127,7 +127,7 @@
 
 <TerminalPanel title="PROPULSION & FUEL">
   
-  {#if dbState.activeCharacter?.role === 'GM'}
+  {#if dbState.isGM}
     <div class="form-group">
       <label for="fuel-select">FUEL TYPE:</label>
       <TerminalSelect
