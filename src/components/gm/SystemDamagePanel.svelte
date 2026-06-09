@@ -5,7 +5,6 @@
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
 
-  // --- CUSTOM CONDITION STATE ---
   const conditionOptions = [
     { label: 'HULL', value: 'HULL' },
     { label: 'DRIVE', value: 'DRIVE' },
@@ -15,10 +14,9 @@
   let conditionName = $state('');
   let conditionType = $state(conditionOptions[0]);
 
-  // --- TEMPLATE CONDITION STATE ---
   const conditionTemplates = [
     { name: "Cracked Coolant Loop", fixDC: "10", effect: "-1 Reactor Maint. Crit: +1 Rad to engine crew. Untreated 3 segments = -1 RI." },
-    { name: "Thruster Offline", fixDC: "12", effect: "Travels take 50% more segments until fixed." },
+    { name: "Thruster Offline", fixDC: "12", effect: "Travels take 50% more remaining segments until fixed." },
     { name: "Sensor Array Damaged", fixDC: "10", effect: "-2 to Nav/Comms. Blind beyond visual." },
     { name: "Life Support Degradation", fixDC: "10", effect: "-1 to all checks. 2 segments untreated = +1 Rad/segment." },
     { name: "Hull Breach", fixDC: "8", effect: "Lose 1 HP per segment until patched. Vacc suits required." },
@@ -32,8 +30,6 @@
   }));
   let selectedConditionTemplate = $state(conditionTemplates[0]);
 
-  // --- ACTIONS ---
-  // --- ACTIONS ---
   async function inflictCustomCondition() {
     if (!conditionName) return;
     shipState.vitals.addCondition({
@@ -43,7 +39,7 @@
     });
     conditionName = '';
     
-    await dbState.syncShipStateToCloud(); // <--- FIRE THE SYNC
+    await dbState.syncShipStateToCloud();
     toastState.notify('CUSTOM CONDITION INFLICTED');
   }
 
@@ -51,21 +47,21 @@
     if (!selectedConditionTemplate) return;
     shipState.vitals.addCondition(selectedConditionTemplate);
     
-    await dbState.syncShipStateToCloud(); // <--- FIRE THE SYNC
+    await dbState.syncShipStateToCloud();
     toastState.notify('TEMPLATE CONDITION INFLICTED');
   }
 
   async function advanceSegments() {
     shipState.vitals.advanceTravelSegment();
     
-    await dbState.syncShipStateToCloud(); // <--- FIRE THE SYNC
+    await dbState.syncShipStateToCloud();
     toastState.notify('ALL SEGMENTS ADVANCED');
   }
 
   async function removeCondition(id: string) {
     shipState.vitals.removeCondition(id);
     
-    await dbState.syncShipStateToCloud(); // <--- FIRE THE SYNC
+    await dbState.syncShipStateToCloud();
     toastState.notify('CONDITION RESOLVED');
   }
 </script>

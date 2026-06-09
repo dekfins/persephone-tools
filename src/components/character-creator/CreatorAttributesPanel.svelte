@@ -75,7 +75,7 @@
 
 <TerminalPanel title="ATTRIBUTES + AC" extraClass="creator-panel">
   <div class="action-row">
-    <button class="btn-action" onclick={() => characterCreatorState.useStandardArray()}>USE ARRAY</button>
+    <button class="btn-action" onclick={() => characterCreatorState.useStandardArray()}>STANDARD ARRAY</button>
     <button class="btn-action" onclick={() => characterCreatorState.rollAttributes()}>ROLL 3D6</button>
   </div>
 

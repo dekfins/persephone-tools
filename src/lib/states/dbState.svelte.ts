@@ -1940,6 +1940,32 @@ class DatabaseStateManager {
     });
   }
 
+  async updateCharacterNotes(characterId: string, notes: CharacterNotes) {
+    const normalizedNotes = this.normalizeCharacterNotes(notes);
+
+    if (this.localCharacterArchive?.core.id === characterId) {
+      this.localCharacterArchive = {
+        ...this.localCharacterArchive,
+        core: {
+          ...this.localCharacterArchive.core,
+          character_notes: normalizedNotes
+        },
+        creation: {
+          ...this.localCharacterArchive.creation,
+          homeworld: normalizedNotes.homeworld,
+          employerAffiliation: normalizedNotes.employerAffiliation,
+          goal: normalizedNotes.goal,
+          notes: normalizedNotes.notes
+        }
+      };
+      return true;
+    }
+
+    return await this.updateCharacter(characterId, {
+      character_notes: normalizedNotes
+    });
+  }
+
   async updateCharacterSkill(characterId: string, skill: Skill, level: number) {
     const char = this.getCharacterById(characterId);
     if (!char) return;

@@ -130,7 +130,7 @@
   {#if showBootScreen}
     <section class="boot-screen" aria-live="polite" aria-busy="true">
       <div class="boot-frame">
-        <span class="boot-kicker">DEIMOS CREW TERMINAL</span>
+        <span class="boot-kicker">DEIMOS</span>
         <h1>INITIALIZING</h1>
         <div class="boot-scanline" aria-hidden="true"></div>
         <div class="boot-status">

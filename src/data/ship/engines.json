@@ -138,7 +138,7 @@
     "baseCost": 60000,
     "basePower": 1,
     "baseMass": 2,
-    "description": "A fission fragment rocket that can cruise almost forever on a single load of fissionables, or dump eleven units of hydrogen per pellet in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable.",
+    "description": "A fission fragment rocket that can cruise almost forever on a single load of fissionables, or dump eleven units of hydrogen per fissionable in afterburner mode to produce something resembling thrust. Fuel is DAVE-regulated, expensive, and weaponizable.",
     "availableFuels": ["Fissionables"],
     "availableModes": ["Mode 1 (Efficient)", "Mode 2 (Afterburner)"],
     "configs": [
