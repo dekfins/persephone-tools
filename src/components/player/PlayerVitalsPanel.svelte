@@ -1,6 +1,6 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
-  import { canLevelUp, getBaseAttackBonus, getNextLevelThreshold } from '../../lib/characterMechanics';
+  import { canLevelUp, getBaseAttackBonus, getNextLevelThreshold } from '../../lib/character/characterMechanics';
   import LevelUpModal from './LevelUpModal.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';

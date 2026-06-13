@@ -19,7 +19,7 @@ import type {
   EquipmentPackageId,
   Foci,
   Skill
-} from './types';
+} from '../types';
 import { normalizeAdvancementProgress } from './characterMechanics';
 
 export const CHARACTER_FILE_HEADER = 'DEIMOS-CHARACTER-V1|';

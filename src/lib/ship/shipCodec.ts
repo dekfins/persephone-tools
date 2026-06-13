@@ -1,4 +1,4 @@
-import { shipState, MasterShipState } from './states/shipState.svelte';
+import { shipState, MasterShipState } from '../states/shipState.svelte';
 
 const FILE_HEADER = 'DEIMOS-V1|';
 

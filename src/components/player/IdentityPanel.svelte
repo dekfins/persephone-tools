@@ -1,7 +1,7 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
   import { toastState } from '../../lib/states/toastState.svelte';
-  import { characterCodec } from '../../lib/characterCodec';
+  import { characterCodec } from '../../lib/character/characterCodec';
   import type { FinalizeCharacterArchiveResult } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 

@@ -231,6 +231,70 @@ export type CharacterClass = 'expert' | 'warrior' | 'adventurer';
 export type Heritage = 'earthling' | 'voidborn';
 export type AdventurerPartial = 'partial_expert' | 'partial_warrior';
 
+export type NameCulture =
+  | 'arabic'
+  | 'chinese'
+  | 'english'
+  | 'greek'
+  | 'indian'
+  | 'japanese'
+  | 'latin'
+  | 'nigerian'
+  | 'russian'
+  | 'spanish';
+
+export type NameFirstType = 'male' | 'female' | 'any';
+export type NameTableKind = 'male' | 'female' | 'surname' | 'place';
+
+export interface NameTableEntry {
+  min: number;
+  max: number;
+  value: string;
+}
+
+export interface NameCultureTable {
+  label: string;
+  male: NameTableEntry[];
+  female: NameTableEntry[];
+  surname: NameTableEntry[];
+  place: NameTableEntry[];
+}
+
+export type NameGeneratorTables = Record<NameCulture, NameCultureTable>;
+
+export interface NameCultureNameList {
+  label: string;
+  male: string[];
+  female: string[];
+  surname: string[];
+  place: string[];
+}
+
+export type NameGeneratorNameLists = Record<NameCulture, NameCultureNameList>;
+
+export interface NameGenerationOptions {
+  culture: NameCulture;
+  firstNameType: NameFirstType;
+}
+
+export interface GeneratedCharacterName {
+  culture: NameCulture;
+  firstNameType: NameFirstType;
+  firstName: string;
+  surname: string;
+  fullName: string;
+  rolls: {
+    firstName: number;
+    surname: number;
+  };
+}
+
+export interface GeneratedPlaceName {
+  culture: NameCulture;
+  placeName: string;
+  roll: number;
+}
+
 export interface CharacterSaveScores {
   physical: number;
   evasion: number;

@@ -9,7 +9,7 @@
   let targetPoiName = $derived(campaignState.completedMission ? pois.find(p => p.id === campaignState.completedMission?.targetName)?.name || campaignState.completedMission.targetName : '');
 
   async function claimReward() {
-    if (!campaignState.completedMission) return;
+    if (!dbState.isGM || !campaignState.completedMission) return;
     
     const mission = campaignState.completedMission;
     const totalPayout = mission.payoutCredits || 0;
@@ -37,7 +37,7 @@
   }
 </script>
 
-{#if campaignState.completedMission}
+{#if dbState.isGM && campaignState.completedMission}
   <div class="modal-backdrop">
     <div class="modal-content">
       

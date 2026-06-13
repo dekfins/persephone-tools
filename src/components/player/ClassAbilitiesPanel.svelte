@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getClassAbility } from '../../lib/characterMechanics';
+  import { getClassAbility } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 

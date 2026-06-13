@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ALL_ATTRIBUTES, ALL_SKILLS, SKILL_DEFINITIONS } from '../../lib/characterConstants';
-  import { formatModifier, getAttributeModifier } from '../../lib/characterMechanics';
+  import { ALL_ATTRIBUTES, ALL_SKILLS, SKILL_DEFINITIONS } from '../../lib/character/characterConstants';
+  import { formatModifier, getAttributeModifier } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import type { AttributeKey, Skill } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

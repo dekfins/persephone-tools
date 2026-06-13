@@ -166,7 +166,8 @@
     color: var(--accent-amber);
     font-size: clamp(0.7rem, calc(100cqw * var(--value-width-factor)), 1.25rem);
     line-height: 1;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .terminal-stat-grid.value-main strong {

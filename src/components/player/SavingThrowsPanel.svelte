@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getSavingThrows } from '../../lib/characterMechanics';
+  import { getSavingThrows } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';

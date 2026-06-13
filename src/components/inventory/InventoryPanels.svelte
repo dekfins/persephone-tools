@@ -6,9 +6,11 @@
 
 {#if dbState.activeCharacter}
   <div class="inventory-grid">
-    <div class="col-stack">
-      <ShipInventoryPanel />
-    </div>
+    {#if dbState.activeCampaignId}
+      <div class="col-stack">
+        <ShipInventoryPanel />
+      </div>
+    {/if}
 
     <div class="col-stack">
       <PersonalInventoryPanel />
@@ -22,7 +24,7 @@
 <style>
   .inventory-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
   }
 

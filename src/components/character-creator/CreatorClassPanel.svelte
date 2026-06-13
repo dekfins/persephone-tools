@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { CHARACTER_CLASSES } from '../../lib/characterConstants';
-  import { CLASS_ABILITIES, type ClassAbilityDefinition } from '../../lib/characterMechanics';
+  import { CHARACTER_CLASSES } from '../../lib/character/characterConstants';
+  import { CLASS_ABILITIES, type ClassAbilityDefinition } from '../../lib/character/characterMechanics';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { CharacterClass } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

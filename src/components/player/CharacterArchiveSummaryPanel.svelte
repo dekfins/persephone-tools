@@ -1,6 +1,6 @@
 <script lang="ts">
   import { dbState } from '../../lib/states/dbState.svelte';
-  import { formatFocusPicks } from '../../lib/characterConstants';
+  import { formatFocusPicks } from '../../lib/character/characterConstants';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let creation = $derived(dbState.localCharacterCreation);

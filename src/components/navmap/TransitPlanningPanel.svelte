@@ -5,6 +5,7 @@
   import type { PoiDef } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+  import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';
   import poisData from '../../data/celestial/pois.json';
 
   const pois = poisData as PoiDef[];
@@ -59,17 +60,54 @@
           : Number(shipState.propulsion.totalDV.toFixed(2)) < Number(activeTrajectory.maxDv.toFixed(2)) || shipState.propulsion.totalDV <= 0)
       : true
   );
+
+  let canManageTimeline = $derived(dbState.isGM);
+  let planningReadout = $derived.by<TerminalStatGridItem[]>(() => {
+    if (!targetPoi || !activeTrajectory) return [];
+
+    return [
+      {
+        label: 'Origin',
+        value: originPoi.name.toUpperCase()
+      },
+      {
+        label: 'Destination',
+        value: targetPoi.name.toUpperCase()
+      },
+      {
+        label: 'Burnout DV',
+        value: `${activeTrajectory.idealDv.toFixed(2)} km/s`
+      },
+      {
+        label: 'Available DV',
+        value: `${shipState.propulsion.totalDV.toFixed(2)} km/s`,
+        tone: hasInsufficientDV ? 'danger' : undefined
+      },
+      {
+        label: 'Travel Time',
+        value: `${activeTrajectory.realisticTime.toFixed(2)} d`
+      }
+    ];
+  });
+
+  async function confirmLaunch() {
+    if (!canManageTimeline || !targetPoi || !activeTrajectory || hasInsufficientDV) return;
+
+    campaignState.initiateTransit({
+      originName: originPoi.id,
+      targetName: targetPoi.id,
+      launchDay: campaignState.currentDay,
+      travelTime: activeTrajectory.realisticTime,
+      daysElapsed: 0,
+      reqDv: activeTrajectory.maxDv,
+      telemetry: activeTrajectory.telemetry
+    });
+    onConfirmLaunch();
+    await dbState.syncTimelineToCloud();
+  }
 </script>
 
 <TerminalPanel title="TRANSIT COMPUTER">
-  
-  <div class="stat-row">
-    <span>ORIGIN:</span>
-    <span style="color: var(--text-main); text-align: right; padding-left: 1rem;">
-      {originPoi.name.toUpperCase()}
-    </span>
-  </div>
-
   <div class="form-group" style="margin-bottom: 1rem;">
     <span class="stat-row" style="margin-bottom: 4px;">DESTINATION:</span>
     <TerminalSelect
@@ -79,14 +117,15 @@
       labelKey="label"
       placeholder="SELECT TARGET..."
       popupSide="left"
-      showPopup={false}     onSelect={(item: any) => targetPoiId = item.id}
+      showPopup={false}
+      onSelect={(item: any) => targetPoiId = item.id}
     />
   </div>
 
   {#if targetPoi && activeTrajectory}
-    <div class="stat-row"><span>TRAVEL TIME:</span><span>{activeTrajectory.realisticTime.toFixed(2)} d</span></div>
-    <div class="stat-row"><span>BURNOUT DV:</span><span>{activeTrajectory.idealDv.toFixed(2)} km/s</span></div>
-    <div class="stat-row"><span>AVAILABLE DV:</span><span style="color: {hasInsufficientDV ? 'var(--accent-red)' : 'var(--text-main)'};">{shipState.propulsion.totalDV.toFixed(2)} km/s</span></div>
+    <div class="transit-grid">
+      <TerminalStatGrid items={planningReadout} columns={2} dense valueTone="main" />
+    </div>
 
     <div class="fuel-config-box">
       <label class="config-label">
@@ -120,21 +159,15 @@
           campaignState.previewTravelTime = activeTrajectory.realisticTime;
         }}>PREVIEW BURN</button>
 
-      <button 
-        class="btn-action" 
-        style="width: 100%; margin-top: 10px;"
-        disabled={hasInsufficientDV}
-        onclick={async () => {
-          campaignState.initiateTransit({
-            originName: originPoi.id, targetName: targetPoi.id, launchDay: campaignState.currentDay,
-            travelTime: activeTrajectory.realisticTime, daysElapsed: 0, reqDv: activeTrajectory.maxDv,
-            telemetry: activeTrajectory.telemetry 
-          });
-          onConfirmLaunch();
-          await dbState.syncTimelineToCloud();
-        }}>
-        {hasInsufficientDV ? 'INSUFFICIENT DELTA-V' : 'CONFIRM LAUNCH'}
-      </button>
+      {#if canManageTimeline}
+        <button
+          class="btn-action"
+          style="width: 100%; margin-top: 10px;"
+          disabled={hasInsufficientDV}
+          onclick={confirmLaunch}>
+          {hasInsufficientDV ? 'INSUFFICIENT DELTA-V' : 'CONFIRM LAUNCH'}
+        </button>
+      {/if}
     {/if}
   {/if}
 </TerminalPanel>
@@ -145,13 +178,29 @@
     justify-content: space-between;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
-    color: var(--ui-cyan);
+    color: var(--text-main);
     font-family: var(--font-terminal, monospace);
   }
   .form-group {
     display: flex;
     flex-direction: column;
   }
+  .transit-grid {
+    margin-bottom: 0.75rem;
+  }
+
+  .transit-grid :global(.terminal-stat-cell) {
+    align-content: start;
+  }
+
+  .transit-grid :global(.terminal-stat-cell strong) {
+    line-height: 1.15;
+  }
+
+  .transit-grid :global(.terminal-stat-cell:last-child) {
+    grid-column: 1 / -1;
+  }
+
   .fuel-config-box {
     margin-top: 10px;
     padding-top: 10px;

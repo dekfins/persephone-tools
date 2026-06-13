@@ -2,7 +2,7 @@
   import { dbState } from '../lib/states/dbState.svelte';
   import PlayerDashboardPanels from '../components/player/PlayerDashboardPanels.svelte';
 
-  let canViewPlayerDashboard = $derived(Boolean(dbState.activeMembership) || dbState.isLocalCharacterPreview);
+  let canViewPlayerDashboard = $derived(Boolean(dbState.activeCharacter) || dbState.isLocalCharacterPreview);
 </script>
 
 <div class="page-container">

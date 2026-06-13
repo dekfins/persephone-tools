@@ -1,6 +1,6 @@
 <script lang="ts">
   import backgrounds from '../../data/character/backgrounds.json';
-  import { BACKGROUND_CHOICE_LABELS } from '../../lib/characterConstants';
+  import { BACKGROUND_CHOICE_LABELS } from '../../lib/character/characterConstants';
   import { dbState } from '../../lib/states/dbState.svelte';
   import type {
     BackgroundDefinitions,

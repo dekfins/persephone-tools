@@ -3,7 +3,7 @@
   import { shipState } from '../../lib/states/shipState.svelte';
   import { crewState } from '../../lib/states/crewState.svelte';
   import { dbState } from '../../lib/states/dbState.svelte';
-  import { generateJobBoard } from '../../lib/missionGenerator';
+  import { generateJobBoard } from '../../lib/missions/missionGenerator';
   import type { GeneratedMission } from '../../lib/types';
   import JobBoardControls from './JobBoardControls.svelte';
   import JobResults from './JobResults.svelte';
@@ -49,7 +49,7 @@
   }
 
   async function signContract() {
-    if (!activeContract) return;
+    if (!dbState.isGM || !activeContract) return;
 
     // 1. Add negotiated upfront cash to the ship's slush fund
     if (upfrontDemand > 0) {
@@ -83,7 +83,7 @@
   }
 </script>
 
-{#if dbState.activeCharacter?.role !== 'GM'}
+{#if !dbState.isGM}
   <div class="terminal-alert error" style="margin-top: 2rem;">
     UNAUTHORIZED ACCESS. GM CLEARANCE REQUIRED.
   </div>

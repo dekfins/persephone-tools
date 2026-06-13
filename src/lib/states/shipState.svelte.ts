@@ -2,7 +2,7 @@ import hulls from '../../data/ship/hulls.json';
 import constants from '../../data/constants.json';
 import reactors from '../../data/ship/reactors.json';
 import rawEngines from '../../data/ship/engines.json'; 
-import { calculateShipItemCost } from '../shipMechanics';
+import { calculateShipItemCost } from '../ship/shipMechanics';
 import type { ActiveCondition, Engine } from '../types'; 
 
 const engines = rawEngines as unknown as Engine[];

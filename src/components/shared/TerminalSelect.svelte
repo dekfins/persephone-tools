@@ -10,7 +10,7 @@
     getShipComponentTooltip,
     type TerminalSelectTooltip,
     type TerminalTooltipScale
-  } from '../../lib/terminalItems';
+  } from '../../lib/ui/terminalItems';
 
   type Props = {
     options: any[];

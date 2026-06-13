@@ -1,4 +1,4 @@
-import constants from '../data/constants.json';
+import constants from '../../data/constants.json';
 
 export type ShipCostScale = {
   costMult: number;

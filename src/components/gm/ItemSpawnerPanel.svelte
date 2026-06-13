@@ -5,7 +5,7 @@
     getEquipmentInventoryCategory,
     getEquipmentInventoryMass,
     getEquipmentInventoryRarity
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import { dbState } from '../../lib/states/dbState.svelte.ts';
   import { toastState } from '../../lib/states/toastState.svelte.ts';
   import type { EquipmentCatalogItem } from '../../lib/types';

@@ -3,6 +3,7 @@
   import { fly } from 'svelte/transition';
   import Navigation from './components/shared/NavigationPanel.svelte';
   import CampaignLogPanel from './components/campaign/CampaignLogPanel.svelte';
+  import UsernamePromptModal from './components/shared/UsernamePromptModal.svelte';
   
   // Import your pages
   import Login from './pages/Login.svelte';
@@ -203,6 +204,10 @@
 
     {#if showCampaignLog}
       <CampaignLogPanel />
+    {/if}
+
+    {#if authState.shouldPromptUsername}
+      <UsernamePromptModal />
     {/if}
   {/if}
 </main>

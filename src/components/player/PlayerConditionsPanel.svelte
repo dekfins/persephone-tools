@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ALL_CHARACTER_CONDITIONS } from '../../lib/characterConstants';
+  import { ALL_CHARACTER_CONDITIONS } from '../../lib/character/characterConstants';
   import { dbState } from '../../lib/states/dbState.svelte';
   import type { CharacterActiveCondition, CharacterConditionTemplate } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

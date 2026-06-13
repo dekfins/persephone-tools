@@ -1,7 +1,7 @@
-import equipmentCatalog from '../data/character/equipment.json';
-import equipmentPackages from '../data/character/equipmentPackages.json';
-import conditionCatalog from '../data/character/conditions.json';
-import skillMetadata from '../data/character/skills.json';
+import equipmentCatalog from '../../data/character/equipment.json';
+import equipmentPackages from '../../data/character/equipmentPackages.json';
+import conditionCatalog from '../../data/character/conditions.json';
+import skillMetadata from '../../data/character/skills.json';
 import type {
   AttributeCategory,
   AttributeKey,
@@ -20,7 +20,7 @@ import type {
   Foci,
   Skill,
   SkillDefinitions
-} from './types';
+} from '../types';
 
 export const HERITAGES = [
   { label: 'EARTHLING', value: 'earthling' as const },

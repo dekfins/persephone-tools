@@ -1,5 +1,5 @@
 import { Container, Graphics, Text, TextStyle } from 'pixi.js';
-import { mapPlanets } from './helpers/mapDataHelpers';
+import { mapPlanets } from '../helpers/mapDataHelpers';
 import { getTransitTelemetry } from './orbitalMath';
 
 const RADIUS_CULL_MAX = 5000;

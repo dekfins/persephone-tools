@@ -5,7 +5,7 @@
     getEquipmentInventoryCategory,
     getEquipmentInventoryMass,
     getEquipmentInventoryRarity
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { EquipmentCatalogItem, EquipmentPackageId, StartingEquipmentItem } from '../../lib/types';
   import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';

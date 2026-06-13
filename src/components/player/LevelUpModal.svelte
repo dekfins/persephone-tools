@@ -5,7 +5,7 @@
     ALL_FOCI,
     ALL_SKILLS,
     getFocusSkillChoices
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import {
     canAdvanceSkill,
     formatModifier,
@@ -20,7 +20,7 @@
     hasWarriorTraining,
     isCombatSkill,
     normalizeAdvancementProgress
-  } from '../../lib/characterMechanics';
+  } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import type {
     AttributeKey,

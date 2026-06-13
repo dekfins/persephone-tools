@@ -27,6 +27,17 @@ export interface CampaignMembership {
   active_character_id: string | null;
 }
 
+export interface CampaignMemberView extends CampaignMembership {
+  profile?: ProfileRecord | null;
+}
+
+export interface CampaignCharacter {
+  campaign_id: string;
+  character_id: string;
+  user_id: string;
+  created_at?: string;
+}
+
 export interface CampaignInvite {
   id: string;
   campaign_id: string;

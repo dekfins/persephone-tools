@@ -4,7 +4,7 @@
   import weapons from '../../data/ship/weapons.json';
   import { dbState } from '../../lib/states/dbState.svelte.ts';
   import { shipState } from '../../lib/states/shipState.svelte';
-  import { toShipComponentRow } from '../../lib/terminalItems';
+  import { toShipComponentRow } from '../../lib/ui/terminalItems';
   import type { InstalledComponent } from '../../lib/types';
   import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

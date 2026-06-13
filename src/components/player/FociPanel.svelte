@@ -1,6 +1,6 @@
 <script lang="ts">
   import foci from '../../data/character/foci.json';
-  import { getHighestFocusLevels } from '../../lib/characterMechanics';
+  import { getHighestFocusLevels } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import type { Foci, FocusDefinition, FocusDefinitions, FocusGrantEntry, FocusLevel } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

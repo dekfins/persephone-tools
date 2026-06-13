@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 AGENTS.md
-supabase
 
 # Editor directories and files
 .vscode/*
@@ -24,4 +23,16 @@ supabase
 *.njsproj
 *.sln
 *.sw?
+
+# Keep secrets/local Supabase runtime out of Git
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+supabase/.env.*
+supabase/config.toml
+
+# Track schema/migrations
+!supabase/
+!supabase/migrations/
+!supabase/migrations/*.sql
 

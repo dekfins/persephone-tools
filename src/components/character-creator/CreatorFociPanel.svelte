@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { ALL_SKILLS } from '../../lib/characterConstants';
+  import { ALL_SKILLS } from '../../lib/character/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { BackgroundResolvedChoice, Foci, FocusGrantEntry, FocusPickSource, Skill } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

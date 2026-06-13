@@ -4,7 +4,7 @@
   
   import { campaignState } from '../../lib/states/campaignState.svelte';
   import { shipState } from '../../lib/states/shipState.svelte';
-  import { solveTrajectory, getPoiState } from '../../lib/orbitalMath';
+  import { solveTrajectory, getPoiState } from '../../lib/navmap/orbitalMath';
   import type { PlanetDef, MoonDef, PoiDef } from '../../lib/types';
   
   import planetsData from '../../data/celestial/planets.json';
@@ -17,7 +17,7 @@
   // Helper functions to transform raw celestial body data into renderable coordinates
   import { mapPlanets, mapMoons, mapPoiOrbits } from '../../lib/helpers/mapDataHelpers'; 
   // Helper functions to draw celestial bodies, orbits, and trajectories on the PIXI canvas
-  import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from '../../lib/mapRenderers';
+  import { renderPlanets, renderMoons, renderPoiOrbits, renderTransitPipeline } from '../../lib/navmap/mapRenderers';
   // Helper functions to calculate derived state for the map
   import { calculateActiveTrajectory, calculateTransitRefBody } from '../../lib/helpers/mapStateHelpers';
 
@@ -319,5 +319,5 @@
   .navmap-container { position: relative; width: 100%; height: 100%; min-height: 600px; background-color: #0a0a0c; overflow: hidden; cursor: grab; }
   .navmap-container:active { cursor: grabbing; }
   .hud-top-left { position: absolute; top: 100px; left: 20px; color: var(--ui-cyan); font-family: var(--font-terminal, monospace); pointer-events: none; z-index: 100; }
-  .floating-panel-wrapper { position: absolute; top: 100px; right: 20px; width: 300px; z-index: 100; }
+  .floating-panel-wrapper { position: absolute; top: 100px; right: 20px; width: min(360px, calc(100vw - 40px)); z-index: 100; }
 </style>

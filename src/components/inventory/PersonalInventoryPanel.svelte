@@ -95,9 +95,11 @@
         </button>
       {/if}
 
-      <button class="btn-action btn-compact" onclick={() => moveToShip(item.id)}>
-        STORE
-      </button>
+      {#if dbState.activeCampaignId}
+        <button class="btn-action btn-compact" onclick={() => moveToShip(item.id)}>
+          STORE
+        </button>
+      {/if}
     </div>
   {/if}
 {/snippet}

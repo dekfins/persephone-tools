@@ -9,6 +9,7 @@
   let isProfileExpanded = $state(false);
   let isOverviewActive = $derived(!$router?.path || $router.path === '/overview' || $router.path === '/');
   let isLoginRoute = $derived($router?.path === '/login');
+  let hasActiveCampaign = $derived(Boolean(dbState.activeCampaignId));
   let campaignOptions = $derived<SelectOption[]>(
     dbState.campaigns.map(campaign => ({ label: campaign.name, value: campaign.id }))
   );
@@ -16,7 +17,12 @@
     campaignOptions.find(option => option.value === dbState.activeCampaignId) ?? null
   );
   let characterOptions = $derived<SelectOption[]>(
-    dbState.playerCharacters.map(character => ({ label: character.name, value: character.id }))
+    dbState.visiblePlayerCharacters.map(character => ({
+      label: dbState.isCharacterOwnedByActiveUser(character)
+        ? character.name
+        : `${character.name} (VIEW)`,
+      value: character.id
+    }))
   );
   let selectedCharacter = $derived(
     characterOptions.find(option => option.value === dbState.activeCharacter?.id) ?? null
@@ -38,16 +44,18 @@
   <div class="bar-content">
     <a href="/home" class="brand">DEIMOS</a>
     
-    {#if authState.isSignedIn && dbState.activeCampaignId}
+    {#if authState.isSignedIn}
       <nav class="navbar">
         <a href="/home" class="nav-link" use:active>HOME</a>
         <a href="/overview" class="nav-link" class:active={isOverviewActive}>OVERVIEW</a>
         <a href="/character-creator" class="nav-link" use:active>CREATOR</a>
-        <a href="/ship-builder" class="nav-link" exact use:active>SHIP BUILDER</a>
-        <a href="/ship-condition" class="nav-link" use:active>SHIP CONDITION</a>
-        <a href="/inventory" class="nav-link" use:active>INVENTORY</a>
-        <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
-        {#if dbState.isGM}
+        {#if hasActiveCampaign}
+          <a href="/ship-builder" class="nav-link" exact use:active>SHIP BUILDER</a>
+          <a href="/ship-condition" class="nav-link" use:active>SHIP CONDITION</a>
+          <a href="/inventory" class="nav-link" use:active>INVENTORY</a>
+          <a href="/navmap" class="nav-link" use:active>NAVMAP</a>
+        {/if}
+        {#if hasActiveCampaign && dbState.isGM}
           <a href="/missions" class="nav-link" use:active>JOB BOARD</a> 
           <a href="/gm" class="nav-link" use:active>GM TOOLS</a>
         {/if}
@@ -97,7 +105,18 @@
             showPopup={false}
           />
         {:else}
-          <div class="dim-message">NO CAMPAIGN INVITE</div>
+          <div class="dim-message">NO CAMPAIGN JOINED</div>
+          {#if characterOptions.length > 0}
+            <span class="auth-label">ACTIVE CHARACTER</span>
+            <TerminalSelect
+              id="character-selector"
+              options={characterOptions}
+              value={selectedCharacter}
+              placeholder="NO CHARACTER"
+              onSelect={handleCharacterSelect}
+              showPopup={false}
+            />
+          {/if}
         {/if}
 
         <button class="btn-action btn-danger btn-compact" onclick={() => authState.signOut()}>

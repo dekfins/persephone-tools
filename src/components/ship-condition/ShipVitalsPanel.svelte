@@ -1,6 +1,6 @@
 <script lang="ts">
   import { shipState } from '../../lib/states/shipState.svelte';
-  import { shipCodec } from '../../lib/shipCodec';
+  import { shipCodec } from '../../lib/ship/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';
   

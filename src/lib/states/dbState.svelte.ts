@@ -1,13 +1,16 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase/supabaseClient';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import backgrounds from '../../data/character/backgrounds.json';
 import type {
   AttributeKey,
+  CampaignCharacter,
   CampaignLogEvent,
   CampaignLogSnapshot,
+  CampaignMemberView,
   CampaignInvite,
   CampaignMembership,
   CampaignRecord,
+  CampaignRole,
   CharacterAdvancementProgress,
   CharacterActiveCondition,
   CharacterConditionTemplate,
@@ -42,7 +45,7 @@ import {
   getEquipmentInventoryRarity,
   getFocusSkillChoices,
   getSkillChoices
-} from '../characterConstants';
+} from '../character/characterConstants';
 import foci from '../../data/character/foci.json';
 import {
   canAdvanceSkill,
@@ -56,8 +59,8 @@ import {
   hasWarriorTraining,
   isCombatSkill,
   normalizeAdvancementProgress
-} from '../characterMechanics';
-import { characterCodec } from '../characterCodec';
+} from '../character/characterMechanics';
+import { characterCodec } from '../character/characterCodec';
 import { shipState } from './shipState.svelte';
 import { campaignState } from './campaignState.svelte';
 import { crewState } from './crewState.svelte';
@@ -110,6 +113,24 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function uniqueById<T extends { id: string }>(records: T[]) {
+  return [...new Map(records.map(record => [record.id, record])).values()];
+}
+
+function isCampaignIdNotNullError(error: { message?: string } | null | undefined) {
+  return Boolean(
+    error?.message?.includes('campaign_id') &&
+    error.message.includes('violates not-null constraint')
+  );
+}
+
+function isMissingCampaignRosterTable(error: { code?: string; message?: string } | null | undefined) {
+  return Boolean(
+    error?.code === 'PGRST205' &&
+    error.message?.includes('campaign_characters')
+  );
+}
+
 class DatabaseStateManager {
   activeUserId = $state<string | null>(null);
   activeCampaignId = $state<string | null>(null);
@@ -117,12 +138,18 @@ class DatabaseStateManager {
   campaigns = $state<CampaignRecord[]>([]);
   memberships = $state<CampaignMembership[]>([]);
   campaignInvites = $state<CampaignInvite[]>([]);
+  campaignCharacters = $state<CampaignCharacter[]>([]);
+  campaignRosterSchemaMissing = $state(false);
   campaignLogEvents = $state<CampaignLogEvent[]>([]);
+  campaignMemberProfiles = $state<Record<string, ProfileRecord>>({});
   characters = $state<CharacterRecord[]>([]);
   items = $state<ItemRecord[]>([]);
   localCharacterArchive = $state<CharacterCreationArchive | null>(null);
   #subscription: RealtimeChannel | null = null;
   #lastLedgerSnapshot: Record<string, unknown> | null = null;
+  #ledgerRefreshInterval: ReturnType<typeof setInterval> | null = null;
+  #isRefreshingLedger = false;
+  #suppressRealtimeWarningsUntil = 0;
 
   // --- RELATIONAL GETTERS ---
   get activeCampaign() {
@@ -145,8 +172,49 @@ class DatabaseStateManager {
     return this.characters.filter(character => (character.character_kind ?? character.role) === 'PLAYER');
   }
 
+  get ownedPlayerCharacters() {
+    return this.playerCharacters.filter(character => this.isCharacterOwnedByActiveUser(character));
+  }
+
+  get visiblePlayerCharacters() {
+    if (!this.activeCampaignId) return this.ownedPlayerCharacters;
+    return this.activeCampaignRosterCharacters;
+  }
+
+  get activeCampaignRosterCharacters() {
+    if (!this.activeCampaignId) return [];
+    const rosterIds = new Set(
+      this.campaignCharacters
+        .filter(entry => entry.campaign_id === this.activeCampaignId)
+        .map(entry => entry.character_id)
+    );
+
+    return this.playerCharacters.filter(character => rosterIds.has(character.id));
+  }
+
+  get ownedCharactersAvailableForActiveCampaign() {
+    if (!this.activeCampaignId) return this.ownedPlayerCharacters;
+    const rosterIds = new Set(
+      this.campaignCharacters
+        .filter(entry => entry.campaign_id === this.activeCampaignId)
+        .map(entry => entry.character_id)
+    );
+
+    return this.ownedPlayerCharacters.filter(character => !rosterIds.has(character.id));
+  }
+
   get npcCharacters() {
     return this.characters.filter(character => character.character_kind === 'NPC');
+  }
+
+  get activeCampaignMembers(): CampaignMemberView[] {
+    if (!this.activeCampaignId) return [];
+    return this.memberships
+      .filter(membership => membership.campaign_id === this.activeCampaignId)
+      .map(membership => ({
+        ...membership,
+        profile: this.campaignMemberProfiles[membership.user_id] ?? null
+      }));
   }
 
   get activeCharacter() {
@@ -158,7 +226,7 @@ class DatabaseStateManager {
       if (selected) return selected;
     }
 
-    return this.playerCharacters[0] ?? this.characters.find(c => c.role === 'GM') ?? null;
+    return this.activeCampaignRosterCharacters[0] ?? this.ownedPlayerCharacters[0] ?? this.characters.find(c => c.role === 'GM') ?? null;
   }
 
   get localCharacterCreation() {
@@ -172,6 +240,7 @@ class DatabaseStateManager {
   get shipInventory() {
     return this.items.filter(item =>
       item.owner_id === SHIP_INVENTORY_OWNER_ID &&
+      item.campaign_id === this.activeCampaignId &&
       item.item_state === 'stored'
     );
   }
@@ -229,6 +298,45 @@ class DatabaseStateManager {
     return this.characters.find(c => c.id === characterId) || null;
   }
 
+  isCharacterOwnedByActiveUser(character: CharacterRecord | null | undefined) {
+    if (!character || !this.activeUserProfile) return false;
+    return character.owner_user_id === this.activeUserProfile.id;
+  }
+
+  canManageCharacter(character: CharacterRecord | null | undefined) {
+    if (!character) return false;
+    if (this.localCharacterArchive?.core.id === character.id) return true;
+    if (this.isGM) return true;
+    return (
+      this.isCharacterOwnedByActiveUser(character) &&
+      (character.character_kind ?? character.role) === 'PLAYER'
+    );
+  }
+
+  canDeleteCharacter(character: CharacterRecord | null | undefined) {
+    return this.canManageCharacter(character);
+  }
+
+  canSelectCharacter(character: CharacterRecord | null | undefined) {
+    if (!character) return false;
+    if (this.isCharacterOwnedByActiveUser(character)) return true;
+    return (
+      Boolean(this.activeCampaignId) &&
+      this.visiblePlayerCharacters.some(visibleCharacter => visibleCharacter.id === character.id) &&
+      (character.character_kind ?? character.role) === 'PLAYER'
+    );
+  }
+
+  isCharacterInActiveCampaignRoster(characterId: string) {
+    return Boolean(
+      this.activeCampaignId &&
+      this.campaignCharacters.some(entry =>
+        entry.campaign_id === this.activeCampaignId &&
+        entry.character_id === characterId
+      )
+    );
+  }
+
   normalizeSpawnQuantity(quantity: number) {
     return Math.max(1, Math.floor(Number(quantity)) || 1);
   }
@@ -237,7 +345,7 @@ class DatabaseStateManager {
     const itemState = item.item_state ?? (item.owner_id === SHIP_INVENTORY_OWNER_ID ? 'stored' : 'stowed');
     return {
       ...item,
-      campaign_id: item.campaign_id ?? this.activeCampaignId ?? DEFAULT_CAMPAIGN_ID,
+      campaign_id: item.campaign_id ?? null,
       item_state: itemState
     };
   }
@@ -290,7 +398,7 @@ class DatabaseStateManager {
   normalizeCharacterRecord(char: CharacterRecord): CharacterRecord {
     return {
       ...char,
-      campaign_id: char.campaign_id ?? this.activeCampaignId ?? DEFAULT_CAMPAIGN_ID,
+      campaign_id: char.campaign_id ?? null,
       character_kind: char.character_kind ?? (char.role === 'GM' ? 'GM' : 'PLAYER'),
       xp: typeof char.xp === 'number' ? char.xp : 0,
       character_notes: this.normalizeCharacterNotes(char.character_notes),
@@ -384,6 +492,12 @@ class DatabaseStateManager {
 
   setActiveUserProfile(profile: ProfileRecord | null) {
     this.activeUserProfile = profile;
+    if (profile) {
+      this.campaignMemberProfiles = {
+        ...this.campaignMemberProfiles,
+        [profile.id]: profile
+      };
+    }
   }
 
   clearForSignedOut() {
@@ -393,16 +507,16 @@ class DatabaseStateManager {
     this.campaigns = [];
     this.memberships = [];
     this.campaignInvites = [];
+    this.campaignCharacters = [];
+    this.campaignRosterSchemaMissing = false;
     this.characters = [];
     this.items = [];
     this.campaignLogEvents = [];
+    this.campaignMemberProfiles = {};
     this.localCharacterArchive = null;
     this.#lastLedgerSnapshot = null;
 
-    if (this.#subscription) {
-      void supabase.removeChannel(this.#subscription);
-      this.#subscription = null;
-    }
+    this.stopCampaignRealtime();
   }
 
   async setActiveCampaign(campaignId: string) {
@@ -413,9 +527,12 @@ class DatabaseStateManager {
   }
 
   async setActiveCharacter(characterId: string) {
+    const character = this.getCharacterById(characterId);
+    if (!this.canSelectCharacter(character)) return;
+
     this.activeUserId = characterId;
 
-    if (!this.activeCampaignId || !this.activeUserProfile) return;
+    if (!this.activeCampaignId || !this.activeUserProfile || !this.isCharacterInActiveCampaignRoster(characterId)) return;
 
     const { error } = await supabase
       .from('campaign_members')
@@ -426,11 +543,24 @@ class DatabaseStateManager {
     if (error) console.error('Failed to update active character:', error);
   }
 
+  stopCampaignRealtime() {
+    this.#suppressRealtimeWarningsUntil = Date.now() + 3000;
+    if (this.#subscription) {
+      void supabase.removeChannel(this.#subscription);
+      this.#subscription = null;
+    }
+    this.stopLedgerRefresh();
+  }
+
   applyLedgerState(ledgerData: Record<string, any>) {
+    if (ledgerData.ship_name !== null && ledgerData.ship_name !== undefined) shipState.blueprint.name = ledgerData.ship_name;
+    if (ledgerData.hull !== null && ledgerData.hull !== undefined) shipState.blueprint.hull = ledgerData.hull;
+    if (ledgerData.reactor !== null && ledgerData.reactor !== undefined) shipState.blueprint.reactor = ledgerData.reactor;
+    if (ledgerData.engine !== null && ledgerData.engine !== undefined) shipState.blueprint.engine = ledgerData.engine;
     if (ledgerData.hp !== null && ledgerData.hp !== undefined) shipState.vitals.currentHealth = ledgerData.hp;
     if (ledgerData.ri !== null && ledgerData.ri !== undefined) shipState.vitals.currentRI = ledgerData.ri;
-    if (ledgerData.active_fuel) shipState.propulsion.activeFuel = ledgerData.active_fuel;
-    if (ledgerData.active_mode) shipState.propulsion.activeMode = ledgerData.active_mode;
+    if (ledgerData.active_fuel !== undefined) shipState.propulsion.activeFuel = ledgerData.active_fuel;
+    if (ledgerData.active_mode !== undefined) shipState.propulsion.activeMode = ledgerData.active_mode;
     if (ledgerData.fuel_levels) shipState.propulsion.currentFuel = ledgerData.fuel_levels;
     if (ledgerData.ship_credits !== undefined) crewState.shipCredits = ledgerData.ship_credits;
     if (ledgerData.kibble_days !== undefined) crewState.kibbleDays = ledgerData.kibble_days;
@@ -446,6 +576,10 @@ class DatabaseStateManager {
     return {
       id: ledgerData.id ?? 'TT-9',
       campaign_id: ledgerData.campaign_id ?? this.activeCampaignId,
+      ship_name: ledgerData.ship_name ?? shipState.blueprint.name,
+      hull: ledgerData.hull ?? shipState.blueprint.hull,
+      reactor: ledgerData.reactor ?? shipState.blueprint.reactor,
+      engine: ledgerData.engine ?? shipState.blueprint.engine,
       hp: ledgerData.hp ?? shipState.vitals.currentHealth,
       ri: ledgerData.ri ?? shipState.vitals.currentRI,
       active_fuel: ledgerData.active_fuel ?? shipState.propulsion.activeFuel,
@@ -459,6 +593,75 @@ class DatabaseStateManager {
       current_location: ledgerData.current_location ?? campaignState.shipLocation,
       active_flight: ledgerData.active_flight ?? campaignState.activeMission
     };
+  }
+
+  async upsertShipLedger(payload: Record<string, unknown>, errorLabel: string) {
+    if (!this.activeCampaignId) return { data: null, error: null };
+
+    const { id, ...ledgerPayload } = {
+      ...this.createLedgerSnapshot(),
+      ...payload,
+      campaign_id: this.activeCampaignId
+    };
+
+    let result = await supabase
+      .from('ship_ledger')
+      .upsert(ledgerPayload, { onConflict: 'campaign_id' })
+      .select()
+      .maybeSingle();
+
+    if (result.error) {
+      result = await supabase
+        .from('ship_ledger')
+        .upsert(
+          {
+            id: this.#lastLedgerSnapshot?.id ?? this.activeCampaignId,
+            ...ledgerPayload
+          },
+          { onConflict: 'campaign_id' }
+        )
+        .select()
+        .maybeSingle();
+    }
+
+    if (result.error) console.error(errorLabel, result.error);
+    if (result.data) this.#lastLedgerSnapshot = this.createLedgerSnapshot(result.data as Record<string, unknown>);
+
+    return result;
+  }
+
+  async refreshShipLedgerFromCloud() {
+    if (!this.activeCampaignId || this.#isRefreshingLedger) return;
+    this.#isRefreshingLedger = true;
+
+    const { data, error } = await supabase
+      .from('ship_ledger')
+      .select('*')
+      .eq('campaign_id', this.activeCampaignId)
+      .maybeSingle();
+
+    this.#isRefreshingLedger = false;
+
+    if (error) {
+      console.error('Failed to refresh ship ledger:', error);
+      return;
+    }
+
+    if (data) this.applyLedgerState(data as Record<string, unknown>);
+  }
+
+  startLedgerRefresh() {
+    this.stopLedgerRefresh();
+    void this.refreshShipLedgerFromCloud();
+    this.#ledgerRefreshInterval = setInterval(() => {
+      void this.refreshShipLedgerFromCloud();
+    }, 2000);
+  }
+
+  stopLedgerRefresh() {
+    if (!this.#ledgerRefreshInterval) return;
+    clearInterval(this.#ledgerRefreshInterval);
+    this.#ledgerRefreshInterval = null;
   }
 
   async createCampaignLog(
@@ -643,9 +846,26 @@ class DatabaseStateManager {
       return;
     }
 
-    const { data: membershipData, error: membershipErr } = await supabase
-      .from('campaign_members')
-      .select('campaign_id,user_id,role,active_character_id');
+    const [membershipResult, ownedCharactersResult] = await Promise.all([
+      supabase
+        .from('campaign_members')
+        .select('campaign_id,user_id,role,active_character_id'),
+      supabase
+        .from('characters')
+        .select('*')
+        .eq('owner_user_id', this.activeUserProfile.id)
+    ]);
+
+    const { data: membershipData, error: membershipErr } = membershipResult;
+    const { data: ownedCharacterData, error: ownedCharacterErr } = ownedCharactersResult;
+
+    if (ownedCharacterErr) {
+      console.error('Error loading owned characters:', ownedCharacterErr);
+    }
+
+    const ownedCharacters = (ownedCharacterData ?? []) as CharacterRecord[];
+    this.characters = ownedCharacters.map((char) => this.normalizeCharacterRecord(char));
+    await this.loadOwnedPersonalItems(this.characters);
 
     if (membershipErr) {
       console.error('Error loading campaign memberships:', membershipErr);
@@ -653,16 +873,20 @@ class DatabaseStateManager {
     }
 
     this.memberships = (membershipData ?? []) as CampaignMembership[];
+    await this.loadProfilesForMemberships(this.memberships);
     const campaignIds = this.memberships.map(membership => membership.campaign_id);
 
     if (campaignIds.length === 0) {
+      this.stopCampaignRealtime();
       this.activeCampaignId = null;
-      this.activeUserId = null;
       this.campaigns = [];
       this.campaignInvites = [];
-      this.characters = [];
-      this.items = [];
+      this.campaignCharacters = [];
       this.campaignLogEvents = [];
+      this.campaignMemberProfiles = {};
+      this.activeUserId = this.ownedPlayerCharacters.some(character => character.id === this.activeUserId)
+        ? this.activeUserId
+        : this.ownedPlayerCharacters[0]?.id ?? null;
       return;
     }
 
@@ -686,9 +910,92 @@ class DatabaseStateManager {
     await this.loadCampaignData(nextCampaignId);
   }
 
+  async loadOwnedPersonalItems(characters: CharacterRecord[]) {
+    const ownedCharacterIds = characters
+      .filter(character => this.isCharacterOwnedByActiveUser(character))
+      .map(character => character.id);
+
+    if (ownedCharacterIds.length === 0) {
+      this.items = this.items.filter(item => item.owner_id === SHIP_INVENTORY_OWNER_ID);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .in('owner_id', ownedCharacterIds);
+
+    if (error) {
+      console.error('Error loading owned character items:', error);
+      return;
+    }
+
+    const shipItems = this.items.filter(item => item.owner_id === SHIP_INVENTORY_OWNER_ID);
+    this.items = uniqueById([
+      ...shipItems,
+      ...(data ?? []).map((item) => this.normalizeItemRecord(item as ItemRecord))
+    ]);
+  }
+
+  async loadProfilesForMemberships(memberships: CampaignMembership[]) {
+    const userIds = [...new Set(memberships.map(membership => membership.user_id).filter(Boolean))];
+    if (userIds.length === 0) {
+      this.campaignMemberProfiles = {};
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id,email,display_name,avatar_url,created_at')
+      .in('id', userIds);
+
+    if (error) {
+      console.error('Error loading campaign member profiles:', error);
+      return;
+    }
+
+    this.campaignMemberProfiles = Object.fromEntries(
+      (data ?? []).map(profile => [profile.id, profile as ProfileRecord])
+    );
+  }
+
   async loadCampaignData(campaignId: string) {
-    const [charactersResult, itemsResult, ledgerResult, logsResult] = await Promise.all([
+    const rosterResult = await supabase
+      .from('campaign_characters')
+      .select('campaign_id,character_id,user_id,created_at')
+      .eq('campaign_id', campaignId);
+
+    if (rosterResult.error) {
+      if (isMissingCampaignRosterTable(rosterResult.error)) {
+        this.campaignRosterSchemaMissing = true;
+        console.error(
+          'Campaign roster schema missing. Apply db/repairs/20260612030000_campaign_character_roster.sql:',
+          rosterResult.error
+        );
+      } else {
+        console.error('Error loading campaign roster:', rosterResult.error);
+      }
+      this.campaignCharacters = this.campaignCharacters.filter(entry => entry.campaign_id !== campaignId);
+    } else {
+      this.campaignRosterSchemaMissing = false;
+      this.campaignCharacters = [
+        ...this.campaignCharacters.filter(entry => entry.campaign_id !== campaignId),
+        ...((rosterResult.data ?? []) as CampaignCharacter[])
+      ];
+    }
+
+    const rosterCharacterIds = (rosterResult.data ?? []).map(entry => entry.character_id);
+    const rosterCharactersRequest = rosterCharacterIds.length > 0
+      ? supabase.from('characters').select('*').in('id', rosterCharacterIds)
+      : Promise.resolve({ data: [], error: null });
+    const rosterItemsRequest = rosterCharacterIds.length > 0
+      ? supabase.from('items').select('*').in('owner_id', rosterCharacterIds)
+      : Promise.resolve({ data: [], error: null });
+
+    const [campaignCharactersResult, rosterCharactersResult, rosterItemsResult, itemsResult, ledgerResult, logsResult] = await Promise.all([
       supabase.from('characters').select('*').eq('campaign_id', campaignId),
+      rosterCharactersRequest,
+      rosterItemsRequest,
       supabase.from('items').select('*').eq('campaign_id', campaignId),
       supabase.from('ship_ledger').select('*').eq('campaign_id', campaignId).maybeSingle(),
       supabase
@@ -699,15 +1006,27 @@ class DatabaseStateManager {
         .limit(100)
     ]);
 
-    if (charactersResult.data) {
-      this.characters = (charactersResult.data as CharacterRecord[]).map((char) => this.normalizeCharacterRecord(char));
+    if (campaignCharactersResult.data || rosterCharactersResult.data) {
+      const campaignScopedCharacters = ((campaignCharactersResult.data ?? []) as CharacterRecord[])
+        .filter(character => (character.character_kind ?? character.role) !== 'PLAYER');
+      this.characters = uniqueById([
+        ...this.characters,
+        ...campaignScopedCharacters.map((char) => this.normalizeCharacterRecord(char)),
+        ...((rosterCharactersResult.data ?? []) as CharacterRecord[]).map((char) => this.normalizeCharacterRecord(char))
+      ]);
     }
-    if (charactersResult.error) console.error('Error loading characters:', charactersResult.error);
+    if (campaignCharactersResult.error) console.error('Error loading campaign characters:', campaignCharactersResult.error);
+    if (rosterCharactersResult.error) console.error('Error loading roster characters:', rosterCharactersResult.error);
 
-    if (itemsResult.data) {
-      this.items = (itemsResult.data as ItemRecord[]).map((item) => this.normalizeItemRecord(item));
+    if (itemsResult.data || rosterItemsResult.data) {
+      this.items = uniqueById([
+        ...this.items.filter(item => item.campaign_id !== campaignId || item.owner_id !== SHIP_INVENTORY_OWNER_ID),
+        ...((itemsResult.data ?? []) as ItemRecord[]).map((item) => this.normalizeItemRecord(item)),
+        ...((rosterItemsResult.data ?? []) as ItemRecord[]).map((item) => this.normalizeItemRecord(item))
+      ]);
     }
     if (itemsResult.error) console.error('Error loading items:', itemsResult.error);
+    if (rosterItemsResult.error) console.error('Error loading roster items:', rosterItemsResult.error);
 
     if (ledgerResult.data) {
       this.applyLedgerState(ledgerResult.data as Record<string, any>);
@@ -722,9 +1041,9 @@ class DatabaseStateManager {
     await this.loadCampaignInvites();
 
     const membershipCharacterId = this.activeMembership?.active_character_id;
-    this.activeUserId = membershipCharacterId && this.characters.some(character => character.id === membershipCharacterId)
+    this.activeUserId = membershipCharacterId && this.isCharacterInActiveCampaignRoster(membershipCharacterId)
       ? membershipCharacterId
-      : this.playerCharacters[0]?.id ?? this.characters.find(character => character.role === 'GM')?.id ?? null;
+      : this.activeCampaignRosterCharacters[0]?.id ?? this.ownedPlayerCharacters[0]?.id ?? this.characters.find(character => character.role === 'GM')?.id ?? null;
   }
 
   async loadCampaignInvites() {
@@ -747,6 +1066,336 @@ class DatabaseStateManager {
     }
 
     this.campaignInvites = (data ?? []) as CampaignInvite[];
+  }
+
+  async createCampaign(name: string, description = '') {
+    if (!this.activeUserProfile) return null;
+
+    const normalizedName = name.trim();
+    if (!normalizedName) return null;
+
+    const campaignDraft = {
+      name: normalizedName,
+      description: description.trim() || null,
+      status: 'active' as const,
+      created_by: this.activeUserProfile.id
+    };
+
+    let campaign: CampaignRecord | null = null;
+    const directResult = await supabase
+      .from('campaigns')
+      .insert(campaignDraft)
+      .select()
+      .single();
+
+    if (directResult.error) {
+      const rpcResult = await supabase.rpc('create_home_campaign', {
+        campaign_name: normalizedName,
+        campaign_description: campaignDraft.description
+      });
+
+      if (rpcResult.error) {
+        console.error('Failed to create campaign:', directResult.error, rpcResult.error);
+        return null;
+      }
+
+      campaign = rpcResult.data as CampaignRecord;
+    } else {
+      campaign = directResult.data as CampaignRecord;
+
+      const membershipResult = await supabase
+        .from('campaign_members')
+        .insert({
+          campaign_id: campaign.id,
+          user_id: this.activeUserProfile.id,
+          role: 'GM' as CampaignRole,
+          active_character_id: null
+        });
+
+      if (membershipResult.error) {
+        await supabase
+          .from('campaigns')
+          .delete()
+          .eq('id', campaign.id);
+        console.error('Failed to create campaign membership:', membershipResult.error);
+        return null;
+      }
+    }
+
+    await this.loadData();
+    await this.setActiveCampaign(campaign.id);
+    await this.createCampaignLog(
+      'campaign_created',
+      `Created campaign ${campaign.name}.`,
+      { campaignId: campaign.id },
+      null
+    );
+
+    return campaign;
+  }
+
+  async deleteCampaign(campaignId = this.activeCampaignId) {
+    if (!campaignId || !this.isGM) return false;
+
+    const campaign = this.campaigns.find(entry => entry.id === campaignId) ?? null;
+    const { error } = await supabase
+      .from('campaigns')
+      .delete()
+      .eq('id', campaignId);
+
+    if (error) {
+      const { error: rpcError } = await supabase.rpc('delete_home_campaign', {
+        target_campaign: campaignId
+      });
+
+      if (rpcError) {
+        console.error('Failed to delete campaign:', error, rpcError);
+        return false;
+      }
+    }
+
+    this.campaigns = this.campaigns.filter(entry => entry.id !== campaignId);
+    this.memberships = this.memberships.filter(membership => membership.campaign_id !== campaignId);
+
+    if (this.activeCampaignId === campaignId) {
+      this.activeCampaignId = null;
+      this.activeUserId = null;
+      this.characters = [];
+      this.items = [];
+      this.campaignInvites = [];
+      this.campaignLogEvents = [];
+      const nextCampaign = this.campaigns[0] ?? null;
+      if (nextCampaign) await this.setActiveCampaign(nextCampaign.id);
+    }
+
+    if (campaign) {
+      await this.createCampaignLog(
+        'campaign_deleted',
+        `Deleted campaign ${campaign.name}.`,
+        { campaignId },
+        null
+      );
+    }
+
+    return true;
+  }
+
+  async leaveCampaign(campaignId = this.activeCampaignId) {
+    if (!campaignId || !this.activeUserProfile) return false;
+    const wasActiveCampaign = campaignId === this.activeCampaignId;
+
+    const membership = this.memberships.find(entry =>
+      entry.campaign_id === campaignId &&
+      entry.user_id === this.activeUserProfile?.id
+    );
+    if (!membership) return false;
+
+    const campaignMemberships = this.memberships.filter(entry => entry.campaign_id === campaignId);
+    const gmCount = campaignMemberships.filter(entry => entry.role === 'GM').length;
+    if (membership.role === 'GM' && gmCount <= 1) return false;
+
+    if (wasActiveCampaign) this.stopCampaignRealtime();
+
+    const { data: deletedMemberships, error } = await supabase
+      .from('campaign_members')
+      .delete()
+      .eq('campaign_id', campaignId)
+      .eq('user_id', this.activeUserProfile.id)
+      .select('campaign_id,user_id');
+
+    if (!error && (deletedMemberships ?? []).length === 0) {
+      await this.loadData();
+      const stillMember = this.memberships.some(entry =>
+        entry.campaign_id === campaignId &&
+        entry.user_id === this.activeUserProfile?.id
+      );
+      if (!stillMember) {
+        if (this.activeCampaignId) this.subscribeToChanges();
+        else this.stopCampaignRealtime();
+        return true;
+      }
+    }
+
+    if (error || (deletedMemberships ?? []).length === 0) {
+      const { error: rpcError } = await supabase.rpc('leave_home_campaign', {
+        target_campaign: campaignId
+      });
+
+      if (rpcError) {
+        if (wasActiveCampaign) this.subscribeToChanges();
+        console.error('Failed to leave campaign:', error, rpcError);
+        return false;
+      }
+    }
+
+    await this.loadData();
+    if (this.activeCampaignId) this.subscribeToChanges();
+    else this.stopCampaignRealtime();
+    return true;
+  }
+
+  async removeCampaignMember(userId: string, campaignId = this.activeCampaignId) {
+    if (!campaignId || !this.isGM || userId === this.activeUserProfile?.id) return false;
+
+    const membership = this.memberships.find(entry =>
+      entry.campaign_id === campaignId &&
+      entry.user_id === userId
+    );
+    if (!membership) return false;
+
+    const { error } = await supabase
+      .from('campaign_members')
+      .delete()
+      .eq('campaign_id', campaignId)
+      .eq('user_id', userId);
+
+    if (error) {
+      const { error: rpcError } = await supabase.rpc('remove_home_campaign_member', {
+        target_campaign: campaignId,
+        target_user: userId
+      });
+
+      if (rpcError) {
+        console.error('Failed to remove campaign member:', error, rpcError);
+        return false;
+      }
+    }
+
+    this.memberships = this.memberships.filter(entry =>
+      entry.campaign_id !== campaignId ||
+      entry.user_id !== userId
+    );
+    await this.createCampaignLog(
+      'member_removed',
+      `Removed ${this.formatCampaignMemberName(membership)} from the campaign.`,
+      { userId, role: membership.role },
+      null
+    );
+
+    return true;
+  }
+
+  async addCharacterToCampaign(characterId: string, campaignId = this.activeCampaignId) {
+    if (!campaignId || !this.activeUserProfile) return false;
+
+    const character = this.getCharacterById(characterId);
+    if (!character || !this.isCharacterOwnedByActiveUser(character)) return false;
+
+    const existing = this.campaignCharacters.find(entry =>
+      entry.campaign_id === campaignId &&
+      entry.character_id === characterId
+    );
+    if (existing) return true;
+
+    const rosterDraft: CampaignCharacter = {
+      campaign_id: campaignId,
+      character_id: characterId,
+      user_id: this.activeUserProfile.id
+    };
+
+    const { data, error } = await supabase
+      .from('campaign_characters')
+      .insert(rosterDraft)
+      .select('campaign_id,character_id,user_id,created_at')
+      .single();
+
+    if (error) {
+      if (isMissingCampaignRosterTable(error)) {
+        this.campaignRosterSchemaMissing = true;
+        console.error(
+          'Campaign roster schema missing. Apply db/repairs/20260612030000_campaign_character_roster.sql:',
+          error
+        );
+      } else {
+        console.error('Failed to add character to campaign:', error);
+      }
+      return false;
+    }
+
+    this.campaignRosterSchemaMissing = false;
+    this.campaignCharacters = [
+      ...this.campaignCharacters,
+      (data ?? rosterDraft) as CampaignCharacter
+    ];
+
+    if (campaignId === this.activeCampaignId) await this.setActiveCharacter(characterId);
+    await this.createCampaignLog(
+      'campaign_character_add',
+      `Added ${character.name} to the campaign roster.`,
+      { characterId },
+      null
+    );
+
+    return true;
+  }
+
+  async removeCharacterFromCampaign(characterId: string, campaignId = this.activeCampaignId) {
+    if (!campaignId || !this.activeUserProfile) return false;
+
+    const character = this.getCharacterById(characterId);
+    const rosterEntry = this.campaignCharacters.find(entry =>
+      entry.campaign_id === campaignId &&
+      entry.character_id === characterId
+    );
+    if (!rosterEntry) return false;
+
+    const canRemove = this.isGM || rosterEntry.user_id === this.activeUserProfile.id;
+    if (!canRemove) return false;
+
+    const { error } = await supabase
+      .from('campaign_characters')
+      .delete()
+      .eq('campaign_id', campaignId)
+      .eq('character_id', characterId);
+
+    if (error) {
+      if (isMissingCampaignRosterTable(error)) {
+        this.campaignRosterSchemaMissing = true;
+        console.error(
+          'Campaign roster schema missing. Apply db/repairs/20260612030000_campaign_character_roster.sql:',
+          error
+        );
+      } else {
+        console.error('Failed to remove character from campaign:', error);
+      }
+      return false;
+    }
+
+    this.campaignRosterSchemaMissing = false;
+    this.campaignCharacters = this.campaignCharacters.filter(entry =>
+      entry.campaign_id !== campaignId ||
+      entry.character_id !== characterId
+    );
+
+    if (this.activeUserId === characterId && campaignId === this.activeCampaignId) {
+      this.activeUserId = this.activeCampaignRosterCharacters[0]?.id ?? this.ownedPlayerCharacters[0]?.id ?? null;
+    }
+
+    await supabase
+      .from('campaign_members')
+      .update({ active_character_id: null })
+      .eq('campaign_id', campaignId)
+      .eq('active_character_id', characterId);
+
+    if (character) {
+      await this.createCampaignLog(
+        'campaign_character_remove',
+        `Removed ${character.name} from the campaign roster.`,
+        { characterId },
+        null
+      );
+    }
+
+    return true;
+  }
+
+  async redeemCampaignInviteFromHome(code: string) {
+    return await this.redeemCampaignInvite(code);
+  }
+
+  formatCampaignMemberName(membership: CampaignMembership | CampaignMemberView) {
+    const profile = this.campaignMemberProfiles[membership.user_id];
+    return profile?.display_name || profile?.email || membership.user_id.slice(0, 8);
   }
 
   async createCampaignInvite(
@@ -849,12 +1498,7 @@ class DatabaseStateManager {
       components: shipState.blueprint.components
     };
 
-    const { error } = await supabase
-      .from('ship_ledger')
-      .update(payload)
-      .eq('campaign_id', this.activeCampaignId);
-
-    if (error) console.error("GM Error - Failed to sync ship state:", error);
+    const { error } = await this.upsertShipLedger(payload, "GM Error - Failed to sync ship state:");
     if (!error) {
       this.#lastLedgerSnapshot = this.createLedgerSnapshot({ ...previousSnapshot, ...payload });
       await this.createCampaignLog(
@@ -875,12 +1519,7 @@ class DatabaseStateManager {
       active_flight: campaignState.activeMission
     };
 
-    const { error } = await supabase
-      .from('ship_ledger')
-      .update(payload)
-      .eq('campaign_id', this.activeCampaignId);
-
-    if (error) console.error("GM Error - Failed to sync timeline:", error);
+    const { error } = await this.upsertShipLedger(payload, "GM Error - Failed to sync timeline:");
     if (!error) {
       this.#lastLedgerSnapshot = this.createLedgerSnapshot({ ...previousSnapshot, ...payload });
       await this.createCampaignLog(
@@ -894,10 +1533,7 @@ class DatabaseStateManager {
 
   subscribeToChanges() {
     if (!this.activeCampaignId) return;
-    if (this.#subscription) {
-      void supabase.removeChannel(this.#subscription);
-      this.#subscription = null;
-    }
+    this.stopCampaignRealtime();
 
     const campaignFilter = `campaign_id=eq.${this.activeCampaignId}`;
     this.#subscription = supabase
@@ -937,10 +1573,12 @@ class DatabaseStateManager {
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'ship_ledger', filter: campaignFilter },
+        { event: '*', schema: 'public', table: 'ship_ledger', filter: campaignFilter },
         (payload) => {
-          console.log('Real-time Ship Ledger Change:', payload);
-          this.applyLedgerState(payload.new as Record<string, any>);
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            console.log('Real-time Ship Ledger Change:', payload);
+            this.applyLedgerState(payload.new as Record<string, any>);
+          }
         }
       )
       .on(
@@ -958,10 +1596,121 @@ class DatabaseStateManager {
           }
         }
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'campaign_members', filter: campaignFilter },
+        (payload) => {
+          if (payload.eventType === 'DELETE') {
+            this.memberships = this.memberships.filter(membership =>
+              membership.campaign_id !== payload.old.campaign_id ||
+              membership.user_id !== payload.old.user_id
+            );
+            return;
+          }
+
+          const incoming = payload.new as CampaignMembership;
+          const index = this.memberships.findIndex(membership =>
+            membership.campaign_id === incoming.campaign_id &&
+            membership.user_id === incoming.user_id
+          );
+
+          if (index !== -1) {
+            this.memberships[index] = incoming;
+          } else {
+            this.memberships.push(incoming);
+          }
+          if (!this.campaignMemberProfiles[incoming.user_id]) {
+            void this.loadProfilesForMemberships(this.memberships);
+          }
+
+          if (
+            incoming.campaign_id === this.activeCampaignId &&
+            incoming.user_id === this.activeUserProfile?.id
+          ) {
+            this.activeUserId = incoming.active_character_id && this.characters.some(character => character.id === incoming.active_character_id)
+              ? incoming.active_character_id
+              : this.activeUserId;
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'campaign_characters', filter: campaignFilter },
+        (payload) => {
+          if (payload.eventType === 'DELETE') {
+            this.campaignCharacters = this.campaignCharacters.filter(entry =>
+              entry.campaign_id !== payload.old.campaign_id ||
+              entry.character_id !== payload.old.character_id
+            );
+            return;
+          }
+
+          const incoming = payload.new as CampaignCharacter;
+          const index = this.campaignCharacters.findIndex(entry =>
+            entry.campaign_id === incoming.campaign_id &&
+            entry.character_id === incoming.character_id
+          );
+          if (index !== -1) this.campaignCharacters[index] = incoming;
+          else this.campaignCharacters.push(incoming);
+
+          if (incoming.campaign_id === this.activeCampaignId) {
+            void this.loadCampaignData(incoming.campaign_id);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'campaign_invites', filter: campaignFilter },
+        (payload) => {
+          if (!this.isGM) return;
+
+          if (payload.eventType === 'DELETE') {
+            this.campaignInvites = this.campaignInvites.filter(invite => invite.id !== payload.old.id);
+            return;
+          }
+
+          const incoming = payload.new as CampaignInvite;
+          if (incoming.revoked_at) {
+            this.campaignInvites = this.campaignInvites.filter(invite => invite.id !== incoming.id);
+            return;
+          }
+
+          const index = this.campaignInvites.findIndex(invite => invite.id === incoming.id);
+          if (index !== -1) {
+            this.campaignInvites[index] = incoming;
+          } else {
+            this.campaignInvites = [incoming, ...this.campaignInvites];
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'campaigns', filter: `id=eq.${this.activeCampaignId}` },
+        (payload) => {
+          const incoming = payload.new as CampaignRecord;
+          const index = this.campaigns.findIndex(campaign => campaign.id === incoming.id);
+          if (index !== -1) this.campaigns[index] = incoming;
+        }
+      )
+      .subscribe((status, error) => {
+        if (status === 'SUBSCRIBED') {
+          void this.refreshShipLedgerFromCloud();
+        }
+
+        if (
+          (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') &&
+          Date.now() > this.#suppressRealtimeWarningsUntil
+        ) {
+          console.warn('Campaign realtime subscription status:', status, error);
+        }
+      });
+
+    this.startLedgerRefresh();
   }
 
   async transferItem(itemId: string, newOwnerId: string) {
+    if (newOwnerId === SHIP_INVENTORY_OWNER_ID && !this.activeCampaignId) return;
+
     const localItem = this.items.find(i => i.id === itemId);
     if (!localItem) return;
     const snapshotItems = [localItem].map(item => ({ ...item }));
@@ -1074,6 +1823,7 @@ class DatabaseStateManager {
   async updatePersonalCredits(characterId: string, amountToAdd: number) {
     const char = this.getCharacterById(characterId);
     if (!char) return;
+    if (this.localCharacterArchive?.core.id !== characterId && !this.canManageCharacter(char)) return;
 
     const previousChar = { ...char };
     const newTotal = char.personal_credits + amountToAdd;
@@ -1382,9 +2132,9 @@ class DatabaseStateManager {
       }
 
       const { data, error } = await supabase
-        .from('items')
-        .insert({
-          campaign_id: this.activeCampaignId,
+          .from('items')
+          .insert({
+          campaign_id: this.activeCampaignId ?? null,
           equipment_id: draft.equipment_id,
           owner_id: characterId,
           item_state: draft.item_state,
@@ -1414,16 +2164,7 @@ class DatabaseStateManager {
     return result;
   }
 
-  async finalizeLocalCharacterArchive(): Promise<FinalizeCharacterArchiveResult> {
-    if (!this.activeCampaignId) {
-      return emptyFinalizeResult('character_insert_failed', 'No active campaign selected.');
-    }
-
-    if (!this.localCharacterArchive) {
-      return emptyFinalizeResult('no_archive', 'No local character archive loaded.');
-    }
-
-    const archive = this.localCharacterArchive;
+  async finalizeCharacterArchive(archive: CharacterCreationArchive): Promise<FinalizeCharacterArchiveResult> {
     const characterId = archive.core.id;
     const validation = this.validateArchivePurchasedItems(archive);
 
@@ -1445,7 +2186,6 @@ class DatabaseStateManager {
       .from('characters')
       .select('id')
       .eq('id', characterId)
-      .eq('campaign_id', this.activeCampaignId)
       .limit(1);
 
     if (existingError) {
@@ -1464,7 +2204,7 @@ class DatabaseStateManager {
 
     const core: CharacterRecord = {
       ...archive.core,
-      campaign_id: this.activeCampaignId,
+      campaign_id: this.activeCampaignId ?? null,
       owner_user_id: this.activeUserProfile?.id ?? null,
       character_kind: archive.core.role === 'GM' ? 'GM' : 'PLAYER',
       personal_credits: validation.remainingCredits,
@@ -1484,7 +2224,12 @@ class DatabaseStateManager {
 
     if (insertError) {
       return {
-        ...emptyFinalizeResult('character_insert_failed', insertError.message),
+        ...emptyFinalizeResult(
+          'character_insert_failed',
+          isCampaignIdNotNullError(insertError)
+            ? 'Database migration required: characters.campaign_id is still NOT NULL. Apply db/repairs/20260612020000_personal_character_ownership.sql.'
+            : insertError.message
+        ),
         characterId
       };
     }
@@ -1497,12 +2242,14 @@ class DatabaseStateManager {
     const inventory = await this.finalizeInventoryForCharacter(characterId, this.buildFinalizeInventoryDrafts(archive));
     const complete = inventory.failures.length === 0;
 
-    await this.createCampaignLog(
-      'character_finalize',
-      `Finalized character archive for ${core.name}.`,
-      { characterId, inventory },
-      { table: 'characters', recordId: characterId, before: null }
-    );
+    if (this.activeCampaignId) {
+      await this.createCampaignLog(
+        'character_finalize',
+        `Finalized character archive for ${core.name}.`,
+        { characterId, inventory },
+        { table: 'characters', recordId: characterId, before: null }
+      );
+    }
 
     return {
       success: complete,
@@ -1516,25 +2263,29 @@ class DatabaseStateManager {
     };
   }
 
-  async deleteCharacter(characterId: string) {
-    if (!this.activeCampaignId || !this.isGM) return false;
+  async finalizeLocalCharacterArchive(): Promise<FinalizeCharacterArchiveResult> {
+    if (!this.localCharacterArchive) {
+      return emptyFinalizeResult('no_archive', 'No local character archive loaded.');
+    }
 
+    return await this.finalizeCharacterArchive(this.localCharacterArchive);
+  }
+
+  async deleteCharacter(characterId: string) {
     const previousCharacter = this.characters.find(character =>
-      character.id === characterId &&
-      character.campaign_id === this.activeCampaignId
+      character.id === characterId
     );
     if (!previousCharacter) return false;
+    if (!this.canDeleteCharacter(previousCharacter)) return false;
 
     const previousItems = this.items.filter(item =>
-      item.owner_id === characterId &&
-      item.campaign_id === this.activeCampaignId
+      item.owner_id === characterId
     );
     const previousActiveUserId = this.activeUserId;
     const previousMemberships = this.memberships.map(membership => ({ ...membership }));
 
-    const nextActiveCharacter = this.characters.find(character =>
+    const nextActiveCharacter = this.visiblePlayerCharacters.find(character =>
       character.id !== characterId &&
-      character.campaign_id === this.activeCampaignId &&
       (character.character_kind ?? character.role) === 'PLAYER'
     );
 
@@ -1542,16 +2293,19 @@ class DatabaseStateManager {
     this.items = this.items.filter(item => item.owner_id !== characterId);
     if (this.activeUserId === characterId) this.activeUserId = nextActiveCharacter?.id ?? null;
     this.memberships = this.memberships.map(membership =>
-      membership.campaign_id === this.activeCampaignId && membership.active_character_id === characterId
+      membership.active_character_id === characterId
         ? { ...membership, active_character_id: null }
         : membership
     );
 
-    const { error: membershipError } = await supabase
+    const membershipQuery = supabase
       .from('campaign_members')
       .update({ active_character_id: null })
-      .eq('campaign_id', this.activeCampaignId)
       .eq('active_character_id', characterId);
+
+    if (this.activeCampaignId) membershipQuery.eq('campaign_id', this.activeCampaignId);
+
+    const { error: membershipError } = await membershipQuery;
 
     if (membershipError) {
       this.characters = [...this.characters, previousCharacter];
@@ -1565,7 +2319,6 @@ class DatabaseStateManager {
     const { error: itemsError } = await supabase
       .from('items')
       .delete()
-      .eq('campaign_id', this.activeCampaignId)
       .eq('owner_id', characterId);
 
     if (itemsError) {
@@ -1580,7 +2333,6 @@ class DatabaseStateManager {
     const { error: characterError } = await supabase
       .from('characters')
       .delete()
-      .eq('campaign_id', this.activeCampaignId)
       .eq('id', characterId);
 
     if (characterError) {
@@ -1592,19 +2344,21 @@ class DatabaseStateManager {
       return false;
     }
 
-    await this.createCampaignLog(
-      'character_delete',
-      `Deleted character ${previousCharacter.name}.`,
-      { characterId, inventoryDeleted: previousItems.length },
-      {
-        table: 'characters',
-        recordId: characterId,
-        before: {
-          character: previousCharacter,
-          items: previousItems
+    if (this.activeCampaignId) {
+      await this.createCampaignLog(
+        'character_delete',
+        `Deleted character ${previousCharacter.name}.`,
+        { characterId, inventoryDeleted: previousItems.length },
+        {
+          table: 'characters',
+          recordId: characterId,
+          before: {
+            character: previousCharacter,
+            items: previousItems
+          }
         }
-      }
-    );
+      );
+    }
 
     return true;
   }
@@ -1636,32 +2390,17 @@ class DatabaseStateManager {
   async updateShipCredits(amountToAdd: number) {
     if (!this.activeCampaignId) return;
     const previousSnapshot = this.#lastLedgerSnapshot ?? this.createLedgerSnapshot();
-    // 1. Fetch the current slush fund
-    const { data, error: fetchErr } = await supabase
-      .from('ship_ledger')
-      .select('ship_credits')
-      .eq('campaign_id', this.activeCampaignId)
-      .single();
+    const currentCredits = Number(previousSnapshot.ship_credits ?? crewState.shipCredits) || 0;
+    const newTotal = Math.max(0, currentCredits + amountToAdd);
 
-    if (fetchErr || !data) {
-      console.error("GM Error - Failed to fetch ship credits:", fetchErr);
-      return;
-    }
-
-    // 2. Calculate new total (preventing negative credits)
-    const newTotal = Math.max(0, data.ship_credits + amountToAdd);
-
-    // 3. Optimistic local update (makes the UI feel instant)
     crewState.shipCredits = newTotal;
 
-    // 4. Push the update to the cloud
-    const { error: updateErr } = await supabase
-      .from('ship_ledger')
-      .update({ ship_credits: newTotal })
-      .eq('campaign_id', this.activeCampaignId);
+    const { error } = await this.upsertShipLedger(
+      { ship_credits: newTotal },
+      "GM Error - Failed to update ship credits:"
+    );
 
-    if (updateErr) console.error("GM Error - Failed to update ship credits:", updateErr);
-    if (!updateErr) {
+    if (!error) {
       this.#lastLedgerSnapshot = this.createLedgerSnapshot({ ...previousSnapshot, ship_credits: newTotal });
       await this.createCampaignLog(
         'ship_credits',
@@ -1675,32 +2414,17 @@ class DatabaseStateManager {
   async updateKibble(amountToAdd: number) {
     if (!this.activeCampaignId) return;
     const previousSnapshot = this.#lastLedgerSnapshot ?? this.createLedgerSnapshot();
-    // 1. Fetch the current kibble days
-    const { data, error: fetchErr } = await supabase
-      .from('ship_ledger')
-      .select('kibble_days')
-      .eq('campaign_id', this.activeCampaignId)
-      .single();
-
-    if (fetchErr || !data) {
-      console.error("GM Error - Failed to fetch kibble:", fetchErr);
-      return;
-    }
-
-    // 2. Calculate new total (preventing negative kibble)
-    const newKibble = Math.max(0, data.kibble_days + amountToAdd);
+    const currentKibble = Number(previousSnapshot.kibble_days ?? crewState.kibbleDays) || 0;
+    const newKibble = Math.max(0, currentKibble + amountToAdd);
     
-    // Optimistic state correction
     crewState.kibbleDays = newKibble;
 
-    // 3. Push the update to the cloud
-    const { error: updateErr } = await supabase
-      .from('ship_ledger')
-      .update({ kibble_days: newKibble })
-      .eq('campaign_id', this.activeCampaignId);
+    const { error } = await this.upsertShipLedger(
+      { kibble_days: newKibble },
+      "GM Error - Failed to update kibble:"
+    );
 
-    if (updateErr) console.error("GM Error - Failed to update kibble:", updateErr);
-    if (!updateErr) {
+    if (!error) {
       this.#lastLedgerSnapshot = this.createLedgerSnapshot({ ...previousSnapshot, kibble_days: newKibble });
       await this.createCampaignLog(
         'ship_kibble',
@@ -2366,6 +3090,13 @@ class DatabaseStateManager {
     //   this.characters[index] = { ...this.characters[index], ...updates };
     // }
     const char = this.getCharacterById(characterId);
+    if (!char) return false;
+
+    if (this.localCharacterArchive?.core.id !== characterId && !this.canManageCharacter(char)) {
+      console.warn('Blocked character update without ownership:', characterId);
+      return false;
+    }
+
     const previousChar = char ? { ...char } : null;
     if (char) Object.assign(char, updates);
 

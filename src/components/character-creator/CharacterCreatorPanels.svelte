@@ -9,6 +9,22 @@
   import CreatorSummaryPanel from './CreatorSummaryPanel.svelte';
   import CreatorVitalsPanel from './CreatorVitalsPanel.svelte';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
+
+  let showRandomConfirm = $state(false);
+
+  function generateRandomCharacter() {
+    showRandomConfirm = false;
+    characterCreatorState.generateRandomCharacter();
+  }
+
+  function handleRandomCharacter() {
+    if (characterCreatorState.hasDraftProgress) {
+      showRandomConfirm = true;
+      return;
+    }
+
+    generateRandomCharacter();
+  }
 </script>
 
 <div class="creator-layout">
@@ -62,6 +78,12 @@
       >
         NEXT
       </button>
+      <button
+        class="btn-action btn-amber"
+        onclick={handleRandomCharacter}
+      >
+        RANDOM PC
+      </button>
     </div>
   </div>
 
@@ -69,6 +91,21 @@
     <CreatorSummaryPanel />
   </aside>
   </div>
+
+{#if showRandomConfirm}
+  <div class="modal-overlay">
+    <div class="terminal-card modal-content">
+      <h3>OVERWRITE DRAFT?</h3>
+      <p>
+        RANDOM PC GENERATION WILL REPLACE THE CURRENT CHARACTER CREATOR DRAFT.
+      </p>
+      <div class="modal-actions">
+        <button class="btn-action btn-danger" onclick={() => showRandomConfirm = false}>CANCEL</button>
+        <button class="btn-action btn-amber" onclick={generateRandomCharacter}>GENERATE</button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   .creator-layout {
@@ -103,7 +140,17 @@
   }
 
   .step-controls {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .btn-amber {
+    border-color: var(--accent-amber);
+    color: var(--accent-amber);
+  }
+
+  .btn-amber:hover:not(:disabled) {
+    background: var(--accent-amber);
+    color: var(--bg-void);
   }
 
   .step-button {
@@ -149,6 +196,53 @@
     cursor: not-allowed;
   }
 
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    width: min(420px, calc(100vw - 2rem));
+    border: 1px solid var(--accent-amber);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .modal-content h3 {
+    color: var(--accent-amber);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .modal-content p {
+    color: var(--text-main);
+    font-family: var(--font-terminal);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .modal-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .modal-actions .btn-action {
+    width: 100%;
+  }
+
   @media (max-width: 1180px) {
     .creator-layout {
       grid-template-columns: minmax(0, 780px);
@@ -162,6 +256,11 @@
   @media (max-width: 640px) {
     .step-strip {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .step-controls,
+    .modal-actions {
+      grid-template-columns: 1fr;
     }
   }
 </style>

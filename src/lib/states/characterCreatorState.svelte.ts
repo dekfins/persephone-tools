@@ -1,5 +1,6 @@
 import backgrounds from '../../data/character/backgrounds.json';
 import foci from '../../data/character/foci.json';
+import randomCharacter from '../../data/character/randomCharacter.json';
 import {
   ALL_ATTRIBUTES,
   ALL_BACKGROUNDS,
@@ -16,8 +17,9 @@ import {
   getFocusSkillChoices,
   getSkillChoices,
   HERITAGES
-} from '../characterConstants';
-import { getAttributeModifier } from '../characterMechanics';
+} from '../character/characterConstants';
+import { getAttributeModifier } from '../character/characterMechanics';
+import { generateCharacterName, generatePlaceName, NAME_CULTURES } from '../character/nameGenerator';
 import type {
   AdventurerPartial,
   AttributeKey,
@@ -58,6 +60,66 @@ const BACKGROUNDS = backgrounds as BackgroundDefinitions;
 const FOCI = foci as FocusDefinitions;
 const STANDARD_ARRAY = [14, 12, 11, 10, 9, 7];
 const CREATOR_STEPS = ['attributes', 'background', 'class', 'foci', 'vitals', 'equipment', 'identity', 'review'] as const;
+type QuickCharacterStyleId =
+  | 'expert_smart'
+  | 'expert_smooth'
+  | 'expert_nimble'
+  | 'warrior_melee'
+  | 'warrior_ranged'
+  | 'warrior_leader';
+type QuickFocusPick = {
+  focus: Foci;
+  skill?: Skill;
+};
+type QuickCharacterStyle = {
+  id: QuickCharacterStyleId;
+  class: CharacterClass;
+  attributes: Attributes;
+  focusRolls: readonly (readonly QuickFocusPick[])[];
+};
+type RandomCharacterData = {
+  affiliations: readonly string[];
+  goals: readonly string[];
+  notes: readonly string[];
+  quickCharacterStyles: readonly QuickCharacterStyle[];
+};
+
+function validateRandomCharacterData(data: unknown): RandomCharacterData {
+  const value = data as RandomCharacterData;
+
+  if (!Array.isArray(value.affiliations) || !Array.isArray(value.goals) || !Array.isArray(value.notes)) {
+    throw new Error('Random character data must include affiliations, goals, and notes arrays.');
+  }
+
+  value.quickCharacterStyles.forEach((style) => {
+    if (!CHARACTER_CLASSES.some((option) => option.value === style.class)) {
+      throw new Error(`Random character style "${style.id}" has invalid class "${style.class}".`);
+    }
+
+    ALL_ATTRIBUTES.forEach((attribute) => {
+      if (!Number.isInteger(style.attributes[attribute])) {
+        throw new Error(`Random character style "${style.id}" has invalid ${attribute.toUpperCase()} score.`);
+      }
+    });
+
+    if (style.focusRolls.length !== 6) {
+      throw new Error(`Random character style "${style.id}" must have exactly six focus rolls.`);
+    }
+
+    style.focusRolls.flat().forEach((pick) => {
+      if (!ALL_FOCI.includes(pick.focus)) {
+        throw new Error(`Random character style "${style.id}" has invalid focus "${pick.focus}".`);
+      }
+      if (pick.skill && !ALL_SKILLS.includes(pick.skill)) {
+        throw new Error(`Random character style "${style.id}" has invalid focus skill "${pick.skill}".`);
+      }
+    });
+  });
+
+  return value;
+}
+
+const RANDOM_CHARACTER_DATA = validateRandomCharacterData(randomCharacter);
 const DEFAULT_ATTRIBUTES: Attributes = {
   str: 10,
   dex: 10,
@@ -168,6 +230,10 @@ function rollDie(sides: number) {
   return Math.floor(Math.random() * sides) + 1;
 }
 
+function randomItem<T>(items: readonly T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 function signed(value: number) {
   return value >= 0 ? `+${value}` : `${value}`;
 }
@@ -241,6 +307,43 @@ class CharacterCreatorStateManager {
 
   get isLastStep() {
     return this.activeStepIndex === CREATOR_STEPS.length - 1;
+  }
+
+  get hasDraftProgress() {
+    return Boolean(
+      this.draft.name.trim() ||
+      this.draft.homeworld.trim() ||
+      this.draft.employerAffiliation.trim() ||
+      this.draft.goal.trim() ||
+      this.draft.notes.trim() ||
+      this.draft.heritage !== HERITAGES[0].value ||
+      this.draft.background !== ALL_BACKGROUNDS[0] ||
+      this.draft.characterClass !== CHARACTER_CLASSES[0].value ||
+      this.draft.adventurerPartials.length > 0 ||
+      this.draft.focusPicks.length > 0 ||
+      this.draft.focusProgress.picks.length > 0 ||
+      this.draft.focusProgress.grants.length > 0 ||
+      this.draft.focusProgress.complete ||
+      this.draft.freeInterestSkill ||
+      this.draft.attributeMethod !== 'manual' ||
+      ALL_ATTRIBUTES.some((attribute) => this.draft.attributes[attribute] !== DEFAULT_ATTRIBUTES[attribute]) ||
+      Object.keys(this.arrayAssignments).length > 0 ||
+      this.attributeSetTo14 !== null ||
+      Object.keys(this.draft.skills).length > 0 ||
+      Object.keys(this.draft.backgroundProgress).length > 0 ||
+      this.draft.hpRoll !== 1 ||
+      this.draft.startingCredits !== 0 ||
+      this.draft.equipmentMode !== 'package' ||
+      this.draft.selectedPackageId !== null ||
+      this.draft.creditRoll !== undefined ||
+      this.draft.customCreditRoll !== undefined ||
+      this.draft.customStartingCredits !== undefined ||
+      this.draft.purchasedItems.length > 0 ||
+      this.queuedGrants.length > 0 ||
+      this.queuedFocusGrants.length > 0 ||
+      this.pendingChoiceKind !== null ||
+      this.pendingFocusChoiceKind !== null
+    );
   }
 
   get isArrayAssignmentMode() {
@@ -657,6 +760,88 @@ class CharacterCreatorStateManager {
     this.pendingChoiceKind = null;
     this.pendingFocusChoiceKind = null;
     this.lastMessage = 'CREATOR DRAFT RESET';
+  }
+
+  loadArchive(archive: CharacterCreationArchive) {
+    this.draft = {
+      name: archive.core.name,
+      homeworld: archive.creation.homeworld,
+      heritage: archive.core.heritage,
+      background: archive.core.background,
+      characterClass: archive.core.character_class,
+      adventurerPartials: [...archive.creation.adventurerPartials],
+      focusPicks: archive.creation.focusPicks.map((pick) => ({ ...pick })),
+      focusProgress: {
+        ...archive.creation.focusProgress,
+        picks: archive.creation.focusProgress.picks.map((pick) => ({ ...pick })),
+        grants: archive.creation.focusProgress.grants.map((grant) => ({ ...grant }))
+      },
+      employerAffiliation: archive.creation.employerAffiliation,
+      goal: archive.creation.goal,
+      notes: archive.creation.notes,
+      attributes: cloneAttributes(archive.core.attributes),
+      attributeMethod: archive.creation.attributeMethod,
+      skills: { ...archive.core.skills },
+      backgroundProgress: {
+        ...archive.core.background_progress,
+        choices: [...(archive.core.background_progress.choices ?? [])]
+      },
+      freeInterestSkill: archive.creation.freeInterestSkill,
+      hpRoll: archive.creation.hpRoll,
+      startingCredits: archive.creation.equipment.startingCredits,
+      equipmentMode: archive.creation.equipment.mode,
+      selectedPackageId: archive.creation.equipment.packageId ?? null,
+      creditRoll: archive.creation.equipment.creditRoll
+        ? [...archive.creation.equipment.creditRoll] as [number, number]
+        : undefined,
+      customCreditRoll: archive.creation.equipment.mode === 'rolled_credits' && archive.creation.equipment.creditRoll
+        ? [...archive.creation.equipment.creditRoll] as [number, number]
+        : undefined,
+      customStartingCredits: archive.creation.equipment.mode === 'rolled_credits'
+        ? archive.creation.equipment.startingCredits
+        : undefined,
+      purchasedItems: archive.creation.equipment.purchasedItems.map((entry) => ({ ...entry }))
+    };
+    this.activeStep = 'review';
+    this.arrayAssignments = {};
+    this.attributeSetTo14 = null;
+    this.queuedGrants = [];
+    this.queuedFocusGrants = [];
+    this.pendingChoiceKind = null;
+    this.pendingFocusChoiceKind = null;
+    this.lastMessage = `${archive.core.name.toUpperCase()} ARCHIVE LOADED`;
+  }
+
+  generateRandomCharacter() {
+    this.resetDraft();
+
+    const nameCulture = randomItem(NAME_CULTURES);
+    const generatedName = generateCharacterName({
+      culture: nameCulture,
+      firstNameType: 'any'
+    });
+    const generatedHomeworld = generatePlaceName(nameCulture);
+
+    this.setName(generatedName.fullName);
+    this.setHomeworld(generatedHomeworld.placeName);
+    this.setEmployerAffiliation(randomItem(RANDOM_CHARACTER_DATA.affiliations));
+    this.setGoal(randomItem(RANDOM_CHARACTER_DATA.goals));
+    this.setNotes(randomItem(RANDOM_CHARACTER_DATA.notes));
+    this.setHeritage(randomItem(HERITAGES).value);
+    const quickStyle = randomItem(RANDOM_CHARACTER_DATA.quickCharacterStyles);
+    const focusPicks = randomItem(quickStyle.focusRolls);
+    this.draft.attributes = cloneAttributes(quickStyle.attributes);
+    this.draft.attributeMethod = 'manual';
+    this.setBackground(randomItem(ALL_BACKGROUNDS));
+    this.setClass(quickStyle.class);
+    this.generateQuickBackground();
+    this.generateQuickFoci(focusPicks);
+    this.applyQuickBonusSkill();
+    this.rollHp();
+    this.chooseEquipmentPackage(randomItem(ALL_EQUIPMENT_PACKAGES).id);
+
+    this.activeStep = 'review';
+    this.lastMessage = `${this.draft.name.toUpperCase()} RANDOM PC GENERATED`;
   }
 
   setName(value: string) {
@@ -1084,6 +1269,96 @@ class CharacterCreatorStateManager {
     }, skill, 'free_interest');
     this.lastMessage = `${skill.toUpperCase()} INTEREST SKILL APPLIED`;
     return true;
+  }
+
+  private generateQuickBackground() {
+    this.beginQuickSkills();
+    this.resolveRandomBackgroundChoices();
+  }
+
+  private resolveRandomBackgroundChoices() {
+    let guard = 0;
+    while (this.currentQueuedGrant && this.pendingChoiceKind && guard < 50) {
+      const options = this.currentChoiceOptions as Array<{
+        value: Skill | AttributeKey;
+        kind: 'skill' | 'attribute';
+      }>;
+      const choice = randomItem(options);
+      if (!choice) return;
+
+      this.confirmPendingChoice(
+        choice.kind === 'skill'
+          ? { skill: choice.value as Skill }
+          : { attribute: choice.value as AttributeKey }
+      );
+      guard += 1;
+    }
+  }
+
+  private generateQuickFoci(picks: readonly QuickFocusPick[]) {
+    const remainingPicks = [...picks];
+    const assignedPicks = new Map<FocusPickSource, QuickFocusPick>();
+    const orderedSlots = [
+      ...this.focusSlots.filter((slot) => slot.filter !== 'any'),
+      ...this.focusSlots.filter((slot) => slot.filter === 'any')
+    ];
+
+    orderedSlots.forEach((slot) => {
+      const matchingIndex = remainingPicks.findIndex((pick) => {
+        return slot.filter === 'any' || FOCI[pick.focus].category === slot.filter;
+      });
+      if (matchingIndex < 0) return;
+
+      const [pick] = remainingPicks.splice(matchingIndex, 1);
+      assignedPicks.set(slot.source, pick);
+    });
+
+    this.focusSlots.forEach((slot) => {
+      const pick = assignedPicks.get(slot.source);
+      if (!pick) return;
+
+      this.setFocusPick(slot.source, pick.focus);
+      this.resolveRandomFocusChoices(pick.skill);
+    });
+
+    this.resolveRandomFocusChoices();
+  }
+
+  private resolveRandomFocusChoices(preferredSkill?: Skill) {
+    let guard = 0;
+    while (this.currentQueuedFocusGrant && this.pendingFocusChoiceKind && guard < 50) {
+      const preferredChoice = preferredSkill
+        ? this.currentFocusChoiceOptions.find((option) => option.value === preferredSkill)
+        : undefined;
+      const choice = preferredChoice ?? randomItem(this.currentFocusChoiceOptions);
+      if (!choice) return;
+
+      this.confirmPendingFocusChoice({ skill: choice.value as Skill });
+      guard += 1;
+    }
+  }
+
+  private applyQuickBonusSkill() {
+    const roll = rollDie(20);
+    if (roll === 20) {
+      const upgradeOptions = ALL_SKILLS.filter((skill) => this.draft.skills[skill] === 0);
+      const upgradeSkill = upgradeOptions.length > 0
+        ? randomItem(upgradeOptions)
+        : randomItem(ALL_SKILLS.filter((skill) => (this.draft.skills[skill] ?? -1) < 1));
+      if (upgradeSkill) {
+        this.applyFreeInterestSkill(upgradeSkill);
+      }
+      return;
+    }
+
+    const rolledSkill = ALL_SKILLS[roll - 1];
+    const skill = (this.draft.skills[rolledSkill] ?? -1) < 1
+      ? rolledSkill
+      : randomItem(ALL_SKILLS.filter((candidate) => (this.draft.skills[candidate] ?? -1) < 1));
+
+    if (skill) {
+      this.applyFreeInterestSkill(skill);
+    }
   }
 
   private removeFreeInterestSkillGrant() {

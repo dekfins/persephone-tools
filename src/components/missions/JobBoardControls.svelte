@@ -1,6 +1,6 @@
 <script lang="ts">
   import TerminalPanel from '../shared/TerminalPanel.svelte';
-  import DualRangeSlider from './DualRangeSlider.svelte';
+  import DualRangeSlider from '../shared/DualRangeSlider.svelte';
   import { campaignState } from '../../lib/states/campaignState.svelte';
   import { shipState } from '../../lib/states/shipState.svelte';
   import poisData from '../../data/celestial/pois.json';

@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { HERITAGES } from '../../lib/characterConstants';
+  import { HERITAGES } from '../../lib/character/characterConstants';
+  import { generateCharacterName, NAME_CULTURE_OPTIONS, NAME_FIRST_TYPE_OPTIONS } from '../../lib/character/nameGenerator';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
-  import type { Heritage } from '../../lib/types';
+  import type { Heritage, NameCulture, NameFirstType } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalSelect from '../shared/TerminalSelect.svelte';
+
+  type GeneratorOption<T extends string> = { label: string; value: T };
 
   const heritageOptions = HERITAGES.map((option) => ({
     ...option,
@@ -11,6 +14,12 @@
   }));
 
   let heritageOption = $state(heritageOptions[0]);
+  let selectedNameCulture = $state<GeneratorOption<NameCulture>>(
+    NAME_CULTURE_OPTIONS.find((option) => option.value === 'english') ?? NAME_CULTURE_OPTIONS[0]
+  );
+  let selectedFirstNameType = $state<GeneratorOption<NameFirstType>>(
+    NAME_FIRST_TYPE_OPTIONS.find((option) => option.value === 'any') ?? NAME_FIRST_TYPE_OPTIONS[0]
+  );
 
   $effect(() => {
     heritageOption = heritageOptions.find((option) => option.value === characterCreatorState.draft.heritage) ?? heritageOptions[0];
@@ -18,6 +27,14 @@
 
   function handleName(event: Event) {
     characterCreatorState.setName((event.target as HTMLInputElement).value);
+  }
+
+  function handleRandomName() {
+    const generated = generateCharacterName({
+      culture: selectedNameCulture.value,
+      firstNameType: selectedFirstNameType.value
+    });
+    characterCreatorState.setName(generated.fullName);
   }
 
   function handleHomeworld(event: Event) {
@@ -41,15 +58,38 @@
   <div class="form-grid">
     <div class="form-group span-full">
       <label for="creator-name">NAME</label>
-      <input
-        id="creator-name"
-        type="text"
-        class="terminal-input"
-        value={characterCreatorState.draft.name}
-        oninput={handleName}
-        placeholder="Enter character name"
-        autocomplete="off"
-      />
+      <div class="name-entry">
+        <input
+          id="creator-name"
+          type="text"
+          class="terminal-input"
+          value={characterCreatorState.draft.name}
+          oninput={handleName}
+          placeholder="Enter character name"
+          autocomplete="off"
+        />
+        <button type="button" class="btn-action" onclick={handleRandomName}>
+          RANDOM NAME
+        </button>
+      </div>
+      <div class="name-generator-controls">
+        <div class="generator-select">
+          <TerminalSelect
+            id="creator-name-culture"
+            options={NAME_CULTURE_OPTIONS}
+            bind:value={selectedNameCulture}
+            showPopup={false}
+          />
+        </div>
+        <div class="generator-select">
+          <TerminalSelect
+            id="creator-name-type"
+            options={NAME_FIRST_TYPE_OPTIONS}
+            bind:value={selectedFirstNameType}
+            showPopup={false}
+          />
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -143,6 +183,25 @@
     grid-column: 1 / -1;
   }
 
+  .name-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .name-entry .btn-action {
+    min-height: 2.65rem;
+    white-space: nowrap;
+  }
+
+  .name-generator-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.45fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
   input.terminal-input,
   textarea.terminal-input,
   .terminal-input,
@@ -196,6 +255,13 @@
     text-transform: none;
   }
 
+  .generator-select :global(.option-item) {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    text-transform: none;
+  }
+
   .identity-select :global(.select-input) {
     color: var(--accent-amber);
     font-size: 0.9rem;
@@ -204,16 +270,37 @@
     text-transform: none;
   }
 
+  .generator-select :global(.select-input) {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    min-height: 2.35rem;
+    text-transform: none;
+  }
+
   .identity-select :global(.select-trigger) {
     min-height: 2.65rem;
+  }
+
+  .generator-select :global(.select-trigger) {
+    min-height: 2.35rem;
   }
 
   .identity-select :global(.option-item.selected) {
     color: var(--accent-amber);
   }
 
+  .generator-select :global(.option-item.selected) {
+    color: var(--accent-amber);
+  }
+
   @media (max-width: 700px) {
     .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .name-entry,
+    .name-generator-controls {
       grid-template-columns: 1fr;
     }
   }

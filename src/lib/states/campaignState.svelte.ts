@@ -1,6 +1,6 @@
 import type { ActiveMission, PoiDef } from "../types";
 import { shipState } from './shipState.svelte';
-import { getTransitTelemetry } from '../orbitalMath';
+import { getTransitTelemetry } from '../navmap/orbitalMath';
 import poisData from '../../data/celestial/pois.json';
 
 interface HistorySnapshot {
@@ -62,6 +62,17 @@ class CampaignStateManager {
     this.#historyStack = []; 
   }
 
+  adjustCurrentDay(deltaDays: number) {
+    this.currentDay += deltaDays;
+  }
+
+  forceLocation(targetPoiId: string) {
+    this.shipLocation = targetPoiId;
+    this.activeMission = null;
+    this.animatedDaysElapsed = 0;
+    this.#historyStack = [];
+  }
+
   advanceSegment() {
     if (!this.activeMission) return;
     
@@ -110,6 +121,26 @@ class CampaignStateManager {
     return this.#historyStack.length > 0;
   }
 
+  get isTransitComplete() {
+    return Boolean(
+      this.activeMission &&
+      this.activeMission.daysElapsed >= this.activeMission.travelTime
+    );
+  }
+
+  completeTransit() {
+    if (!this.activeMission || !this.isTransitComplete) return null;
+
+    const completedMission = this.activeMission;
+    this.shipLocation = completedMission.targetName;
+    this.completedMission = completedMission;
+    this.activeMission = null;
+    this.animatedDaysElapsed = 0;
+    this.#historyStack = [];
+
+    return completedMission;
+  }
+
   updateAnimationEasing(dt: number) {
     if (this.isPreviewing) {
       this.previewElapsed += dt * 6; // Fast-forward preview
@@ -119,7 +150,7 @@ class CampaignStateManager {
       }
     }
 
-    if (!this.activeMission) return;
+    if (!this.activeMission) return false;
     const target = this.activeMission.daysElapsed;
     const diff = target - this.animatedDaysElapsed;
 
@@ -127,13 +158,9 @@ class CampaignStateManager {
       this.animatedDaysElapsed += diff * (dt * 6); 
     } else {
       this.animatedDaysElapsed = target;
-      if (this.activeMission.daysElapsed >= this.activeMission.travelTime) {
-        this.shipLocation = this.activeMission.targetName;
-        this.completedMission = this.activeMission;
-        this.activeMission = null;
-        this.#historyStack = [];
-      }
     }
+
+    return this.isTransitComplete;
   }
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ALL_ATTRIBUTES } from '../../lib/characterConstants';
+  import { ALL_ATTRIBUTES } from '../../lib/character/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { AttributeKey } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

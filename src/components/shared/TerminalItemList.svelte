@@ -3,7 +3,7 @@
     EquipmentItemListRow,
     TerminalItemDetail,
     TerminalItemListRow
-  } from '../../lib/terminalItems';
+  } from '../../lib/ui/terminalItems';
 </script>
 
 <script lang="ts">
@@ -15,10 +15,10 @@
     getEquipmentInventoryCategory,
     getEquipmentInventoryMass,
     getEquipmentInventoryRarity
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import type { EquipmentCatalogItem } from '../../lib/types';
-  import type { TerminalItemDetail, TerminalItemListRow } from '../../lib/terminalItems';
-  import { formatCredits } from '../../lib/terminalItems';
+  import type { TerminalItemDetail, TerminalItemListRow } from '../../lib/ui/terminalItems';
+  import { formatCredits } from '../../lib/ui/terminalItems';
   import TerminalStatGrid from './TerminalStatGrid.svelte';
 
   type Props = {

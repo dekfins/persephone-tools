@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createShipState } from '../../lib/states/shipState.svelte';
-  import { shipCodec } from '../../lib/shipCodec';
+  import { shipCodec } from '../../lib/ship/shipCodec';
   import type { MasterShipState } from '../../lib/states/shipState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';
@@ -130,6 +130,10 @@
   #mass-grid  { --fill-color: #60a5fa; }
   #hardpoint-grid    { --fill-color: #f87171; }
 
+  .value-readout {
+    color: var(--accent-amber);
+  }
+
   .value-readout.error {
     color: var(--accent-red);
   }
@@ -140,11 +144,9 @@
 
   .terminal-controls {
     display: flex;
+    justify-content: center;
     gap: 1rem;
     margin-top: 1.5rem;
   }
 
-  .stats-wrap {
-    margin-top: 1.5rem;
-  }
 </style>

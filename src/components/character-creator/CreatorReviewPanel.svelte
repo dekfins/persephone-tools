@@ -1,18 +1,22 @@
 <script lang="ts">
-  import { characterCodec } from '../../lib/characterCodec';
+  import { characterCodec } from '../../lib/character/characterCodec';
   import {
     ALL_ATTRIBUTES,
     ALL_SKILLS,
     formatFocusPicks,
     getEquipmentById
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
-  import type { AttributeKey, EquipmentCatalogItem, Skill, StartingEquipmentItem } from '../../lib/types';
+  import { dbState } from '../../lib/states/dbState.svelte';
+  import { toastState } from '../../lib/states/toastState.svelte';
+  import type { AttributeKey, EquipmentCatalogItem, FinalizeCharacterArchiveResult, Skill, StartingEquipmentItem } from '../../lib/types';
   import TerminalItemList, { type TerminalItemListRow } from '../shared/TerminalItemList.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
   let archivePreview = $derived(characterCreatorState.buildArchive());
   let validationMessages = $derived(characterCreatorState.validationMessages);
+  let finalizeResult = $state<FinalizeCharacterArchiveResult | null>(null);
+  let isAddingCharacter = $state(false);
   let trainedSkills = $derived(
     ALL_SKILLS.filter((skill) => (archivePreview.core.skills[skill] ?? -1) >= 0)
   );
@@ -22,6 +26,15 @@
   function exportArchive() {
     if (validationMessages.length > 0) return;
     characterCodec.exportToFile(characterCreatorState.buildArchive());
+  }
+
+  async function addToCharacterList() {
+    if (validationMessages.length > 0 || isAddingCharacter) return;
+
+    isAddingCharacter = true;
+    finalizeResult = await dbState.finalizeCharacterArchive(characterCreatorState.buildArchive());
+    isAddingCharacter = false;
+    toastState.notify(finalizeResult.success ? 'CHARACTER ADDED' : finalizeResult.message.toUpperCase());
   }
 
   function focusSummary() {
@@ -226,13 +239,34 @@
       {/each}
     </div>
   {:else}
-    <div class="terminal-alert">READY FOR ARCHIVE EXPORT</div>
+    <div class="terminal-alert">READY FOR ARCHIVE EXPORT OR CHARACTER LIST</div>
+  {/if}
+
+  {#if finalizeResult}
+    <div class="result-box" class:error={!finalizeResult.success}>
+      <strong>{finalizeResult.status.replace(/_/g, ' ').toUpperCase()}</strong>
+      <span>{finalizeResult.message}</span>
+      {#if finalizeResult.inventory.attempted > 0}
+        <span>
+          INV {finalizeResult.inventory.inserted} INSERTED /
+          {finalizeResult.inventory.merged} MERGED /
+          {finalizeResult.inventory.failures.length} FAILED
+        </span>
+      {/if}
+    </div>
   {/if}
 
   <div class="action-grid">
     <button class="btn-action" onclick={() => characterCreatorState.resetDraft()}>RESET DRAFT</button>
     <button
-      class="btn-action btn-amber"
+      class="btn-action"
+      disabled={validationMessages.length > 0 || isAddingCharacter}
+      onclick={addToCharacterList}
+    >
+      {isAddingCharacter ? 'ADDING...' : 'ADD TO CHARACTER LIST'}
+    </button>
+    <button
+      class="btn-action"
       disabled={validationMessages.length > 0}
       onclick={exportArchive}
     >
@@ -245,7 +279,8 @@
   .review-sections,
   .review-section,
   .review-grid,
-  .validation-list {
+  .validation-list,
+  .result-box {
     display: grid;
     gap: 0.55rem;
   }
@@ -370,21 +405,29 @@
     margin-top: 0.9rem;
   }
 
-  .action-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
-    margin-top: 1rem;
+  .result-box {
+    margin-top: 0.9rem;
+    padding: 0.65rem;
+    background: var(--bg-void);
+    border: var(--border-subtle);
+    color: var(--text-main);
+    font-family: var(--font-terminal);
+    font-size: 0.78rem;
   }
 
-  .btn-amber {
-    border-color: var(--accent-amber);
+  .result-box strong {
     color: var(--accent-amber);
   }
 
-  .btn-amber:hover:not(:disabled) {
-    background: var(--accent-amber);
-    color: var(--bg-void);
+  .result-box.error strong {
+    color: var(--accent-red);
+  }
+
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 1rem;
   }
 
   .btn-action:disabled {
@@ -395,7 +438,8 @@
   @media (max-width: 900px) {
     .review-grid,
     .compact-grid,
-    .attribute-grid {
+    .attribute-grid,
+    .action-grid {
       grid-template-columns: 1fr;
     }
   }

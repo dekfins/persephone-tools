@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ALL_ATTRIBUTES } from '../../lib/characterConstants';
-  import { formatModifier, getAttributeModifier } from '../../lib/characterMechanics';
+  import { ALL_ATTRIBUTES } from '../../lib/character/characterConstants';
+  import { formatModifier, getAttributeModifier } from '../../lib/character/characterMechanics';
   import { dbState } from '../../lib/states/dbState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid from '../shared/TerminalStatGrid.svelte';

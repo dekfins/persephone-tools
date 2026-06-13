@@ -3,9 +3,9 @@ import {
   getEquipmentInventoryCategory,
   getEquipmentInventoryMass,
   getEquipmentInventoryRarity
-} from './characterConstants';
-import { calculateShipItemCost, isCoreSystem, numericValue } from './shipMechanics';
-import type { EquipmentCatalogItem, InstalledComponent, InstallableItem } from './types';
+} from '../character/characterConstants';
+import { calculateShipItemCost, isCoreSystem, numericValue } from '../ship/shipMechanics';
+import type { EquipmentCatalogItem, InstalledComponent, InstallableItem } from '../types';
 
 export type TerminalItemDetail = {
   label: string;

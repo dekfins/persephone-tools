@@ -1,7 +1,7 @@
-import type { PoiDef, PlanetDef, MoonDef } from "./types";
-import planetsData from "../data/celestial/planets.json";
-import moonsData from "../data/celestial/moons.json";
-import poisData from "../data/celestial/pois.json";
+import type { PoiDef, PlanetDef, MoonDef } from "../types";
+import planetsData from "../../data/celestial/planets.json";
+import moonsData from "../../data/celestial/moons.json";
+import poisData from "../../data/celestial/pois.json";
 
 const planets = planetsData as PlanetDef[];
 const moons = moonsData as MoonDef[];

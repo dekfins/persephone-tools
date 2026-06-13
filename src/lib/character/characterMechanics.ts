@@ -9,7 +9,7 @@ import type {
   Foci,
   FocusLevel,
   Skill
-} from './types';
+} from '../types';
 import { COMBAT_SKILLS } from './characterConstants';
 
 export type ClassAbilityDefinition = {

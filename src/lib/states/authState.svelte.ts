@@ -1,5 +1,5 @@
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabase/supabaseClient';
 import type { ProfileRecord } from '../types';
 import { dbState } from './dbState.svelte';
 
@@ -12,6 +12,8 @@ class AuthStateManager {
   isInitializing = $state(true);
   isSigningIn = $state(false);
   authError = $state<string | null>(null);
+  usernameError = $state<string | null>(null);
+  shouldPromptUsername = $state(false);
   #isInitialized = false;
 
   get isSignedIn() {
@@ -74,6 +76,8 @@ class AuthStateManager {
 
     if (!this.user) {
       this.profile = null;
+      this.shouldPromptUsername = false;
+      this.usernameError = null;
       dbState.clearForSignedOut();
       return;
     }
@@ -91,21 +95,53 @@ class AuthStateManager {
 
   async upsertProfile(user: User): Promise<ProfileRecord | null> {
     const metadata = user.user_metadata ?? {};
-    const profile: ProfileRecord = {
-      id: user.id,
-      email: user.email ?? '',
-      display_name: typeof metadata.full_name === 'string'
-        ? metadata.full_name
-        : typeof metadata.name === 'string'
-          ? metadata.name
-          : user.email ?? null,
-      avatar_url: typeof metadata.avatar_url === 'string' ? metadata.avatar_url : null,
-      created_at: new Date().toISOString()
-    };
+    const email = user.email ?? '';
+    const avatarUrl = typeof metadata.avatar_url === 'string' ? metadata.avatar_url : null;
+    const generatedDisplayName = typeof metadata.full_name === 'string'
+      ? metadata.full_name
+      : typeof metadata.name === 'string'
+        ? metadata.name
+        : email || null;
+
+    const existingProfile = await supabase
+      .from('profiles')
+      .select('id,email,display_name,avatar_url,created_at')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (existingProfile.error) {
+      this.authError = `Profile sync failed: ${existingProfile.error.message}`;
+      return null;
+    }
+
+    if (!existingProfile.data) {
+      const profile: ProfileRecord = {
+        id: user.id,
+        email,
+        display_name: generatedDisplayName,
+        avatar_url: avatarUrl,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert(profile)
+        .select()
+        .single();
+
+      if (error) {
+        this.authError = `Profile sync failed: ${error.message}`;
+        return null;
+      }
+
+      this.shouldPromptUsername = true;
+      return data as ProfileRecord;
+    }
 
     const { data, error } = await supabase
       .from('profiles')
-      .upsert(profile, { onConflict: 'id' })
+      .update({ email, avatar_url: avatarUrl })
+      .eq('id', user.id)
       .select()
       .single();
 
@@ -115,6 +151,38 @@ class AuthStateManager {
     }
 
     return data as ProfileRecord;
+  }
+
+  async updateUsername(displayName: string): Promise<boolean> {
+    if (!this.user) {
+      this.usernameError = 'Sign in before changing username.';
+      return false;
+    }
+
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      this.usernameError = 'Username cannot be blank.';
+      return false;
+    }
+
+    this.usernameError = null;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ display_name: trimmedName })
+      .eq('id', this.user.id)
+      .select()
+      .single();
+
+    if (error) {
+      this.usernameError = `Username update failed: ${error.message}`;
+      return false;
+    }
+
+    this.profile = data as ProfileRecord;
+    dbState.setActiveUserProfile(this.profile);
+    this.shouldPromptUsername = false;
+    return true;
   }
 }
 

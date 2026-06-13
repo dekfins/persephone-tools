@@ -3,7 +3,7 @@
   import {
     ALL_BACKGROUNDS,
     BACKGROUND_CHOICE_LABELS
-  } from '../../lib/characterConstants';
+  } from '../../lib/character/characterConstants';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
   import type { AttributeKey, Background, BackgroundDefinitions, BackgroundRuleEntry, Skill } from '../../lib/types';
   import TerminalPanel from '../shared/TerminalPanel.svelte';

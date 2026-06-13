@@ -14,24 +14,20 @@
   <div class="col-stack">
     <HomeAccessPanel />
 
-    {#if hasCampaigns}
-      <HomeCampaignsPanel />
-    {/if}
+    <HomeCampaignsPanel />
 
     {#if isGM}
       <CampaignInvitePanel />
     {/if}
   </div>
 
-  {#if hasCampaigns}
-    <div class="col-stack">
-      <HomeCharactersPanel />
+  <div class="col-stack">
+    <HomeCharactersPanel />
 
-      {#if isGM}
-        <HomeNpcsPanel />
-      {/if}
-    </div>
-  {/if}
+    {#if hasCampaigns && isGM}
+      <HomeNpcsPanel />
+    {/if}
+  </div>
 </div>
 
 <style>

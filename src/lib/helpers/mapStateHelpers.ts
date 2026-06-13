@@ -1,5 +1,5 @@
 import type { PlanetDef, MoonDef, PoiDef } from '../types';
-import { solveTrajectory } from '../orbitalMath';
+import { solveTrajectory } from '../navmap/orbitalMath';
 
 // The stores exported from Svelte files are store objects, not callables,
 // so using ReturnType<typeof ...> is incorrect. Use broad any types here

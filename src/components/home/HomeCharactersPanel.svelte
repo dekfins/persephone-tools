@@ -3,8 +3,11 @@
   import { toastState } from '../../lib/states/toastState.svelte';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
 
-  let isGM = $derived(dbState.isGM);
-  let playerCharacters = $derived(dbState.playerCharacters);
+  let playerCharacters = $derived(dbState.ownedPlayerCharacters);
+
+  async function selectCharacter(characterId: string) {
+    await dbState.setActiveCharacter(characterId);
+  }
 
   async function deleteCharacter(characterId: string, characterName: string) {
     const confirmed = window.confirm(`Delete ${characterName}? This also deletes their personal inventory.`);
@@ -15,9 +18,9 @@
   }
 </script>
 
-<TerminalPanel title={isGM ? 'CREW' : 'CHARACTERS'}>
+<TerminalPanel title="CHARACTERS">
   {#if playerCharacters.length === 0}
-    <div class="dim-message">NO LINKED CHARACTERS</div>
+    <div class="dim-message">NO PERSONAL CHARACTERS</div>
   {:else}
     <div class="character-list">
       {#each playerCharacters as character}
@@ -25,12 +28,15 @@
           class="character-row"
           class:active={character.id === dbState.activeCharacter?.id}
         >
-          <button class="character-select" onclick={() => dbState.setActiveCharacter(character.id)}>
-            <span>{character.name.toUpperCase()}</span>
-            <em>LVL {character.level} {character.character_class.toUpperCase()}</em>
+          <button class="character-select" onclick={() => selectCharacter(character.id)}>
+            <span class="character-name">{character.name.toUpperCase()}</span>
+            <em class="character-detail">
+              LVL {character.level} {character.character_class.toUpperCase()} /
+              {character.heritage.toUpperCase()} {character.background.toUpperCase()}
+            </em>
           </button>
 
-          {#if isGM}
+          {#if dbState.canDeleteCharacter(character)}
             <button
               class="btn-action btn-danger btn-delete"
               aria-label={`Delete ${character.name}`}
@@ -68,9 +74,7 @@
   .character-select {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 1rem;
-    align-items: center;
+    gap: 0.3rem;
     padding: 0;
     background: transparent;
     border: 0;
@@ -85,18 +89,17 @@
     color: var(--accent-amber);
   }
 
-  .character-row span,
-  .character-select span {
+  .character-name {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .character-row em,
-  .character-select em {
+  .character-detail {
     color: var(--text-dim);
     font-size: 0.72rem;
     font-style: normal;
+    overflow-wrap: anywhere;
   }
 
   .btn-delete {
