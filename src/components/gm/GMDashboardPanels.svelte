@@ -4,11 +4,60 @@
 
   import ShipLogisticsPanel from './ShipLogisticsPanel.svelte';
   import CargoSpawnerPanel from './ItemSpawnerPanel.svelte';
-  import ShipOverridePanel from './ShipOverridePanel.svelte';
   import SystemDamagePanel from './SystemDamagePanel.svelte';
   import CharacterEditorPanel from './CharacterEditorPanel.svelte';
   import WorldControlPanel from './WorldControlPanel.svelte';
   import NpcSummaryPanel from './NpcSummaryPanel.svelte';
+  import TerminalMenuPanel, { type TerminalMenuEntry } from '../shared/TerminalMenuPanel.svelte';
+
+  type GmToolId =
+    | 'ship-logistics'
+    | 'world-controls'
+    | 'character-editor'
+    | 'cargo-spawner'
+    | 'system-damage'
+    | 'npc-dossier';
+
+  type GmToolEntry = TerminalMenuEntry & { id: GmToolId };
+
+  const toolEntries: GmToolEntry[] = [
+    {
+      id: 'ship-logistics',
+      label: 'SHIP LOGISTICS',
+      description: 'Slush fund, kibble, hull, and reactor overrides.'
+    },
+    {
+      id: 'world-controls',
+      label: 'UNIVERSE CONTROLS',
+      description: 'Timeline adjustment and forced translocation.'
+    },
+    {
+      id: 'character-editor',
+      label: 'CHARACTER EDITOR',
+      description: 'Credits and radiation overrides.'
+    },
+    {
+      id: 'cargo-spawner',
+      label: 'CARGO SPAWNER',
+      description: 'Spawn catalog or custom cargo.'
+    },
+    {
+      id: 'system-damage',
+      label: 'SYSTEM DAMAGE LOG',
+      description: 'Inflict, advance, and resolve conditions.'
+    },
+    {
+      id: 'npc-dossier',
+      label: 'NPC DOSSIER',
+      description: 'Review recorded NPC profiles.'
+    }
+  ];
+
+  let activeTool = $state<GmToolId>('ship-logistics');
+
+  function selectTool(entry: TerminalMenuEntry) {
+    activeTool = entry.id as GmToolId;
+  }
 </script>
 
 {#if toastState.show}
@@ -18,22 +67,30 @@
   </div>
 {/if}
 
-<div class="gm-grid">
-  <div class="col-stack">
-    <ShipLogisticsPanel />
-    <WorldControlPanel />
-  </div>
+<div class="gm-tools-layout">
+  <TerminalMenuPanel
+    title="GM TOOL MENU"
+    entries={toolEntries}
+    activeId={activeTool}
+    onSelect={selectTool}
+    ariaLabel="GM tools"
+  />
 
-  <div class="col-stack">
-    <ShipOverridePanel />
-    <CharacterEditorPanel />
-    <NpcSummaryPanel />
-  </div>
-
-  <div class="col-stack">
-    <CargoSpawnerPanel />
-    <SystemDamagePanel />
-  </div>
+  <section class="gm-tool-detail" aria-live="polite">
+    {#if activeTool === 'ship-logistics'}
+      <ShipLogisticsPanel />
+    {:else if activeTool === 'world-controls'}
+      <WorldControlPanel />
+    {:else if activeTool === 'character-editor'}
+      <CharacterEditorPanel />
+    {:else if activeTool === 'cargo-spawner'}
+      <CargoSpawnerPanel />
+    {:else if activeTool === 'system-damage'}
+      <SystemDamagePanel />
+    {:else if activeTool === 'npc-dossier'}
+      <NpcSummaryPanel />
+    {/if}
+  </section>
 </div>
 
 <style>
@@ -53,15 +110,20 @@
     pointer-events: none; 
   }
 
-  .gm-grid {
+  .gm-tools-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
     gap: 2rem;
+    align-items: start;
   }
 
-  .col-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  .gm-tool-detail {
+    min-width: 0;
+  }
+
+  @media (max-width: 900px) {
+    .gm-tools-layout {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

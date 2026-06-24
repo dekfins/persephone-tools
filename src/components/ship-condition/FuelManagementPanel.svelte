@@ -8,6 +8,8 @@
   
   // Create local state instance for this component
   const localState = shipState;
+  let fuelDrafts = $state<Record<string, string>>({});
+  let dirtyFuelDrafts = $state<Record<string, boolean>>({});
 
   let fuelOptions = $derived((localState.blueprint.engine?.availableFuels || []).map(f => ({ name: f, class: "universal" })));
   let modeOptions = $derived((localState.blueprint.engine?.availableModes || []).map(m => ({ name: m, class: "universal" })));
@@ -75,6 +77,59 @@
       }
     }
   });
+
+  function clampFuelLevel(name: string, value: number) {
+    const maxCap = fuelCapacities[name] || 0;
+    if (!Number.isFinite(value)) return 0;
+    return Math.max(0, Math.min(maxCap, Math.round(value * 100) / 100));
+  }
+
+  function setFuelLevel(name: string, value: number) {
+    localState.propulsion.currentFuel = {
+      ...localState.propulsion.currentFuel,
+      [name]: clampFuelLevel(name, value)
+    };
+  }
+
+  function getFuelInputValue(name: string) {
+    return dirtyFuelDrafts[name]
+      ? fuelDrafts[name]
+      : String(localState.propulsion.currentFuel[name] ?? 0);
+  }
+
+  function setFuelDraft(name: string, rawValue: string) {
+    fuelDrafts = { ...fuelDrafts, [name]: rawValue };
+    dirtyFuelDrafts = { ...dirtyFuelDrafts, [name]: true };
+
+    if (rawValue === '') return;
+    const parsedValue = Number(rawValue);
+    if (Number.isFinite(parsedValue)) setFuelLevel(name, parsedValue);
+  }
+
+  function commitFuelDraft(name: string) {
+    const rawValue = dirtyFuelDrafts[name]
+      ? fuelDrafts[name]
+      : String(localState.propulsion.currentFuel[name] ?? 0);
+    const parsedValue = Number(rawValue);
+    const nextValue = Number.isFinite(parsedValue) ? parsedValue : 0;
+    const clampedValue = clampFuelLevel(name, nextValue);
+
+    localState.propulsion.currentFuel = {
+      ...localState.propulsion.currentFuel,
+      [name]: clampedValue
+    };
+    fuelDrafts = { ...fuelDrafts, [name]: String(clampedValue) };
+    dirtyFuelDrafts = { ...dirtyFuelDrafts, [name]: true };
+  }
+
+  async function applyFuelChanges() {
+    for (const prop of activePropellants) {
+      if (dirtyFuelDrafts[prop.name]) commitFuelDraft(prop.name);
+    }
+    dirtyFuelDrafts = {};
+    fuelDrafts = {};
+    await dbState.syncShipStateToCloud();
+  }
 
   let selectedFuelObj = $state<{ name: string } | null>(null);
   let selectedModeObj = $state<{ name: string } | null>(null);
@@ -161,13 +216,15 @@
           step="0.01" 
           min="0" 
           max={fuelCapacities[prop.name] || 0}
-          bind:value={localState.propulsion.currentFuel[prop.name]} 
+          value={getFuelInputValue(prop.name)}
+          oninput={(event) => setFuelDraft(prop.name, (event.currentTarget as HTMLInputElement).value)}
+          onblur={() => commitFuelDraft(prop.name)}
           class="terminal-input num-input" 
         />
       </div>
     {/each}
 
-    <button class="btn-action" style="width: 100%; border-color: var(--ui-cyan);" onclick={() => dbState.syncShipStateToCloud()}>
+    <button class="btn-action" style="width: 100%; border-color: var(--ui-cyan);" onclick={applyFuelChanges}>
       APPLY CHANGES
     </button>
   {:else}

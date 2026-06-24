@@ -132,8 +132,14 @@ class CampaignStateManager {
     if (!this.activeMission || !this.isTransitComplete) return null;
 
     const completedMission = this.activeMission;
+    const hasReward = Boolean(
+      (completedMission.payoutCredits ?? 0) > 0 ||
+      completedMission.lootReward ||
+      (completedMission.lootItem && completedMission.lootRarity)
+    );
+
     this.shipLocation = completedMission.targetName;
-    this.completedMission = completedMission;
+    this.completedMission = hasReward ? completedMission : null;
     this.activeMission = null;
     this.animatedDaysElapsed = 0;
     this.#historyStack = [];

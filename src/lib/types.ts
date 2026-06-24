@@ -5,3 +5,4 @@ export * from './types/character';
 export * from './types/inventory';
 export * from './types/equipment';
 export * from './types/campaign';
+export * from './types/npc';

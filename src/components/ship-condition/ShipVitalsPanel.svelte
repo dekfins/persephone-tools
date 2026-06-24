@@ -1,5 +1,6 @@
 <script lang="ts">
   import { shipState } from '../../lib/states/shipState.svelte';
+  import { dbState } from '../../lib/states/dbState.svelte';
   import { shipCodec } from '../../lib/ship/shipCodec';
   import TerminalPanel from '../shared/TerminalPanel.svelte';
   import TerminalStatGrid, { type TerminalStatGridItem } from '../shared/TerminalStatGrid.svelte';
@@ -51,11 +52,15 @@
 
   let fileInput: HTMLInputElement;
 
-  function handleFileUpload(event: Event) {
+  async function handleFileUpload(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files.length > 0) {
-      shipCodec.importFromFile(target.files[0], localState);
-      target.value = '';
+      try {
+        await shipCodec.importFromFile(target.files[0], localState);
+        await dbState.syncShipStateToCloud();
+      } finally {
+        target.value = '';
+      }
     }
   }
 </script>

@@ -249,66 +249,66 @@
       "Final Appeal Hearing Room "
     ]
   },
-    "loot": {
+  "loot": {
     "common": [
-      "a spare power cell",
-      "3 days of mid-grade Kibble",
-      "a standard med-patch",
-      "a large spool of copper wire",
-      "a roll of vacuum-grade sealant tape",
-      "a dented pressure manifold valve",
-      "a cracked fluid dynamics manual",
-      "a tube of degraded thermal paste",
-      "a frayed EVA tether set",
-      "5 liters of filtered drinking water"
+      { "equipmentId": "power_cell_type_a", "quantity": 1 },
+      { "equipmentId": "kibble_day", "quantity": 3 },
+      { "equipmentId": "lazarus_patch", "quantity": 1 },
+      { "equipmentId": "scrap_copper_spool", "quantity": 1 },
+      { "equipmentId": "vacuum_sealant_roll", "quantity": 1 },
+      { "equipmentId": "pressure_manifold_valve", "quantity": 1 },
+      { "equipmentId": "fluid_dynamics_manual", "quantity": 1 },
+      { "equipmentId": "thermal_paste_tube", "quantity": 1 },
+      { "equipmentId": "eva_tether_set", "quantity": 1 },
+      { "equipmentId": "clean_water_canister", "quantity": 1 }
     ],
     "uncommon": [
-      "a high-capacity firearm magazine",
-      "a SCUM-modded servo",
-      "an encrypted data-slug",
-      "a recycled oxygen scrubber",
-      "a calibrated radiation dosimeter",
-      "a reinforced coolant transfer hose",
-      "a basic trauma medkit",
-      "a 500Wh lithium-ion power cell",
-      "a magnetic coupling assembly for airlocks",
-      "a surplus DAVE-issued sidearm"
+      { "equipmentId": "extended_firearm_magazine", "quantity": 1 },
+      { "equipmentId": "scum_servo_actuator", "quantity": 1 },
+      { "equipmentId": "encrypted_data_slug", "quantity": 1 },
+      { "equipmentId": "recycled_oxygen_scrubber", "quantity": 1 },
+      { "equipmentId": "radiation_dosimeter", "quantity": 1 },
+      { "equipmentId": "reinforced_coolant_hose", "quantity": 1 },
+      { "equipmentId": "medkit", "quantity": 1 },
+      { "equipmentId": "power_cell_type_b", "quantity": 1 },
+      { "equipmentId": "airlock_mag_coupling", "quantity": 1 },
+      { "equipmentId": "dave_sidearm", "quantity": 1 }
     ],
     "rare": [
-      "a military rifle (SCUM enhanced)",
-      "2 bottles of military-grade stimulants",
-      "a heavy breach charge",
-      "a Terragrow genetic sample",
-      "a sealed crate of fresh apples",
-      "a high-yield xenon propellant cell",
-      "a Jovian Hive relay signal booster",
-      "a DAVE master encryption dongle",
-      "a SABRE engine pre-cooler filter assembly",
-      "a quantum mesh routing node (TL3 prototype)"
+      { "equipmentId": "combat_rifle", "quantity": 1 },
+      { "equipmentId": "tsunami_stim", "quantity": 2 },
+      { "equipmentId": "demo_charge", "quantity": 1 },
+      { "equipmentId": "terragrow_genetic_sample", "quantity": 1 },
+      { "equipmentId": "fresh_produce_crate", "quantity": 1 },
+      { "equipmentId": "xenon_propellant_cell", "quantity": 1 },
+      { "equipmentId": "jovian_hive_relay_booster", "quantity": 1 },
+      { "equipmentId": "dave_master_encryption_dongle", "quantity": 1 },
+      { "equipmentId": "sabre_precooler_filter", "quantity": 1 },
+      { "equipmentId": "quantum_mesh_routing_node", "quantity": 1 }
     ],
     "epic": [
-      "an experimental DAVE shield-emitter",
-      "an unregistered cybernetic arm",
-      "a ship-grade thermal sink",
-      "a classified Terragrow agricultural ledger",
-      "a vial of experimental super-fertilizer concentrate",
-      "a sealed POS antimatter micro-capsule (0.1μg)",
-      "a Jovian atmospheric skimmer heat shield tile",
-      "a TL4 fusion ignition catalyst cartridge",
-      "a stealth transponder drive (military-grade spoofing)",
-      "a Pioneer Research extremophile culture bank"
+      { "equipmentId": "deflector_array", "quantity": 1 },
+      { "equipmentId": "unregistered_cybernetic_arm", "quantity": 1 },
+      { "equipmentId": "ship_grade_thermal_sink", "quantity": 1 },
+      { "equipmentId": "terragrow_agricultural_ledger", "quantity": 1 },
+      { "equipmentId": "super_fertilizer_concentrate", "quantity": 1 },
+      { "equipmentId": "pos_antimatter_micro_capsule", "quantity": 1 },
+      { "equipmentId": "jovian_skimmer_heat_tile", "quantity": 1 },
+      { "equipmentId": "fusion_ignition_catalyst", "quantity": 1 },
+      { "equipmentId": "stealth_transponder_drive", "quantity": 1 },
+      { "equipmentId": "extremophile_culture_bank", "quantity": 1 }
     ],
     "legendary": [
-      "an intact pre-collapse fusion core",
-      "a black-site master keycard",
-      "a relic plasma-cutter",
-      "a perfected Persephone lattice matrix fragment",
-      "The Rocket Man's original SABRE ignition schematic",
-      "a Terragrow biological continuity master index",
-      "a TL4 metric drive calibration coil",
-      "a von Neumann archival data shard (Proxima origin)",
-      "a POS antimatter containment algorithm key",
-      "a spacetime curvature telemetry array prototype"
+      { "equipmentId": "precollapse_fusion_core", "quantity": 1 },
+      { "equipmentId": "black_site_master_keycard", "quantity": 1 },
+      { "equipmentId": "relic_plasma_cutter", "quantity": 1 },
+      { "equipmentId": "persephone_lattice_fragment", "quantity": 1 },
+      { "equipmentId": "rocket_man_sabre_schematic", "quantity": 1 },
+      { "equipmentId": "terragrow_continuity_index", "quantity": 1 },
+      { "equipmentId": "metric_drive_calibration_coil", "quantity": 1 },
+      { "equipmentId": "von_neumann_archival_shard", "quantity": 1 },
+      { "equipmentId": "pos_antimatter_algorithm_key", "quantity": 1 },
+      { "equipmentId": "curvature_telemetry_array", "quantity": 1 }
     ]
   }
 }

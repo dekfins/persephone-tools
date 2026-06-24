@@ -1,0 +1,153 @@
+{
+  "combatPresets": [
+    { "id": "small_vicious_beast", "label": "Vent-Slit Vermin", "sourceLabel": "Small Vicious Beast", "hd": 1, "fixedHp": 1, "ac": 14, "attackBonus": 1, "damage": "1d2", "move": "10m", "morale": 7, "skillBonus": 1, "save": 15 },
+    { "id": "small_pack_hunter", "label": "Dust-Pack Hunter", "sourceLabel": "Small Pack Hunter", "hd": 1, "ac": 13, "attackBonus": 1, "damage": "1d4", "move": "15m", "morale": 8, "skillBonus": 1, "save": 15 },
+    { "id": "large_pack_hunter", "label": "Ridge-Pack Predator", "sourceLabel": "Large Pack Hunter", "hd": 2, "ac": 14, "attackBonus": 2, "damage": "1d6", "move": "15m", "morale": 9, "skillBonus": 1, "save": 14 },
+    { "id": "large_aggressive_prey", "label": "Armored Grazer", "sourceLabel": "Large Aggressive Prey Animal", "hd": 5, "ac": 13, "attackBonus": 4, "damage": "1d10", "move": "15m", "morale": 8, "skillBonus": 1, "save": 12 },
+    { "id": "lesser_lone_predator", "label": "Lone Ravine Stalker", "sourceLabel": "Lesser Lone Predator", "hd": 3, "ac": 14, "attackBonus": 4, "attacks": 2, "damage": "1d8 each", "move": "15m", "morale": 8, "skillBonus": 2, "save": 14 },
+    { "id": "greater_lone_predator", "label": "Pressure-Wold Alpha", "sourceLabel": "Greater Lone Predator", "hd": 5, "ac": 15, "attackBonus": 6, "attacks": 2, "damage": "1d10 each", "move": "10m", "morale": 9, "skillBonus": 2, "save": 12 },
+    { "id": "terrifying_apex_predator", "label": "Persephone Apex", "sourceLabel": "Terrifying Apex Predator", "hd": 8, "ac": 16, "attackBonus": 8, "attacks": 2, "damage": "1d10 each", "move": "20m", "morale": 9, "skillBonus": 2, "save": 11 },
+    { "id": "gengineered_murder_beast", "label": "Gengineered Kill-Beast", "sourceLabel": "Gengineered Murder Beast", "hd": 10, "ac": 18, "attackBonus": 10, "attacks": 4, "damage": "1d10 each", "move": "20m", "morale": 11, "skillBonus": 3, "save": 10 }
+  ],
+  "defaultCombatPresetId": "large_pack_hunter",
+  "namePrefixes": ["Ash", "Basalt", "Brine", "Glass", "Iron", "Mire", "Pale", "Razor", "Silt", "Vapor", "Vermilion", "Void"],
+  "nameSuffixes": ["crawler", "grazer", "jaw", "leaper", "moth", "runner", "skitter", "spike", "stalker", "thorn", "wold", "worm"],
+  "ecologicalRoles": [
+    { "label": "PREDATOR", "value": "predator" },
+    { "label": "PREY", "value": "prey" },
+    { "label": "SCAVENGER", "value": "scavenger" }
+  ],
+  "tableMetadata": {
+    "basicAnimalFeatures": { "die": "d10", "label": "Basic Animal Features", "entries": 10 },
+    "bodyPlan": { "die": "d6", "label": "Body Plan", "entries": 6 },
+    "limbNovelty": { "die": "d6", "label": "Limb Novelty", "entries": 6 },
+    "skinNovelty": { "die": "d6", "label": "Skin Novelty", "entries": 6 },
+    "mainWeapon": { "die": "d6", "label": "Main Weapon", "entries": 6 },
+    "size": { "die": "d6", "label": "Size", "entries": 6 },
+    "predator": { "die": "d8", "label": "Predator Trait", "entries": 8 },
+    "prey": { "die": "d8", "label": "Prey Trait", "entries": 8 },
+    "scavenger": { "die": "d8", "label": "Scavenger Trait", "entries": 8 },
+    "harmfulDischarge": { "die": "d8", "label": "Harmful Discharge", "entries": 8 },
+    "poisonEffect": { "die": "d6", "label": "Poison Effect", "entries": 6 },
+    "poisonOnset": { "die": "d6", "label": "Poison Onset", "entries": 6 },
+    "poisonDuration": { "die": "d6", "label": "Poison Duration", "entries": 6 }
+  },
+  "tables": {
+    "basicAnimalFeatures": [
+      { "roll": 1, "label": "Amphibian, pressure-wet and newtlike" },
+      { "roll": 2, "label": "Birdlike, winged and filament-feathered" },
+      { "roll": 3, "label": "Fishlike, scaled and torpedo-bodied" },
+      { "roll": 4, "label": "Insectile, beetle-shelled or fly-winged" },
+      { "roll": 5, "label": "Mammalian, hairy and fanged" },
+      { "roll": 6, "label": "Reptilian, long-bodied and lizardlike" },
+      { "roll": 7, "label": "Arachnid, many-legged and swollen-bodied" },
+      { "roll": 8, "label": "Exotic, built from alien mineral or chemical biology" },
+      { "roll": 9, "label": "Roll twice and mix the results", "rollTwice": true },
+      { "roll": 10, "label": "Roll twice and mix the results", "rollTwice": true }
+    ],
+    "bodyPlan": [
+      { "roll": 1, "label": "Humanoid" },
+      { "roll": 2, "label": "Quadruped" },
+      { "roll": 3, "label": "Many-legged" },
+      { "roll": 4, "label": "Bulbous" },
+      { "roll": 5, "label": "Amorphous" },
+      { "roll": 6, "label": "Roll twice and combine body plans", "rollTwice": true }
+    ],
+    "limbNovelty": [
+      { "roll": 1, "label": "Wings" },
+      { "roll": 2, "label": "Many joints" },
+      { "roll": 3, "label": "Tentacles" },
+      { "roll": 4, "label": "Opposable thumbs" },
+      { "roll": 5, "label": "Retractable limbs" },
+      { "roll": 6, "label": "Varying limb sizes" }
+    ],
+    "skinNovelty": [
+      { "roll": 1, "label": "Hard shell" },
+      { "roll": 2, "label": "Exoskeleton" },
+      { "roll": 3, "label": "Odd texture" },
+      { "roll": 4, "label": "Molts regularly" },
+      { "roll": 5, "label": "Harmful to touch" },
+      { "roll": 6, "label": "Wet or slimy" }
+    ],
+    "mainWeapon": [
+      { "roll": 1, "label": "Teeth or mandibles" },
+      { "roll": 2, "label": "Claws" },
+      { "roll": 3, "label": "Poison" },
+      { "roll": 4, "label": "Harmful discharge" },
+      { "roll": 5, "label": "Pincers" },
+      { "roll": 6, "label": "Horns" }
+    ],
+    "size": [
+      { "roll": 1, "label": "Cat-sized" },
+      { "roll": 2, "label": "Wolf-sized" },
+      { "roll": 3, "label": "Calf-sized" },
+      { "roll": 4, "label": "Bull-sized" },
+      { "roll": 5, "label": "Hippo-sized" },
+      { "roll": 6, "label": "Elephant-sized" }
+    ],
+    "predator": [
+      { "roll": 1, "label": "Hunts in kin-group packs" },
+      { "roll": 2, "label": "Favors ambush attacks" },
+      { "roll": 3, "label": "Cripples prey and waits for collapse" },
+      { "roll": 4, "label": "Pack supports an alpha-beast attack" },
+      { "roll": 5, "label": "Lures or drives prey into danger" },
+      { "roll": 6, "label": "Hunts alone as a powerful stalker" },
+      { "roll": 7, "label": "Only becomes predatory at certain times" },
+      { "roll": 8, "label": "Mindlessly attacks humans" }
+    ],
+    "prey": [
+      { "roll": 1, "label": "Moves in vigilant herds" },
+      { "roll": 2, "label": "Exists in small family groups" },
+      { "roll": 3, "label": "Teams up on a single foe" },
+      { "roll": 4, "label": "Goes berserk when near death" },
+      { "roll": 5, "label": "Violent in certain seasons" },
+      { "roll": 6, "label": "Vicious if threatened" },
+      { "roll": 7, "label": "Protected by a symbiotic creature" },
+      { "roll": 8, "label": "Breeds at tremendous rates" }
+    ],
+    "scavenger": [
+      { "roll": 1, "label": "Never attacks unwounded prey" },
+      { "roll": 2, "label": "Uses other beasts as harriers" },
+      { "roll": 3, "label": "Always flees if significantly hurt" },
+      { "roll": 4, "label": "Poisons prey and waits for death" },
+      { "roll": 5, "label": "Disguises itself as its prey" },
+      { "roll": 6, "label": "Remarkably stealthy" },
+      { "roll": 7, "label": "Summons predators to weak prey" },
+      { "roll": 8, "label": "Steals prey from weaker predators" }
+    ],
+    "harmfulDischarge": [
+      { "roll": 1, "label": "Acidic spew doing normal damage on a hit" },
+      { "roll": 2, "label": "Toxic spittle or cloud" },
+      { "roll": 3, "label": "Super-heated or super-chilled spew" },
+      { "roll": 4, "label": "Sonic drill or disabling noise" },
+      { "roll": 5, "label": "Natural laser or plasma discharge" },
+      { "roll": 6, "label": "Nauseating stench or disabling chemical" },
+      { "roll": 7, "label": "Equipment-melting corrosive" },
+      { "roll": 8, "label": "Explosive pellets or chemical catalysts" }
+    ],
+    "poisonEffect": [
+      { "roll": 1, "label": "Death" },
+      { "roll": 2, "label": "Paralysis" },
+      { "roll": 3, "label": "1d4 damage per onset interval" },
+      { "roll": 4, "label": "Convulsions" },
+      { "roll": 5, "label": "Blindness" },
+      { "roll": 6, "label": "Hallucinations" }
+    ],
+    "poisonOnset": [
+      { "roll": 1, "label": "Instant" },
+      { "roll": 2, "label": "1 round" },
+      { "roll": 3, "label": "1d6 rounds" },
+      { "roll": 4, "label": "1 minute" },
+      { "roll": 5, "label": "1d6 minutes" },
+      { "roll": 6, "label": "1 hour" }
+    ],
+    "poisonDuration": [
+      { "roll": 1, "label": "1d6 rounds" },
+      { "roll": 2, "label": "1 minute" },
+      { "roll": 3, "label": "10 minutes" },
+      { "roll": 4, "label": "1 hour" },
+      { "roll": 5, "label": "1d6 hours" },
+      { "roll": 6, "label": "1d6 days" }
+    ]
+  }
+}

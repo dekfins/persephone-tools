@@ -3035,6 +3035,860 @@
       "quality": "luxury"
     }
   },
+  "scrap_copper_spool": {
+    "id": "scrap_copper_spool",
+    "name": "Scrap copper spool",
+    "sourceName": "Scrap copper spool",
+    "category": "trade_good",
+    "description": "A heavy spool of stripped conductor wire, still clean enough for repairs, bribes, or fabrication feedstock.",
+    "cost": 25,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "trade",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "vacuum_sealant_roll": {
+    "id": "vacuum_sealant_roll",
+    "name": "Vacuum sealant roll",
+    "sourceName": "Vacuum sealant roll",
+    "category": "field_equipment",
+    "description": "A roll of pressure-rated patch tape for temporary suit, hose, and panel repairs in hard vacuum.",
+    "cost": 20,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool",
+      "vacc",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "pressure_manifold_valve": {
+    "id": "pressure_manifold_valve",
+    "name": "Pressure manifold valve",
+    "sourceName": "Pressure manifold valve",
+    "category": "field_equipment",
+    "description": "A salvageable regulator valve for life support, coolant, and fuel plumbing.",
+    "cost": 35,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "tool",
+      "vacc"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "fluid_dynamics_manual": {
+    "id": "fluid_dynamics_manual",
+    "name": "Fluid dynamics manual",
+    "sourceName": "Fluid dynamics manual",
+    "category": "computing",
+    "description": "A battered technical manual with usable notes on pumps, vents, propellant lines, and pressure math.",
+    "cost": 50,
+    "encumbrance": "*",
+    "techLevel": 3,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "computing",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "thermal_paste_tube": {
+    "id": "thermal_paste_tube",
+    "name": "Thermal paste tube",
+    "sourceName": "Thermal paste tube",
+    "category": "trade_good",
+    "description": "A tube of industrial thermal compound useful for electronics, reactor auxiliaries, and heat sink repairs.",
+    "cost": 15,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "trade",
+      "tool",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "eva_tether_set": {
+    "id": "eva_tether_set",
+    "name": "EVA tether set",
+    "sourceName": "EVA tether set",
+    "category": "field_equipment",
+    "description": "A clipped set of rated hullwork tethers for EVA crews and cautious boarders.",
+    "cost": 40,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "tool",
+      "vacc"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "extended_firearm_magazine": {
+    "id": "extended_firearm_magazine",
+    "name": "Extended firearm magazine",
+    "sourceName": "Extended firearm magazine",
+    "category": "ammo_power",
+    "description": "A high-capacity magazine for common projectile weapons, useful but suspicious in secure habitats.",
+    "cost": 75,
+    "encumbrance": "*",
+    "techLevel": 3,
+    "legality": "licensed",
+    "availability": "licensed_vendor",
+    "tags": [
+      "ammo"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "scum_servo_actuator": {
+    "id": "scum_servo_actuator",
+    "name": "SCUM servo actuator",
+    "sourceName": "SCUM servo actuator",
+    "category": "restricted_tech",
+    "description": "A hacked industrial servo with SCUM firmware hooks and a worrying torque curve.",
+    "cost": 250,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "tool",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "encrypted_data_slug": {
+    "id": "encrypted_data_slug",
+    "name": "Encrypted data slug",
+    "sourceName": "Encrypted data slug",
+    "category": "computing",
+    "description": "A sealed memory slug with tamper alarms and enough encryption to make ownership dangerous.",
+    "cost": 200,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "recycled_oxygen_scrubber": {
+    "id": "recycled_oxygen_scrubber",
+    "name": "Recycled oxygen scrubber",
+    "sourceName": "Recycled oxygen scrubber",
+    "category": "field_equipment",
+    "description": "A refurbished air scrubber cartridge for habitat crawlspaces, emergency pods, and marginal ships.",
+    "cost": 150,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "survival",
+      "vacc",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "radiation_dosimeter": {
+    "id": "radiation_dosimeter",
+    "name": "Radiation dosimeter",
+    "sourceName": "Radiation dosimeter",
+    "category": "field_equipment",
+    "description": "A calibrated badge meter that records exposure spikes for work crews and later arguments.",
+    "cost": 100,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "common",
+    "tags": [
+      "survival",
+      "radiation"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "radiation": {
+      "effect": "Records exposure and warns of active radiation hazards; it does not reduce Rads."
+    }
+  },
+  "reinforced_coolant_hose": {
+    "id": "reinforced_coolant_hose",
+    "name": "Reinforced coolant hose",
+    "sourceName": "Reinforced coolant hose",
+    "category": "field_equipment",
+    "description": "A pressure-rated transfer hose for shipboard coolant, fuel-adjacent fluids, and improvised bypasses.",
+    "cost": 120,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "airlock_mag_coupling": {
+    "id": "airlock_mag_coupling",
+    "name": "Airlock mag-coupling",
+    "sourceName": "Airlock mag-coupling",
+    "category": "field_equipment",
+    "description": "A magnetic coupling assembly for airlocks, hatch collars, and docking clamps.",
+    "cost": 180,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "open",
+    "availability": "station_only",
+    "tags": [
+      "tool",
+      "vacc"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "dave_sidearm": {
+    "id": "dave_sidearm",
+    "name": "DAVE sidearm",
+    "sourceName": "DAVE sidearm",
+    "category": "ranged_weapon",
+    "description": "A surplus compliance pistol with DAVE inventory marks filed down badly.",
+    "cost": 400,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    },
+    "weapon": {
+      "damage": "1d6+1",
+      "range": "30/100",
+      "magazine": "12",
+      "attribute": "Dex",
+      "ammoType": "projectile"
+    }
+  },
+  "terragrow_genetic_sample": {
+    "id": "terragrow_genetic_sample",
+    "name": "Terragrow genetic sample",
+    "sourceName": "Terragrow genetic sample",
+    "category": "restricted_tech",
+    "description": "A cold-chain biological sample with Terragrow trace markers and resale value to the wrong lab.",
+    "cost": 1000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "medical",
+      "black_market",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "xenon_propellant_cell": {
+    "id": "xenon_propellant_cell",
+    "name": "Xenon propellant cell",
+    "sourceName": "Xenon propellant cell",
+    "category": "trade_good",
+    "description": "A high-yield xenon canister useful for specialized thrusters and very specific buyers.",
+    "cost": 1200,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "licensed",
+    "availability": "station_only",
+    "tags": [
+      "trade"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "jovian_hive_relay_booster": {
+    "id": "jovian_hive_relay_booster",
+    "name": "Jovian Hive relay booster",
+    "sourceName": "Jovian Hive relay booster",
+    "category": "communications",
+    "description": "A signal booster tuned for Hive relay pods and magnetosphere-bent telemetry.",
+    "cost": 1500,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "communications",
+      "powered"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "dave_master_encryption_dongle": {
+    "id": "dave_master_encryption_dongle",
+    "name": "DAVE master encryption dongle",
+    "sourceName": "DAVE master encryption dongle",
+    "category": "computing",
+    "description": "A hardware key for DAVE audit systems, dangerous to carry and lucrative to sell.",
+    "cost": 2000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "sabre_precooler_filter": {
+    "id": "sabre_precooler_filter",
+    "name": "SABRE pre-cooler filter assembly",
+    "sourceName": "SABRE pre-cooler filter assembly",
+    "category": "restricted_tech",
+    "description": "A precision heat exchanger assembly pulled from SABRE engine hardware.",
+    "cost": 2500,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "tool",
+      "powered"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "quantum_mesh_routing_node": {
+    "id": "quantum_mesh_routing_node",
+    "name": "Quantum mesh routing node",
+    "sourceName": "Quantum mesh routing node",
+    "category": "computing",
+    "description": "A prototype TL3 routing core with fragile quantum-mesh timing hardware.",
+    "cost": 3000,
+    "encumbrance": 1,
+    "techLevel": 3,
+    "legality": "restricted",
+    "availability": "black_market",
+    "tags": [
+      "computing",
+      "powered"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": true,
+      "spawnable": true
+    }
+  },
+  "unregistered_cybernetic_arm": {
+    "id": "unregistered_cybernetic_arm",
+    "name": "Unregistered cybernetic arm",
+    "sourceName": "Unregistered cybernetic arm",
+    "category": "restricted_tech",
+    "description": "A boxed replacement limb with serials scrubbed and no legal surgical chain of custody.",
+    "cost": 8000,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "medical",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "ship_grade_thermal_sink": {
+    "id": "ship_grade_thermal_sink",
+    "name": "Ship-grade thermal sink",
+    "sourceName": "Ship-grade thermal sink",
+    "category": "restricted_tech",
+    "description": "A compact heat sink cartridge meant for drives, weapons, or overworked reactor auxiliaries.",
+    "cost": 6000,
+    "encumbrance": 2,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "terragrow_agricultural_ledger": {
+    "id": "terragrow_agricultural_ledger",
+    "name": "Terragrow agricultural ledger",
+    "sourceName": "Terragrow agricultural ledger",
+    "category": "computing",
+    "description": "A classified Terragrow yield, genetics, and ownership ledger with blackmail-grade metadata.",
+    "cost": 7000,
+    "encumbrance": "*",
+    "techLevel": 4,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "super_fertilizer_concentrate": {
+    "id": "super_fertilizer_concentrate",
+    "name": "Super-fertilizer concentrate",
+    "sourceName": "Super-fertilizer concentrate",
+    "category": "restricted_tech",
+    "description": "An experimental Terragrow concentrate that can save a dome farm or poison one.",
+    "cost": 5000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "trade",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "pos_antimatter_micro_capsule": {
+    "id": "pos_antimatter_micro_capsule",
+    "name": "POS antimatter micro-capsule",
+    "sourceName": "POS antimatter micro-capsule",
+    "category": "restricted_tech",
+    "description": "A sealed 0.1 ug antimatter containment capsule with POS custody warnings still active.",
+    "cost": 12000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "powered",
+      "pretech",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "jovian_skimmer_heat_tile": {
+    "id": "jovian_skimmer_heat_tile",
+    "name": "Jovian skimmer heat shield tile",
+    "sourceName": "Jovian skimmer heat shield tile",
+    "category": "restricted_tech",
+    "description": "An ablative heat shield tile from a Jovian atmospheric skimmer, still valuable as material science proof.",
+    "cost": 4500,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "trade",
+      "radiation"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "fusion_ignition_catalyst": {
+    "id": "fusion_ignition_catalyst",
+    "name": "Fusion ignition catalyst cartridge",
+    "sourceName": "Fusion ignition catalyst cartridge",
+    "category": "restricted_tech",
+    "description": "A TL4 catalyst cartridge used to stabilize violent fusion starts in compact plant hardware.",
+    "cost": 9000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "powered",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "stealth_transponder_drive": {
+    "id": "stealth_transponder_drive",
+    "name": "Stealth transponder drive",
+    "sourceName": "Stealth transponder drive",
+    "category": "communications",
+    "description": "A military-grade spoofing module for ship or beacon identity systems.",
+    "cost": 10000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "military",
+    "availability": "mission_reward",
+    "tags": [
+      "communications",
+      "powered",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "extremophile_culture_bank": {
+    "id": "extremophile_culture_bank",
+    "name": "Pioneer extremophile culture bank",
+    "sourceName": "Pioneer extremophile culture bank",
+    "category": "restricted_tech",
+    "description": "A sealed bank of Pioneer Research extremophile cultures and growth media.",
+    "cost": 8500,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "medical",
+      "consumable"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "precollapse_fusion_core": {
+    "id": "precollapse_fusion_core",
+    "name": "Pre-collapse fusion core",
+    "sourceName": "Pre-collapse fusion core",
+    "category": "restricted_tech",
+    "description": "An intact ancient compact fusion core with enough signatures to start a war over provenance.",
+    "cost": 50000,
+    "encumbrance": 3,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "powered",
+      "pretech"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "black_site_master_keycard": {
+    "id": "black_site_master_keycard",
+    "name": "Black-site master keycard",
+    "sourceName": "Black-site master keycard",
+    "category": "computing",
+    "description": "A root-access credential for a facility that officially never existed.",
+    "cost": 30000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "pretech",
+      "black_market"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "relic_plasma_cutter": {
+    "id": "relic_plasma_cutter",
+    "name": "Relic plasma cutter",
+    "sourceName": "Relic plasma cutter",
+    "category": "restricted_tech",
+    "description": "A pre-collapse cutting torch able to slice hull alloy like shop plastic when it behaves.",
+    "cost": 35000,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "pretech",
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "persephone_lattice_fragment": {
+    "id": "persephone_lattice_fragment",
+    "name": "Persephone lattice matrix fragment",
+    "sourceName": "Persephone lattice matrix fragment",
+    "category": "restricted_tech",
+    "description": "A perfected lattice fragment with anomalous material properties and too many interested owners.",
+    "cost": 60000,
+    "encumbrance": 1,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "pretech",
+      "trade"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "rocket_man_sabre_schematic": {
+    "id": "rocket_man_sabre_schematic",
+    "name": "Rocket Man SABRE ignition schematic",
+    "sourceName": "Rocket Man SABRE ignition schematic",
+    "category": "computing",
+    "description": "The Rocket Man's original SABRE ignition schematic, complete with notes nobody should trust blindly.",
+    "cost": 45000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "pretech"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "terragrow_continuity_index": {
+    "id": "terragrow_continuity_index",
+    "name": "Terragrow continuity master index",
+    "sourceName": "Terragrow continuity master index",
+    "category": "computing",
+    "description": "A master biological continuity index tying Terragrow seed lines, vaults, and illegal backups together.",
+    "cost": 40000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "medical"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "metric_drive_calibration_coil": {
+    "id": "metric_drive_calibration_coil",
+    "name": "Metric drive calibration coil",
+    "sourceName": "Metric drive calibration coil",
+    "category": "restricted_tech",
+    "description": "A TL4 calibration coil for metric drive work that most legal yards would deny recognizing.",
+    "cost": 38000,
+    "encumbrance": 1,
+    "techLevel": 4,
+    "legality": "restricted",
+    "availability": "mission_reward",
+    "tags": [
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "von_neumann_archival_shard": {
+    "id": "von_neumann_archival_shard",
+    "name": "Von Neumann archival data shard",
+    "sourceName": "Von Neumann archival data shard",
+    "category": "computing",
+    "description": "A Proxima-origin archival shard from a von Neumann system, valuable even if nobody can fully parse it.",
+    "cost": 70000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "pretech"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "pos_antimatter_algorithm_key": {
+    "id": "pos_antimatter_algorithm_key",
+    "name": "POS antimatter containment key",
+    "sourceName": "POS antimatter containment key",
+    "category": "computing",
+    "description": "A containment algorithm key used by POS antimatter silos and audited only under armed supervision.",
+    "cost": 65000,
+    "encumbrance": "*",
+    "techLevel": 5,
+    "legality": "contraband",
+    "availability": "mission_reward",
+    "tags": [
+      "computing",
+      "pretech",
+      "powered"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
+  "curvature_telemetry_array": {
+    "id": "curvature_telemetry_array",
+    "name": "Curvature telemetry array",
+    "sourceName": "Curvature telemetry array",
+    "category": "restricted_tech",
+    "description": "A prototype sensor array for reading local spacetime curvature during drive-scale events.",
+    "cost": 75000,
+    "encumbrance": 2,
+    "techLevel": 5,
+    "legality": "pretech",
+    "availability": "mission_reward",
+    "tags": [
+      "pretech",
+      "powered",
+      "tool"
+    ],
+    "source": "persephone_homebrew",
+    "app": {
+      "playerVisible": false,
+      "spawnable": true,
+      "gmOnly": true
+    }
+  },
   "vacc_fresher": {
     "id": "vacc_fresher",
     "name": "Vacc fresher",

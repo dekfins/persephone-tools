@@ -8,8 +8,12 @@
   import CreatorReviewPanel from './CreatorReviewPanel.svelte';
   import CreatorSummaryPanel from './CreatorSummaryPanel.svelte';
   import CreatorVitalsPanel from './CreatorVitalsPanel.svelte';
+  import CreatorNpcPanel from './CreatorNpcPanel.svelte';
   import { characterCreatorState } from '../../lib/states/characterCreatorState.svelte';
 
+  type CreatorMode = 'pc' | 'npc';
+
+  let creatorMode = $state<CreatorMode>('pc');
   let showRandomConfirm = $state(false);
 
   function generateRandomCharacter() {
@@ -27,6 +31,28 @@
   }
 </script>
 
+<div class="creator-mode-toggle" aria-label="Creator mode">
+  <button
+    class="btn-action mode-button"
+    class:active={creatorMode === 'pc'}
+    onclick={() => creatorMode = 'pc'}
+  >
+    CREATE PC
+  </button>
+  <button
+    class="btn-action mode-button"
+    class:active={creatorMode === 'npc'}
+    onclick={() => creatorMode = 'npc'}
+  >
+    CREATE NPC
+  </button>
+</div>
+
+{#if creatorMode === 'npc'}
+  <div class="npc-creator-wrap">
+    <CreatorNpcPanel />
+  </div>
+{:else}
 <div class="creator-layout">
   <div class="creator-shell">
     <div class="step-strip">
@@ -91,6 +117,7 @@
     <CreatorSummaryPanel />
   </aside>
   </div>
+{/if}
 
 {#if showRandomConfirm}
   <div class="modal-overlay">
@@ -108,6 +135,26 @@
 {/if}
 
 <style>
+  .creator-mode-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 14rem));
+    gap: 0.75rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .mode-button.active {
+    background: var(--accent-amber);
+    color: var(--bg-void);
+    border-color: var(--accent-amber);
+  }
+
+  .npc-creator-wrap {
+    max-width: 1120px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
   .creator-layout {
     display: grid;
     grid-template-columns: minmax(0, 780px) 340px;  
@@ -254,6 +301,10 @@
   }
 
   @media (max-width: 640px) {
+    .creator-mode-toggle {
+      grid-template-columns: 1fr;
+    }
+
     .step-strip {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

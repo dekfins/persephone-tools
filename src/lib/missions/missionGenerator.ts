@@ -1,31 +1,85 @@
 // src/lib/missionGenerator.ts
 import { solveTrajectory } from '../navmap/orbitalMath';
-import type { PoiDef } from '../types';
-import type { GeneratedMission } from '../types';
+import {
+  getEquipmentById
+} from '../character/characterConstants';
+import type { GeneratedMission, MissionLootRarity, MissionLootReward, PoiDef } from '../types';
 import missionsData from '../../data/missions.json';
 import poisData from '../../data/celestial/pois.json';
 import planetsData from '../../data/celestial/planets.json';
 import moonsData from '../../data/celestial/moons.json';
 
 const pois = poisData as PoiDef[];
+const MISSION_LOOT_RARITIES: MissionLootRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+
+type MissionLootEntry = {
+  equipmentId: string;
+  quantity: number;
+};
+
+type MissionData = {
+  clients: string[];
+  objectives: string[];
+  adversaries: string[];
+  complications: string[];
+  loot: Record<MissionLootRarity, MissionLootEntry[]>;
+};
+
+const MISSION_DATA = validateMissionData(missionsData as MissionData);
 
 // Helper to grab random items from arrays
 function getRandomElement<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function formatLootDisplayName(equipmentId: string, quantity: number) {
+  const item = getEquipmentById(equipmentId);
+  const name = item?.name ?? equipmentId;
+  return quantity > 1 ? `x${quantity} ${name}` : name;
+}
+
+function validateMissionData(data: MissionData) {
+  MISSION_LOOT_RARITIES.forEach((rarity) => {
+    const entries = data.loot[rarity];
+    if (!Array.isArray(entries) || entries.length === 0) {
+      throw new Error(`Mission loot table "${rarity}" must contain at least one catalog reward.`);
+    }
+
+    entries.forEach((entry) => {
+      const item = getEquipmentById(entry.equipmentId);
+      if (!item) {
+        throw new Error(`Mission loot table "${rarity}" references missing equipment "${entry.equipmentId}".`);
+      }
+
+      if (!item.app.spawnable) {
+        throw new Error(`Mission loot table "${rarity}" references non-spawnable equipment "${entry.equipmentId}".`);
+      }
+
+      if (!Number.isInteger(entry.quantity) || entry.quantity < 1) {
+        throw new Error(`Mission loot table "${rarity}" has invalid quantity for "${entry.equipmentId}".`);
+      }
+    });
+  });
+
+  return data;
+}
+
 // Emulates your Python get_random_loot logic
-function getRandomLoot(difficulty: number): { rarity: string; item: string } {
+function getRandomLoot(difficulty: number): MissionLootReward {
   const roll = Math.floor(Math.random() * 100) + 1;
-  let rarity = "common";
+  let rarity: MissionLootRarity = "common";
 
   if (roll + difficulty >= 105) rarity = "legendary";
   else if (roll + difficulty >= 95) rarity = "epic";
   else if (roll + (difficulty * 2) >= 75) rarity = "rare";
   else if (roll + (difficulty * 3) >= 50) rarity = "uncommon";
 
-  const items = (missionsData as any).loot[rarity] || ["a handful of loose credits"];
-  return { rarity, item: getRandomElement(items) };
+  const entry = getRandomElement(MISSION_DATA.loot[rarity]);
+  return {
+    ...entry,
+    rarity,
+    displayName: formatLootDisplayName(entry.equipmentId, entry.quantity)
+  };
 }
 
 // Emulates your Python get_location logic, but wired to your actual POIs
@@ -67,6 +121,7 @@ export function generateJobBoard(
 ): GeneratedMission[] {
   const originPoi = pois.find(p => p.id === originPoiId);
   if (!originPoi) return [];
+  if (availableDv <= 0) return [];
 
   const jobs: GeneratedMission[] = [];
   let attempts = 0;
@@ -94,6 +149,7 @@ export function generateJobBoard(
     
     // If we can't reach it physically, skip this generation
     if (!trajectory) continue;
+    if (trajectory.maxDv > availableDv) continue;
 
     // --- PAYOUT CALCULATION ---
     // trajectory.telemetry.dist is in meters. 1 AU = 1.496e11 meters
@@ -107,12 +163,12 @@ export function generateJobBoard(
     const finalCredits = Math.floor(rawCredits * variance);
 
     let payoutString = `${finalCredits.toLocaleString()} CR`;
-    let loot: { rarity: string, item: string } | undefined;
+    let lootReward: MissionLootReward | undefined;
 
     // 50% chance for a loot drop
     if (Math.random() > 0.50) {
-      loot = getRandomLoot(difficulty);
-      payoutString += ` + ${loot.item}`;
+      lootReward = getRandomLoot(difficulty);
+      payoutString += ` + ${lootReward.displayName}`;
     }
 
     jobs.push({
@@ -120,16 +176,15 @@ export function generateJobBoard(
       targetPoiId: targetPoi.id,
       originPoiId: originPoi.id,
       difficulty,
-      client: getRandomElement((missionsData as any).clients),
-      objective: getRandomElement((missionsData as any).objectives),
-      adversary: getRandomElement((missionsData as any).adversaries),
-      twist: getRandomElement((missionsData as any).complications),
+      client: getRandomElement(MISSION_DATA.clients),
+      objective: getRandomElement(MISSION_DATA.objectives),
+      adversary: getRandomElement(MISSION_DATA.adversaries),
+      twist: getRandomElement(MISSION_DATA.complications),
       travelTimeDays: trajectory.realisticTime,
       reqDv: trajectory.maxDv,
       payoutString,
       payoutCredits: finalCredits,
-      lootRarity: loot?.rarity,
-      lootItem: loot?.item,
+      lootReward,
       telemetry: trajectory.telemetry
     });
   }

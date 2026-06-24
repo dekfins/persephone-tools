@@ -32,6 +32,9 @@ import type {
   ItemRecord,
   ItemState,
   InviteRedemptionResult,
+  GeneratedNpcDraft,
+  NpcProfile,
+  NpcProfileRecord,
   ProfileRecord,
   PurchasedEquipmentItem,
   Skill
@@ -143,6 +146,7 @@ class DatabaseStateManager {
   campaignLogEvents = $state<CampaignLogEvent[]>([]);
   campaignMemberProfiles = $state<Record<string, ProfileRecord>>({});
   characters = $state<CharacterRecord[]>([]);
+  npcProfiles = $state<Record<string, NpcProfileRecord>>({});
   items = $state<ItemRecord[]>([]);
   localCharacterArchive = $state<CharacterCreationArchive | null>(null);
   #subscription: RealtimeChannel | null = null;
@@ -205,6 +209,10 @@ class DatabaseStateManager {
 
   get npcCharacters() {
     return this.characters.filter(character => character.character_kind === 'NPC');
+  }
+
+  getNpcProfile(characterId: string) {
+    return this.npcProfiles[characterId]?.profile ?? null;
   }
 
   get activeCampaignMembers(): CampaignMemberView[] {
@@ -407,6 +415,90 @@ class DatabaseStateManager {
     };
   }
 
+  normalizeNpcProfileRecord(record: NpcProfileRecord): NpcProfileRecord {
+    const profile = isRecord(record.profile) ? record.profile as unknown as NpcProfile : null;
+    const gmNotes = typeof record.gm_notes === 'string' ? record.gm_notes : '';
+
+    return {
+      ...record,
+      gm_notes: gmNotes,
+      profile: {
+        schema: 'PERSEPHONE-NPC',
+        version: 1,
+        kind: profile?.kind === 'beast' ? 'beast' : 'human',
+        characterId: typeof profile?.characterId === 'string' ? profile.characterId : record.character_id,
+        identity: {
+          name: typeof profile?.identity?.name === 'string' ? profile.identity.name : 'Unnamed NPC',
+          culture: typeof profile?.identity?.culture === 'string' ? profile.identity.culture : 'unknown',
+          firstNameType: typeof profile?.identity?.firstNameType === 'string' ? profile.identity.firstNameType : 'any',
+          age: typeof profile?.identity?.age === 'string' ? profile.identity.age : 'Unknown age',
+          background: typeof profile?.identity?.background === 'string' ? profile.identity.background : 'Unknown background',
+          role: typeof profile?.identity?.role === 'string' ? profile.identity.role : 'Unknown role'
+        },
+        personality: {
+          biggestProblem: typeof profile?.personality?.biggestProblem === 'string' ? profile.personality.biggestProblem : '',
+          obviousTrait: typeof profile?.personality?.obviousTrait === 'string' ? profile.personality.obviousTrait : '',
+          greatestDesire: typeof profile?.personality?.greatestDesire === 'string' ? profile.personality.greatestDesire : '',
+          motivation: typeof profile?.personality?.motivation === 'string' ? profile.personality.motivation : '',
+          want: typeof profile?.personality?.want === 'string' ? profile.personality.want : '',
+          power: typeof profile?.personality?.power === 'string' ? profile.personality.power : '',
+          hook: typeof profile?.personality?.hook === 'string' ? profile.personality.hook : '',
+          initialManner: typeof profile?.personality?.initialManner === 'string' ? profile.personality.initialManner : '',
+          defaultDealOutcome: typeof profile?.personality?.defaultDealOutcome === 'string' ? profile.personality.defaultDealOutcome : ''
+        },
+        morphology: isRecord(profile?.morphology)
+          ? {
+              basicAnimalFeatures: typeof profile.morphology.basicAnimalFeatures === 'string' ? profile.morphology.basicAnimalFeatures : '',
+              bodyPlan: typeof profile.morphology.bodyPlan === 'string' ? profile.morphology.bodyPlan : '',
+              limbNovelty: typeof profile.morphology.limbNovelty === 'string' ? profile.morphology.limbNovelty : '',
+              skinNovelty: typeof profile.morphology.skinNovelty === 'string' ? profile.morphology.skinNovelty : '',
+              mainWeapon: typeof profile.morphology.mainWeapon === 'string' ? profile.morphology.mainWeapon : '',
+              size: typeof profile.morphology.size === 'string' ? profile.morphology.size : ''
+            }
+          : undefined,
+        behavior: isRecord(profile?.behavior)
+          ? {
+              ecologicalRole: profile.behavior.ecologicalRole === 'prey' || profile.behavior.ecologicalRole === 'scavenger'
+                ? profile.behavior.ecologicalRole
+                : 'predator',
+              trait: typeof profile.behavior.trait === 'string' ? profile.behavior.trait : '',
+              swarm: profile.behavior.swarm === true
+            }
+          : undefined,
+        hazards: isRecord(profile?.hazards)
+          ? {
+              harmfulDischarge: typeof profile.hazards.harmfulDischarge === 'string' ? profile.hazards.harmfulDischarge : '',
+              poisonEffect: typeof profile.hazards.poisonEffect === 'string' ? profile.hazards.poisonEffect : '',
+              poisonOnset: typeof profile.hazards.poisonOnset === 'string' ? profile.hazards.poisonOnset : '',
+              poisonDuration: typeof profile.hazards.poisonDuration === 'string' ? profile.hazards.poisonDuration : ''
+            }
+          : undefined,
+        combat: {
+          presetId: typeof profile?.combat?.presetId === 'string' ? profile.combat.presetId : 'normal_human',
+          label: typeof profile?.combat?.label === 'string' ? profile.combat.label : 'Baseline Spacer',
+          sourceLabel: typeof profile?.combat?.sourceLabel === 'string' ? profile.combat.sourceLabel : 'Normal Human',
+          hd: typeof profile?.combat?.hd === 'number' ? profile.combat.hd : 1,
+          hp: typeof profile?.combat?.hp === 'number' ? profile.combat.hp : 1,
+          hpRolls: Array.isArray(profile?.combat?.hpRolls) ? profile.combat.hpRolls.filter((roll) => typeof roll === 'number') : [1],
+          ac: typeof profile?.combat?.ac === 'number' ? profile.combat.ac : 10,
+          armorTag: profile?.combat?.armorTag,
+          attackBonus: typeof profile?.combat?.attackBonus === 'number' ? profile.combat.attackBonus : 0,
+          attacks: typeof profile?.combat?.attacks === 'number' ? profile.combat.attacks : 1,
+          damage: typeof profile?.combat?.damage === 'string' ? profile.combat.damage : 'Unarmed',
+          move: typeof profile?.combat?.move === 'string' ? profile.combat.move : '10m',
+          morale: typeof profile?.combat?.morale === 'number' ? profile.combat.morale : 6,
+          skillBonus: typeof profile?.combat?.skillBonus === 'number' ? profile.combat.skillBonus : 1,
+          save: typeof profile?.combat?.save === 'number' ? profile.combat.save : 15
+        },
+        rolls: Array.isArray(profile?.rolls)
+          ? profile.rolls.filter((roll) => isRecord(roll)) as NpcProfile['rolls']
+          : [],
+        generatedAt: typeof profile?.generatedAt === 'string' ? profile.generatedAt : new Date().toISOString(),
+        gmNotes
+      }
+    };
+  }
+
   applySkillCredit(
     skills: Partial<Record<Skill, number>>,
     investments: Partial<Record<Skill, number>>,
@@ -510,6 +602,7 @@ class DatabaseStateManager {
     this.campaignCharacters = [];
     this.campaignRosterSchemaMissing = false;
     this.characters = [];
+    this.npcProfiles = {};
     this.items = [];
     this.campaignLogEvents = [];
     this.campaignMemberProfiles = {};
@@ -991,8 +1084,11 @@ class DatabaseStateManager {
     const rosterItemsRequest = rosterCharacterIds.length > 0
       ? supabase.from('items').select('*').in('owner_id', rosterCharacterIds)
       : Promise.resolve({ data: [], error: null });
+    const npcProfilesRequest = this.isGM
+      ? supabase.from('npc_profiles').select('*').eq('campaign_id', campaignId)
+      : Promise.resolve({ data: [], error: null });
 
-    const [campaignCharactersResult, rosterCharactersResult, rosterItemsResult, itemsResult, ledgerResult, logsResult] = await Promise.all([
+    const [campaignCharactersResult, rosterCharactersResult, rosterItemsResult, itemsResult, ledgerResult, logsResult, npcProfilesResult] = await Promise.all([
       supabase.from('characters').select('*').eq('campaign_id', campaignId),
       rosterCharactersRequest,
       rosterItemsRequest,
@@ -1003,7 +1099,8 @@ class DatabaseStateManager {
         .select('*')
         .eq('campaign_id', campaignId)
         .order('event_time', { ascending: false })
-        .limit(100)
+        .limit(100),
+      npcProfilesRequest
     ]);
 
     if (campaignCharactersResult.data || rosterCharactersResult.data) {
@@ -1037,6 +1134,14 @@ class DatabaseStateManager {
       this.campaignLogEvents = logsResult.data as CampaignLogEvent[];
     }
     if (logsResult.error) console.error('Error loading campaign logs:', logsResult.error);
+
+    if (npcProfilesResult.data) {
+      const profiles = (npcProfilesResult.data as NpcProfileRecord[]).map((record) => this.normalizeNpcProfileRecord(record));
+      this.npcProfiles = Object.fromEntries(profiles.map((record) => [record.character_id, record]));
+    } else if (!this.isGM) {
+      this.npcProfiles = {};
+    }
+    if (npcProfilesResult.error && this.isGM) console.error('Error loading NPC profiles:', npcProfilesResult.error);
 
     await this.loadCampaignInvites();
 
@@ -1161,6 +1266,7 @@ class DatabaseStateManager {
       this.activeCampaignId = null;
       this.activeUserId = null;
       this.characters = [];
+      this.npcProfiles = {};
       this.items = [];
       this.campaignInvites = [];
       this.campaignLogEvents = [];
@@ -1489,13 +1595,17 @@ class DatabaseStateManager {
     if (!this.activeCampaignId) return;
     const previousSnapshot = this.#lastLedgerSnapshot ?? this.createLedgerSnapshot();
     const payload = {
+      ship_name: shipState.blueprint.name,
+      hull: shipState.blueprint.hull,
+      reactor: shipState.blueprint.reactor,
+      engine: shipState.blueprint.engine,
       hp: shipState.vitals.currentHealth,
       ri: shipState.vitals.currentRI,
       active_fuel: shipState.propulsion.activeFuel,
       active_mode: shipState.propulsion.activeMode,
-      fuel_levels: shipState.propulsion.currentFuel,
-      active_conditions: shipState.vitals.activeConditions,
-      components: shipState.blueprint.components
+      fuel_levels: { ...shipState.propulsion.currentFuel },
+      active_conditions: shipState.vitals.activeConditions.map(condition => ({ ...condition })),
+      components: shipState.blueprint.components.map(component => ({ ...component }))
     };
 
     const { error } = await this.upsertShipLedger(payload, "GM Error - Failed to sync ship state:");
@@ -1568,7 +1678,30 @@ class DatabaseStateManager {
             this.characters.push(this.normalizeCharacterRecord(payload.new as CharacterRecord));
           } else if (payload.eventType === 'DELETE') {
             this.characters = this.characters.filter(c => c.id !== payload.old.id);
+            const characterId = String(payload.old.id ?? '');
+            const { [characterId]: _removed, ...remaining } = this.npcProfiles;
+            this.npcProfiles = remaining;
           }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'npc_profiles', filter: campaignFilter },
+        (payload) => {
+          if (!this.isGM) return;
+
+          if (payload.eventType === 'DELETE') {
+            const characterId = String(payload.old.character_id ?? '');
+            const { [characterId]: _removed, ...remaining } = this.npcProfiles;
+            this.npcProfiles = remaining;
+            return;
+          }
+
+          const incoming = this.normalizeNpcProfileRecord(payload.new as NpcProfileRecord);
+          this.npcProfiles = {
+            ...this.npcProfiles,
+            [incoming.character_id]: incoming
+          };
         }
       )
       .on(
@@ -2271,6 +2404,147 @@ class DatabaseStateManager {
     return await this.finalizeCharacterArchive(this.localCharacterArchive);
   }
 
+  async saveGeneratedNpc(draft: GeneratedNpcDraft) {
+    if (!this.activeCampaignId || !this.isGM) return false;
+
+    const profile: NpcProfile = {
+      ...draft.profile,
+      kind: draft.profile.kind ?? 'human',
+      characterId: draft.characterId,
+      identity: { ...draft.profile.identity },
+      personality: { ...draft.profile.personality },
+      morphology: draft.profile.morphology ? { ...draft.profile.morphology } : undefined,
+      behavior: draft.profile.behavior ? { ...draft.profile.behavior } : undefined,
+      hazards: draft.profile.hazards ? { ...draft.profile.hazards } : undefined,
+      combat: {
+        ...draft.profile.combat,
+        hpRolls: [...draft.profile.combat.hpRolls]
+      },
+      rolls: draft.profile.rolls.map((roll) => ({ ...roll })),
+      gmNotes: draft.profile.gmNotes.trim()
+    };
+    const isBeast = profile.kind === 'beast';
+
+    const core: CharacterRecord = {
+      id: draft.characterId,
+      name: profile.identity.name.trim() || 'Unnamed NPC',
+      role: 'GM',
+      campaign_id: this.activeCampaignId,
+      owner_user_id: this.activeUserProfile?.id ?? null,
+      character_kind: 'NPC',
+      personal_credits: 0,
+      character_notes: isBeast
+        ? {
+            homeworld: profile.morphology?.basicAnimalFeatures ?? profile.identity.background,
+            employerAffiliation: `${profile.behavior?.ecologicalRole ?? profile.identity.role}${profile.behavior?.swarm ? ' swarm' : ''}`,
+            goal: profile.behavior?.trait ?? '',
+            notes: [
+              profile.morphology ? `${profile.morphology.size}; ${profile.morphology.bodyPlan}; ${profile.morphology.mainWeapon}` : '',
+              profile.hazards ? `${profile.hazards.harmfulDischarge}; poison ${profile.hazards.poisonEffect} (${profile.hazards.poisonOnset}, ${profile.hazards.poisonDuration})` : ''
+            ].filter(Boolean).join(' | ')
+          }
+        : {
+            homeworld: profile.identity.background,
+            employerAffiliation: profile.identity.role,
+            goal: profile.personality.greatestDesire,
+            notes: profile.personality.hook
+          },
+      attributes: {
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 10
+      },
+      heritage: 'earthling',
+      background: 'Worker',
+      skills: {},
+      background_progress: {},
+      advancement_progress: {
+        generalSkillPoints: 0,
+        nonCombatSkillPoints: 0,
+        skillInvestments: {},
+        attributeBoostCount: 0
+      },
+      character_class: isBeast ? 'warrior' : 'expert',
+      foci: [],
+      level: Math.max(1, Math.floor(profile.combat.hd)),
+      xp: 0,
+      hp: profile.combat.hp,
+      max_hp: profile.combat.hp,
+      system_strain: 0,
+      max_system_strain: 10,
+      rads: 0,
+      max_rads: 10,
+      base_ac: profile.combat.ac,
+      active_conditions: []
+    };
+
+    const { data: insertedCharacter, error: characterError } = await supabase
+      .from('characters')
+      .insert(core)
+      .select()
+      .single();
+
+    if (characterError) {
+      console.error('Failed to save generated NPC character:', characterError);
+      return false;
+    }
+
+    const profileDraft: NpcProfileRecord = {
+      character_id: draft.characterId,
+      campaign_id: this.activeCampaignId,
+      profile,
+      gm_notes: profile.gmNotes,
+      created_by: this.activeUserProfile?.id ?? null
+    };
+
+    const { data: insertedProfile, error: profileError } = await supabase
+      .from('npc_profiles')
+      .insert(profileDraft)
+      .select()
+      .single();
+
+    if (profileError) {
+      await supabase
+        .from('characters')
+        .delete()
+        .eq('id', draft.characterId);
+      console.error('Failed to save generated NPC profile:', profileError);
+      return false;
+    }
+
+    if (insertedCharacter) {
+      this.characters = uniqueById([
+        ...this.characters,
+        this.normalizeCharacterRecord(insertedCharacter as CharacterRecord)
+      ]);
+    }
+
+    if (insertedProfile) {
+      const normalizedProfile = this.normalizeNpcProfileRecord(insertedProfile as NpcProfileRecord);
+      this.npcProfiles = {
+        ...this.npcProfiles,
+        [normalizedProfile.character_id]: normalizedProfile
+      };
+    }
+
+    await this.createCampaignLog(
+      'npc_create',
+      `Generated NPC ${core.name}.`,
+      {
+        characterId: draft.characterId,
+        role: profile.identity.role,
+        kind: profile.kind,
+        combatPreset: profile.combat.label
+      },
+      { table: 'characters', recordId: draft.characterId, before: null }
+    );
+
+    return true;
+  }
+
   async deleteCharacter(characterId: string) {
     const previousCharacter = this.characters.find(character =>
       character.id === characterId
@@ -2281,6 +2555,7 @@ class DatabaseStateManager {
     const previousItems = this.items.filter(item =>
       item.owner_id === characterId
     );
+    const previousNpcProfile = this.npcProfiles[characterId] ?? null;
     const previousActiveUserId = this.activeUserId;
     const previousMemberships = this.memberships.map(membership => ({ ...membership }));
 
@@ -2291,6 +2566,10 @@ class DatabaseStateManager {
 
     this.characters = this.characters.filter(character => character.id !== characterId);
     this.items = this.items.filter(item => item.owner_id !== characterId);
+    if (previousNpcProfile) {
+      const { [characterId]: _removed, ...remainingNpcProfiles } = this.npcProfiles;
+      this.npcProfiles = remainingNpcProfiles;
+    }
     if (this.activeUserId === characterId) this.activeUserId = nextActiveCharacter?.id ?? null;
     this.memberships = this.memberships.map(membership =>
       membership.active_character_id === characterId
@@ -2310,6 +2589,7 @@ class DatabaseStateManager {
     if (membershipError) {
       this.characters = [...this.characters, previousCharacter];
       this.items = [...this.items, ...previousItems];
+      if (previousNpcProfile) this.npcProfiles = { ...this.npcProfiles, [characterId]: previousNpcProfile };
       this.activeUserId = previousActiveUserId;
       this.memberships = previousMemberships;
       console.error('Failed to clear deleted character selections:', membershipError);
@@ -2324,6 +2604,7 @@ class DatabaseStateManager {
     if (itemsError) {
       this.characters = [...this.characters, previousCharacter];
       this.items = [...this.items, ...previousItems];
+      if (previousNpcProfile) this.npcProfiles = { ...this.npcProfiles, [characterId]: previousNpcProfile };
       this.activeUserId = previousActiveUserId;
       this.memberships = previousMemberships;
       console.error('Failed to delete character inventory:', itemsError);
@@ -2338,6 +2619,7 @@ class DatabaseStateManager {
     if (characterError) {
       this.characters = [...this.characters, previousCharacter];
       this.items = [...this.items, ...previousItems];
+      if (previousNpcProfile) this.npcProfiles = { ...this.npcProfiles, [characterId]: previousNpcProfile };
       this.activeUserId = previousActiveUserId;
       this.memberships = previousMemberships;
       console.error('Failed to delete character:', characterError);

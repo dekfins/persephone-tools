@@ -1,3 +1,12 @@
+export type MissionLootRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+
+export interface MissionLootReward {
+  equipmentId: string;
+  quantity: number;
+  rarity: MissionLootRarity;
+  displayName: string;
+}
+
 export interface ActiveMission {
   originName: string;
   targetName: string;
@@ -7,8 +16,10 @@ export interface ActiveMission {
   reqDv: number;
   telemetry: FlightTelemetry; 
   payoutCredits?: number;
+  lootReward?: MissionLootReward;
+  // Legacy fallback for active flights saved before catalog-backed mission rewards.
   lootItem?: string;
-  lootRarity?: string;
+  lootRarity?: MissionLootRarity | string;
 }
 
 export interface GeneratedMission {
@@ -24,7 +35,9 @@ export interface GeneratedMission {
   reqDv: number;
   payoutString: string;
   payoutCredits: number;
-  lootRarity?: string;
+  lootReward?: MissionLootReward;
+  // Legacy fallback for active flights saved before catalog-backed mission rewards.
+  lootRarity?: MissionLootRarity | string;
   lootItem?: string;
   telemetry: any;
 }

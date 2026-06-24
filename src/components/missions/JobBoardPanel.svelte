@@ -21,7 +21,14 @@
   let isScanning = $state(false);
   let activeContract = $state<GeneratedMission | null>(null);
   let upfrontDemand = $state<number>(0);
+  let negotiationError = $state('');
   let targetPoiName = $derived(activeContract ? pois.find(p => p.id === activeContract?.targetPoiId)?.name || activeContract.targetPoiId : '');
+  let contractHasEnoughFuel = $derived(
+    activeContract
+      ? shipState.propulsion.totalDV > 0 &&
+        Number(shipState.propulsion.totalDV.toFixed(2)) >= Number(activeContract.reqDv.toFixed(2))
+      : false
+  );
 
   let accel = $derived.by(() => {
     if (!shipState.blueprint.engine) return 0.05 * 9.81;
@@ -50,6 +57,11 @@
 
   async function signContract() {
     if (!dbState.isGM || !activeContract) return;
+    negotiationError = '';
+    if (!contractHasEnoughFuel) {
+      negotiationError = `INSUFFICIENT FUEL FOR FILED BURN PLAN. AVAILABLE: ${shipState.propulsion.totalDV.toFixed(2)} KM/S. REQUIRED: ${activeContract.reqDv.toFixed(2)} KM/S.`;
+      return;
+    }
 
     // 1. Add negotiated upfront cash to the ship's slush fund
     if (upfrontDemand > 0) {
@@ -66,6 +78,7 @@
       reqDv: activeContract.reqDv,
       telemetry: activeContract.telemetry,
       payoutCredits: activeContract.payoutCredits,
+      lootReward: activeContract.lootReward,
       lootItem: activeContract.lootItem,
       lootRarity: activeContract.lootRarity
     });
@@ -105,7 +118,10 @@
       <JobResults 
         {jobs} 
         {isScanning} 
-        onAccept={(selectedJob) => activeContract = selectedJob} 
+        onAccept={(selectedJob) => {
+          negotiationError = '';
+          activeContract = selectedJob;
+        }} 
       />
     </div>
   </div>
@@ -129,12 +145,16 @@
             <input type="number" min="0" bind:value={upfrontDemand} class="terminal-input num-input" style="width: 120px;" />
           </div>
 
+          {#if negotiationError}
+            <div class="terminal-alert error" style="margin-bottom: 1rem;">{negotiationError}</div>
+          {/if}
+
           <div class="action-buttons" style="flex-direction: row; gap: 1rem;">
             <button class="btn-action btn-red" onclick={() => activeContract = null}>
               CANCEL
             </button>
-            <button class="btn-action btn-green" onclick={signContract}>
-              SIGN & LAUNCH
+            <button class="btn-action btn-green" disabled={!contractHasEnoughFuel} onclick={signContract}>
+              {contractHasEnoughFuel ? 'SIGN & LAUNCH' : 'INSUFFICIENT FUEL'}
             </button>
           </div>
 

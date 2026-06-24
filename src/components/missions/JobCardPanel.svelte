@@ -13,6 +13,8 @@
   } = $props();
 
   let targetPoiName = $derived(pois.find(p => p.id === job.targetPoiId)?.name || job.targetPoiId);
+  let availableDv = $derived(shipState.propulsion.totalDV);
+  let hasEnoughFuel = $derived(availableDv > 0 && Number(availableDv.toFixed(2)) >= Number(job.reqDv.toFixed(2)));
 </script>
 
 <TerminalPanel title={targetPoiName.toUpperCase()} extraClass="job-card">
@@ -32,10 +34,16 @@
   
   <div class="card-stat-row">
     <span>DV REQUIRED:</span>
-    <span style="color: {job.reqDv > shipState.propulsion.totalDV ? 'var(--accent-red)' : 'var(--ui-cyan)'}">
+    <span style="color: {!hasEnoughFuel ? 'var(--accent-red)' : 'var(--ui-cyan)'}">
       {job.reqDv.toFixed(2)} km/s
     </span>
   </div>
+
+  {#if !hasEnoughFuel}
+    <div class="terminal-alert error fuel-alert">
+      INSUFFICIENT FUEL FOR FILED BURN PLAN. AVAILABLE: {availableDv.toFixed(2)} KM/S
+    </div>
+  {/if}
 
   <div class="card-stat-row"><span>CLIENT:</span><span class="text-highlight">{job.client.toUpperCase()}</span></div>
   <div class="card-stat-row"><span>ADVERSARY:</span><span class="text-highlight">{job.adversary.toUpperCase()}</span></div>
@@ -48,7 +56,11 @@
     <span>PAYOUT:</span>
     <span style="color: #ffffff; font-weight: bold; text-align: right;">
       {job.payoutCredits.toLocaleString()} CR
-      {#if job.lootItem}
+      {#if job.lootReward}
+        <br/>
+        <span style="font-weight: normal;">+ </span>
+        <span class="loot-{job.lootReward.rarity}">{job.lootReward.displayName.toUpperCase()}</span>
+      {:else if job.lootItem}
         <br/>
         <span style="font-weight: normal;">+ </span>
         <span class="loot-{job.lootRarity}">{job.lootItem.toUpperCase()}</span>
@@ -59,9 +71,10 @@
   <button 
     class="btn-action btn-compact" 
     style="width: 100%; margin-top: 1rem;"
+    disabled={!hasEnoughFuel}
     onclick={() => onAccept(job)}
   >
-    ACCEPT CONTRACT
+    {hasEnoughFuel ? 'ACCEPT CONTRACT' : 'INSUFFICIENT FUEL'}
   </button>
 </TerminalPanel>
 
@@ -80,9 +93,15 @@
     text-align: right;
   }
 
+  .fuel-alert {
+    margin: 0.75rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
   :global(.job-card h3) {
     font-size: 1rem !important; 
-    color: var(--ui-cyan) !important;
+    color: var(--accent-amber) !important;
   }
 
   .loot-common { color: var(--loot-common); }

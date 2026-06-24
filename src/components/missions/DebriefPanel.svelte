@@ -1,31 +1,132 @@
 <script lang="ts">
-  import { crewState } from "../../lib/states/crewState.svelte";
   import { campaignState } from "../../lib/states/campaignState.svelte";
   import { dbState } from "../../lib/states/dbState.svelte";
   import poisData from '../../data/celestial/pois.json';
-  import type { PoiDef } from '../../lib/types';
+  import type { ActiveMission, CharacterRecord, PoiDef } from '../../lib/types';
+
+  type PayoutRecipientShare = {
+    characterId: string;
+    name: string;
+    amount: number;
+  };
+
+  type PayoutLogDetails = {
+    missionTarget: {
+      id: string;
+      name: string;
+    };
+    totalPayout: number;
+    shipCut: number;
+    personalCut: number;
+    recipients: PayoutRecipientShare[];
+    loot: {
+      item: string;
+      rarity: string;
+      equipmentId?: string;
+      quantity?: number;
+    } | null;
+    summary: string;
+  };
 
   const pois = poisData as PoiDef[];
   let targetPoiName = $derived(campaignState.completedMission ? pois.find(p => p.id === campaignState.completedMission?.targetName)?.name || campaignState.completedMission.targetName : '');
+  let payoutRecipients = $derived.by<CharacterRecord[]>(() => {
+    if (dbState.activeCampaignRosterCharacters.length > 0) return dbState.activeCampaignRosterCharacters;
+    return dbState.activeCharacter ? [dbState.activeCharacter] : [];
+  });
+  let hasCashPayout = $derived((campaignState.completedMission?.payoutCredits ?? 0) > 0);
+  let hasLootPayout = $derived(Boolean(
+    campaignState.completedMission?.lootReward ||
+    (campaignState.completedMission?.lootItem && campaignState.completedMission?.lootRarity)
+  ));
+  let completedLootDisplay = $derived(
+    campaignState.completedMission?.lootReward?.displayName ??
+    campaignState.completedMission?.lootItem ??
+    ''
+  );
+
+  function formatCredits(amount: number) {
+    return `${amount.toLocaleString()} CR`;
+  }
+
+  function getPoiName(poiId: string) {
+    return pois.find(poi => poi.id === poiId)?.name || poiId;
+  }
+
+  function getMissionLootDetails(mission: ActiveMission): PayoutLogDetails['loot'] {
+    if (mission.lootReward) {
+      return {
+        item: mission.lootReward.displayName,
+        rarity: mission.lootReward.rarity,
+        equipmentId: mission.lootReward.equipmentId,
+        quantity: mission.lootReward.quantity
+      };
+    }
+
+    if (mission.lootItem && mission.lootRarity) {
+      return { item: mission.lootItem, rarity: mission.lootRarity };
+    }
+
+    return null;
+  }
+
+  function buildPayoutLogDetails(mission: ActiveMission, recipients: CharacterRecord[]): PayoutLogDetails {
+    const totalPayout = Math.max(0, Math.floor(mission.payoutCredits ?? 0));
+    const shipCut = Math.floor(totalPayout * 0.5);
+    const personalCut = totalPayout - shipCut;
+    const crewShare = recipients.length > 0
+      ? Math.floor(personalCut / recipients.length)
+      : 0;
+    const remainder = recipients.length > 0 ? personalCut % recipients.length : 0;
+    const recipientShares = personalCut > 0
+      ? recipients.map((recipient, index) => ({
+          characterId: recipient.id,
+          name: recipient.name,
+          amount: crewShare + (index < remainder ? 1 : 0)
+        }))
+      : [];
+    const loot = getMissionLootDetails(mission);
+    const cashSummary = totalPayout > 0
+      ? `${formatCredits(totalPayout)} total; ${formatCredits(shipCut)} to ship; ${formatCredits(personalCut)} ${recipients.length > 0 ? `split across ${recipients.length} crew` : 'not assigned because no crew received personal shares'}`
+      : 'no cash payout';
+    const lootSummary = loot ? `; salvage: ${loot.item} (${loot.rarity})` : '';
+
+    return {
+      missionTarget: {
+        id: mission.targetName,
+        name: getPoiName(mission.targetName)
+      },
+      totalPayout,
+      shipCut,
+      personalCut,
+      recipients: recipientShares,
+      loot,
+      summary: `Mission payout claimed: ${cashSummary}${lootSummary}.`
+    };
+  }
 
   async function claimReward() {
     if (!dbState.isGM || !campaignState.completedMission) return;
     
     const mission = campaignState.completedMission;
-    const totalPayout = mission.payoutCredits || 0;
-    const shipCut = Math.floor(totalPayout * 0.5);
-    const personalCut = totalPayout - shipCut;
+    const payoutDetails = buildPayoutLogDetails(mission, payoutRecipients);
     
-    // 1. Distribute the cash (50% to ship, 50% split among crew)
-    if (shipCut > 0) {
-      await dbState.updateShipCredits(shipCut);
+    // 1. Distribute the cash (50% to ship, 50% split among rostered crew)
+    if (payoutDetails.shipCut > 0) {
+      await dbState.updateShipCredits(payoutDetails.shipCut);
     }
-    if (personalCut > 0 && dbState.activeCharacter) {
-      await dbState.updatePersonalCredits(dbState.activeCharacter.id, personalCut);
+    if (payoutDetails.personalCut > 0 && payoutDetails.recipients.length > 0) {
+      for (const recipient of payoutDetails.recipients) {
+        if (recipient.amount > 0) {
+          await dbState.updatePersonalCredits(recipient.characterId, recipient.amount);
+        }
+      }
     }
 
     // 2. Spawn the loot directly into the Cloud Inventory!
-    if (mission.lootItem && mission.lootRarity) {
+    if (mission.lootReward) {
+      await dbState.spawnCatalogItem(mission.lootReward.equipmentId, mission.lootReward.quantity);
+    } else if (mission.lootItem && mission.lootRarity) {
       await dbState.spawnItem(mission.lootItem, "Trade Good", mission.lootRarity, 1, 1);
     }
 
@@ -34,10 +135,25 @@
 
     // 4. Tell the cloud the active flight is officially over
     await dbState.syncTimelineToCloud();
+
+    // 5. Record one high-level payout summary as the newest campaign log event.
+    await dbState.createCampaignLog(
+      'mission_payout',
+      payoutDetails.summary,
+      {
+        missionTarget: payoutDetails.missionTarget,
+        totalPayout: payoutDetails.totalPayout,
+        shipCut: payoutDetails.shipCut,
+        personalCut: payoutDetails.personalCut,
+        recipients: payoutDetails.recipients,
+        loot: payoutDetails.loot
+      },
+      null
+    );
   }
 </script>
 
-{#if dbState.isGM && campaignState.completedMission}
+{#if dbState.isGM && campaignState.completedMission && (hasCashPayout || hasLootPayout)}
   <div class="modal-backdrop">
     <div class="modal-content">
       
@@ -49,23 +165,27 @@
         <span class="info-value">{targetPoiName.toUpperCase()}</span>
       </div>
 
-      <div class="info-row payout-row">
-        <span>TOTAL PAYOUT:</span>
-        <span class="payout-value">
-          {campaignState.completedMission.payoutCredits?.toLocaleString()} CR
-        </span>
-      </div>
-
-      {#if campaignState.completedMission.lootItem}
-        <div class="loot-box">
-          <span class="loot-label">SALVAGE SECURED:</span>
-          <span class="info-value">{campaignState.completedMission.lootItem.toUpperCase()}</span>
+      {#if hasCashPayout}
+        <div class="info-row payout-row">
+          <span>TOTAL PAYOUT:</span>
+          <span class="payout-value">
+            {campaignState.completedMission.payoutCredits?.toLocaleString()} CR
+          </span>
         </div>
       {/if}
 
-      <p class="flavor-text">
-        Funds will be split evenly. 50% allocated to Ship Maintenance Slush Fund. The remaining 50% has been wired to individual crew accounts.
-      </p>
+      {#if hasLootPayout}
+        <div class="loot-box">
+          <span class="loot-label">SALVAGE SECURED:</span>
+          <span class="info-value">{completedLootDisplay.toUpperCase()}</span>
+        </div>
+      {/if}
+
+      {#if hasCashPayout}
+        <p class="flavor-text">
+          50% allocated to Ship Maintenance Slush Fund. The remaining 50% will be split across {payoutRecipients.length > 0 ? `${payoutRecipients.length} rostered crew account${payoutRecipients.length === 1 ? '' : 's'}` : 'the available crew roster'}.
+        </p>
+      {/if}
 
       <button class="btn-action btn-claim" onclick={claimReward}>
         COLLECT PAYOUT

@@ -55,47 +55,58 @@ export const shipCodec = {
     URL.revokeObjectURL(url);
   },
 
-  importFromFile(file: File, state: MasterShipState = shipState) {
-    const reader = new FileReader();
+  importFromFile(file: File, state: MasterShipState = shipState): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
 
-      if (!content.startsWith(FILE_HEADER)) {
-        alert("CRITICAL ERROR: Corrupted or invalid .deimos file.");
-        return;
-      }
+        if (!content.startsWith(FILE_HEADER)) {
+          const error = new Error("CRITICAL ERROR: Corrupted or invalid .deimos file.");
+          alert(error.message);
+          reject(error);
+          return;
+        }
 
-      try {
-        const encodedData = content.substring(FILE_HEADER.length);
-        const jsonStr = decodeURIComponent(atob(encodedData));
-        const payload = JSON.parse(jsonStr);
+        try {
+          const encodedData = content.substring(FILE_HEADER.length);
+          const jsonStr = decodeURIComponent(atob(encodedData));
+          const payload = JSON.parse(jsonStr);
 
-        // 1. Load Blueprint Data
-        state.blueprint.name = payload.name;
-        state.blueprint.hull = payload.hull;
-        state.blueprint.reactor = payload.reactor;
-        state.blueprint.engine = payload.engine;
-        state.blueprint.components = payload.components;
+          // 1. Load Blueprint Data
+          state.blueprint.name = payload.name;
+          state.blueprint.hull = payload.hull;
+          state.blueprint.reactor = payload.reactor;
+          state.blueprint.engine = payload.engine;
+          state.blueprint.components = payload.components;
 
-        // 2. Load LIVE Tracker Data (With safety fallbacks for old save files!)
-        // If an old save file doesn't have currentHealth, it defaults to max hull health
-        state.vitals.currentHealth = payload.currentHealth ?? state.blueprint.hull.health;
-        
-        // If it doesn't have RI, default to max RI
-        state.vitals.currentRI = payload.currentRI ?? (state.blueprint.reactor?.reactorIntegrity || 6);
-        
-        state.vitals.activeConditions = payload.activeConditions || [];
-        state.propulsion.activeFuel = payload.activeFuel || null;
-        state.propulsion.activeMode = payload.activeMode || null;
-        state.propulsion.currentFuel = payload.currentFuel || {};
+          // 2. Load LIVE Tracker Data (With safety fallbacks for old save files!)
+          // If an old save file doesn't have currentHealth, it defaults to max hull health
+          state.vitals.currentHealth = payload.currentHealth ?? state.blueprint.hull.health;
+          
+          // If it doesn't have RI, default to max RI
+          state.vitals.currentRI = payload.currentRI ?? (state.blueprint.reactor?.reactorIntegrity || 6);
+          
+          state.vitals.activeConditions = payload.activeConditions || [];
+          state.propulsion.activeFuel = payload.activeFuel || null;
+          state.propulsion.activeMode = payload.activeMode || null;
+          state.propulsion.currentFuel = payload.currentFuel || {};
+          resolve();
 
-      } catch (error) {
-        alert("DECRYPTION FAILED: The file archive has been tampered with.");
-        console.error(error);
-      }
-    };
+        } catch (error) {
+          alert("DECRYPTION FAILED: The file archive has been tampered with.");
+          console.error(error);
+          reject(error);
+        }
+      };
 
-    reader.readAsText(file);
+      reader.onerror = () => {
+        const error = reader.error ?? new Error("Failed to read ship archive.");
+        reject(error);
+      };
+
+      reader.readAsText(file);
+    });
   }
 };

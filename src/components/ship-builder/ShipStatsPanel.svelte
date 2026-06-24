@@ -34,11 +34,14 @@
 
   let fileInput: HTMLInputElement;
 
-  function handleImport(event: Event) {
+  async function handleImport(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      shipCodec.importFromFile(input.files[0], localState);
-      input.value = ''; 
+      try {
+        await shipCodec.importFromFile(input.files[0], localState);
+      } finally {
+        input.value = ''; 
+      }
     }
   }
 </script>
