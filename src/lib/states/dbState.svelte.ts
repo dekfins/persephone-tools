@@ -1087,6 +1087,14 @@ class DatabaseStateManager {
     const npcProfilesRequest = this.isGM
       ? supabase.from('npc_profiles').select('*').eq('campaign_id', campaignId)
       : Promise.resolve({ data: [], error: null });
+    const logsRequest = this.isGM
+      ? supabase
+        .from('campaign_log_events')
+        .select('*')
+        .eq('campaign_id', campaignId)
+        .order('event_time', { ascending: false })
+        .limit(100)
+      : Promise.resolve({ data: [], error: null });
 
     const [campaignCharactersResult, rosterCharactersResult, rosterItemsResult, itemsResult, ledgerResult, logsResult, npcProfilesResult] = await Promise.all([
       supabase.from('characters').select('*').eq('campaign_id', campaignId),
@@ -1094,12 +1102,7 @@ class DatabaseStateManager {
       rosterItemsRequest,
       supabase.from('items').select('*').eq('campaign_id', campaignId),
       supabase.from('ship_ledger').select('*').eq('campaign_id', campaignId).maybeSingle(),
-      supabase
-        .from('campaign_log_events')
-        .select('*')
-        .eq('campaign_id', campaignId)
-        .order('event_time', { ascending: false })
-        .limit(100),
+      logsRequest,
       npcProfilesRequest
     ]);
 
@@ -1132,8 +1135,10 @@ class DatabaseStateManager {
 
     if (logsResult.data) {
       this.campaignLogEvents = logsResult.data as CampaignLogEvent[];
+    } else if (!this.isGM) {
+      this.campaignLogEvents = [];
     }
-    if (logsResult.error) console.error('Error loading campaign logs:', logsResult.error);
+    if (logsResult.error && this.isGM) console.error('Error loading campaign logs:', logsResult.error);
 
     if (npcProfilesResult.data) {
       const profiles = (npcProfilesResult.data as NpcProfileRecord[]).map((record) => this.normalizeNpcProfileRecord(record));
@@ -1718,6 +1723,11 @@ class DatabaseStateManager {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'campaign_log_events', filter: campaignFilter },
         (payload) => {
+          if (!this.isGM) {
+            this.campaignLogEvents = [];
+            return;
+          }
+
           if (payload.eventType === 'INSERT') {
             const incoming = payload.new as CampaignLogEvent;
             if (!this.campaignLogEvents.some(event => event.id === incoming.id)) {

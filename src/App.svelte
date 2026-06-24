@@ -27,7 +27,7 @@
   
   let showToast = $state(false);
   let isHydrated = $state(false); // The gatekeeper
-  let showCampaignLog = $derived(authState.isSignedIn && Boolean(dbState.activeCampaignId) && $router?.path !== '/login');
+  let showCampaignLog = $derived(authState.isSignedIn && Boolean(dbState.activeCampaignId) && dbState.isGM && $router?.path !== '/login');
   let showBootScreen = $derived(!isHydrated || authState.isInitializing);
   let bootStatus = $derived(!isHydrated ? 'RESTORING LOCAL SESSION' : 'SYNCING CREW DATA');
 
