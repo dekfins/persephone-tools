@@ -23,6 +23,9 @@ import type {
   BackgroundResolvedChoice,
   BackgroundTableName,
   CharacterCreationArchive,
+  GmCharacterNumericStats,
+  GmSessionZeroAttributeInput,
+  GmSessionZeroAttributePreview,
   CharacterLevelUpPayload,
   CharacterRecord,
   FinalizeCharacterArchiveResult,
@@ -40,6 +43,7 @@ import type {
   Skill
 } from '../types';
 import {
+  ALL_ATTRIBUTES,
   getAttributeChoices,
   getEquipmentById,
   getEquipmentDisplayName,
@@ -73,6 +77,7 @@ const FOCI = foci as FocusDefinitions;
 const SHIP_INVENTORY_OWNER_ID = 'SHIP_INVENTORY';
 const CONDITION_CATEGORIES = ['combat', 'hazard', 'custom'] as const;
 const DEFAULT_CAMPAIGN_ID = '11111111-1111-4111-8111-111111111111';
+const REALTIME_RECOVERY_TIMEOUT_MS = 15_000;
 
 type FinalizeInventoryDraft = {
   equipmentId: string;
@@ -116,6 +121,76 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function isCleanRealtimeClosure(error: unknown) {
+  const cause = error instanceof Error ? error.cause : null;
+  return isRecord(cause) && cause.code === 1001 && cause.wasClean === true;
+}
+
+function cloneAttributes(attributes: CharacterRecord['attributes']) {
+  return { ...attributes };
+}
+
+function isAttributeKey(value: string): value is AttributeKey {
+  return ALL_ATTRIBUTES.includes(value as AttributeKey);
+}
+
+function clampAttributeScore(value: number) {
+  return Math.max(3, Math.min(18, Math.round(value)));
+}
+
+function hasValidAttributes(attributes: CharacterRecord['attributes']) {
+  return ALL_ATTRIBUTES.every((attribute) => {
+    const value = attributes[attribute];
+    return Number.isInteger(value) && value >= 3 && value <= 18;
+  });
+}
+
+function getNumericStatSnapshot(character: CharacterRecord): GmCharacterNumericStats {
+  return {
+    attributes: cloneAttributes(character.attributes),
+    hp: character.hp,
+    max_hp: character.max_hp,
+    system_strain: character.system_strain,
+    max_system_strain: character.max_system_strain,
+    rads: character.rads,
+    max_rads: character.max_rads,
+    base_ac: character.base_ac,
+    xp: character.xp,
+    personal_credits: character.personal_credits
+  };
+}
+
+function hasValidNumericStats(stats: GmCharacterNumericStats) {
+  const values = [
+    stats.hp,
+    stats.max_hp,
+    stats.system_strain,
+    stats.max_system_strain,
+    stats.rads,
+    stats.max_rads,
+    stats.base_ac,
+    stats.xp,
+    stats.personal_credits
+  ];
+
+  return (
+    hasValidAttributes(stats.attributes) &&
+    values.every(Number.isInteger) &&
+    stats.max_hp >= 1 &&
+    stats.hp >= 0 &&
+    stats.hp <= stats.max_hp &&
+    stats.max_system_strain >= 0 &&
+    stats.system_strain >= 0 &&
+    stats.system_strain <= stats.max_system_strain &&
+    stats.max_rads >= 0 &&
+    stats.rads >= 0 &&
+    stats.rads <= stats.max_rads &&
+    stats.base_ac >= 0 &&
+    stats.xp >= 0 &&
+    stats.personal_credits >= 0
+  );
+}
+
 function uniqueById<T extends { id: string }>(records: T[]) {
   return [...new Map(records.map(record => [record.id, record])).values()];
 }
@@ -154,6 +229,8 @@ class DatabaseStateManager {
   #ledgerRefreshInterval: ReturnType<typeof setInterval> | null = null;
   #isRefreshingLedger = false;
   #suppressRealtimeWarningsUntil = 0;
+  #realtimeRecoveryTimeout: ReturnType<typeof setTimeout> | null = null;
+  #realtimeNeedsReconciliation = false;
 
   // --- RELATIONAL GETTERS ---
   get activeCampaign() {
@@ -638,11 +715,28 @@ class DatabaseStateManager {
 
   stopCampaignRealtime() {
     this.#suppressRealtimeWarningsUntil = Date.now() + 3000;
+    this.clearRealtimeRecoveryTimeout();
+    this.#realtimeNeedsReconciliation = false;
     if (this.#subscription) {
       void supabase.removeChannel(this.#subscription);
       this.#subscription = null;
     }
     this.stopLedgerRefresh();
+  }
+
+  clearRealtimeRecoveryTimeout() {
+    if (!this.#realtimeRecoveryTimeout) return;
+    clearTimeout(this.#realtimeRecoveryTimeout);
+    this.#realtimeRecoveryTimeout = null;
+  }
+
+  async reconcileAfterRealtimeRecovery(campaignId: string, channel: RealtimeChannel) {
+    await this.loadData();
+
+    if (this.#subscription !== channel) return;
+    if (this.activeCampaignId !== campaignId) {
+      this.subscribeToChanges();
+    }
   }
 
   applyLedgerState(ledgerData: Record<string, any>) {
@@ -1646,13 +1740,14 @@ class DatabaseStateManager {
     }
   }
 
-  subscribeToChanges() {
+  subscribeToChanges(reconcileOnSubscribe = false) {
     if (!this.activeCampaignId) return;
     this.stopCampaignRealtime();
 
-    const campaignFilter = `campaign_id=eq.${this.activeCampaignId}`;
-    this.#subscription = supabase
-      .channel(`campaign-db-changes-${this.activeCampaignId}-${Date.now()}`)
+    const campaignId = this.activeCampaignId;
+    const campaignFilter = `campaign_id=eq.${campaignId}`;
+    const channel = supabase
+      .channel(`campaign-db-changes-${campaignId}-${Date.now()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'items', filter: campaignFilter },
@@ -1828,7 +1923,7 @@ class DatabaseStateManager {
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'campaigns', filter: `id=eq.${this.activeCampaignId}` },
+        { event: 'UPDATE', schema: 'public', table: 'campaigns', filter: `id=eq.${campaignId}` },
         (payload) => {
           const incoming = payload.new as CampaignRecord;
           const index = this.campaigns.findIndex(campaign => campaign.id === incoming.id);
@@ -1836,18 +1931,40 @@ class DatabaseStateManager {
         }
       )
       .subscribe((status, error) => {
+        if (this.#subscription !== channel || this.activeCampaignId !== campaignId) return;
+
         if (status === 'SUBSCRIBED') {
-          void this.refreshShipLedgerFromCloud();
+          this.clearRealtimeRecoveryTimeout();
+          const shouldReconcile = this.#realtimeNeedsReconciliation;
+          this.#realtimeNeedsReconciliation = false;
+
+          if (shouldReconcile) {
+            void this.reconcileAfterRealtimeRecovery(campaignId, channel);
+          } else {
+            void this.refreshShipLedgerFromCloud();
+          }
         }
 
+        if (status !== 'CHANNEL_ERROR' && status !== 'TIMED_OUT' && status !== 'CLOSED') return;
+
+        this.#realtimeNeedsReconciliation = true;
+        this.clearRealtimeRecoveryTimeout();
+        this.#realtimeRecoveryTimeout = setTimeout(() => {
+          if (this.#subscription !== channel || this.activeCampaignId !== campaignId) return;
+          console.warn('Campaign realtime did not recover; recreating subscription.');
+          this.subscribeToChanges(true);
+        }, REALTIME_RECOVERY_TIMEOUT_MS);
+
         if (
-          (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') &&
+          !isCleanRealtimeClosure(error) &&
           Date.now() > this.#suppressRealtimeWarningsUntil
         ) {
           console.warn('Campaign realtime subscription status:', status, error);
         }
       });
 
+    this.#subscription = channel;
+    this.#realtimeNeedsReconciliation = reconcileOnSubscribe;
     this.startLedgerRefresh();
   }
 
@@ -3371,6 +3488,183 @@ class DatabaseStateManager {
       attributes: { ...progress.baseline.attributes },
       background_progress: {}
     });
+
+    return true;
+  }
+
+  previewSessionZeroAttributes(
+    characterId: string,
+    input: GmSessionZeroAttributeInput
+  ): GmSessionZeroAttributePreview | null {
+    const character = this.getCharacterById(characterId);
+    if (!character || !hasValidAttributes(input.rawAttributes)) return null;
+    if (input.setTo14Attribute && !ALL_ATTRIBUTES.includes(input.setTo14Attribute)) return null;
+
+    const rawAttributes = cloneAttributes(input.rawAttributes);
+    const baseAttributes = cloneAttributes(rawAttributes);
+    if (input.setTo14Attribute) baseAttributes[input.setTo14Attribute] = 14;
+
+    const finalAttributes = cloneAttributes(baseAttributes);
+    const growthBonuses = ALL_ATTRIBUTES.reduce((bonuses, attribute) => {
+      bonuses[attribute] = 0;
+      return bonuses;
+    }, {} as CharacterRecord['attributes']);
+    const progress = character.background_progress ?? {};
+    const choices = (progress.choices ?? []).map((grant) => {
+      const target = grant.resolvedAttribute ??
+        (grant.result.type === 'stat' && isAttributeKey(String(grant.result.target))
+          ? grant.result.target as AttributeKey
+          : undefined);
+
+      if (grant.entry.type !== 'stat' || !target) {
+        return {
+          ...grant,
+          entry: { ...grant.entry },
+          result: { ...grant.result }
+        };
+      }
+
+      const before = finalAttributes[target];
+      const after = clampAttributeScore(before + grant.entry.bonus);
+      finalAttributes[target] = after;
+      growthBonuses[target] += after - before;
+
+      return {
+        ...grant,
+        entry: { ...grant.entry },
+        resolvedAttribute: target,
+        result: {
+          type: 'stat' as const,
+          target,
+          before,
+          after
+        }
+      };
+    });
+
+    return {
+      rawAttributes,
+      baseAttributes,
+      growthBonuses,
+      finalAttributes,
+      backgroundProgress: {
+        ...progress,
+        baseline: {
+          skills: { ...(progress.baseline?.skills ?? {}) },
+          attributes: cloneAttributes(baseAttributes)
+        },
+        choices
+      }
+    };
+  }
+
+  async finalizeSessionZeroAttributes(characterId: string, input: GmSessionZeroAttributeInput) {
+    if (!this.activeCampaignId || !this.isGM) return false;
+    const character = this.activeCampaignRosterCharacters.find(entry => entry.id === characterId);
+    if (!character) return false;
+
+    const preview = this.previewSessionZeroAttributes(characterId, input);
+    if (!preview) return false;
+
+    const previousStats = getNumericStatSnapshot(character);
+    const nextMaxSystemStrain = preview.finalAttributes.con;
+    const nextSystemStrain = Math.min(character.system_strain, nextMaxSystemStrain);
+    const { data, error } = await supabase.rpc('gm_finalize_player_attributes', {
+      target_campaign_id: this.activeCampaignId,
+      target_character_id: characterId,
+      final_attributes: preview.finalAttributes,
+      next_background_progress: preview.backgroundProgress,
+      next_max_system_strain: nextMaxSystemStrain,
+      next_system_strain: nextSystemStrain
+    });
+
+    if (error) {
+      console.error('GM session-0 attribute finalization failed:', error);
+      return false;
+    }
+
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) return false;
+    const updatedCharacter = this.normalizeCharacterRecord(row as CharacterRecord);
+    const index = this.characters.findIndex(entry => entry.id === characterId);
+    if (index !== -1) this.characters[index] = updatedCharacter;
+
+    await this.createCampaignLog(
+      'character_attribute_finalize',
+      `Finalized session-0 attributes for ${character.name}.`,
+      {
+        characterId,
+        rawAttributes: preview.rawAttributes,
+        setTo14Attribute: input.setTo14Attribute ?? null,
+        growthBonuses: preview.growthBonuses,
+        previous: previousStats,
+        updated: getNumericStatSnapshot(updatedCharacter)
+      },
+      null
+    );
+
+    return true;
+  }
+
+  async updateCampaignPlayerStats(characterId: string, stats: GmCharacterNumericStats) {
+    if (!this.activeCampaignId || !this.isGM || !hasValidNumericStats(stats)) return false;
+    const character = this.activeCampaignRosterCharacters.find(entry => entry.id === characterId);
+    if (!character) return false;
+
+    const previousStats = getNumericStatSnapshot(character);
+    const changedFields = ([
+      'attributes',
+      'hp',
+      'max_hp',
+      'system_strain',
+      'max_system_strain',
+      'rads',
+      'max_rads',
+      'base_ac',
+      'xp',
+      'personal_credits'
+    ] as const).filter((field) => {
+      return JSON.stringify(previousStats[field]) !== JSON.stringify(stats[field]);
+    });
+    if (changedFields.length === 0) return true;
+
+    const { data, error } = await supabase.rpc('gm_update_player_numeric_stats', {
+      target_campaign_id: this.activeCampaignId,
+      target_character_id: characterId,
+      next_attributes: stats.attributes,
+      next_hp: stats.hp,
+      next_max_hp: stats.max_hp,
+      next_system_strain: stats.system_strain,
+      next_max_system_strain: stats.max_system_strain,
+      next_rads: stats.rads,
+      next_max_rads: stats.max_rads,
+      next_base_ac: stats.base_ac,
+      next_xp: stats.xp,
+      next_personal_credits: stats.personal_credits
+    });
+
+    if (error) {
+      console.error('GM character stat override failed:', error);
+      return false;
+    }
+
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) return false;
+    const updatedCharacter = this.normalizeCharacterRecord(row as CharacterRecord);
+    const index = this.characters.findIndex(entry => entry.id === characterId);
+    if (index !== -1) this.characters[index] = updatedCharacter;
+
+    await this.createCampaignLog(
+      'character_stats_override',
+      `Overrode ${changedFields.length} numeric field${changedFields.length === 1 ? '' : 's'} for ${character.name}.`,
+      {
+        characterId,
+        changedFields,
+        previous: previousStats,
+        updated: getNumericStatSnapshot(updatedCharacter)
+      },
+      null
+    );
 
     return true;
   }

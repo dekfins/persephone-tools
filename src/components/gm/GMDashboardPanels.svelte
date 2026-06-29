@@ -34,7 +34,7 @@
     {
       id: 'character-editor',
       label: 'CHARACTER EDITOR',
-      description: 'Credits and radiation overrides.'
+      description: 'Session-0 attributes and numeric player overrides.'
     },
     {
       id: 'cargo-spawner',

@@ -12,6 +12,32 @@ export interface Attributes {
 
 export type AttributeKey = keyof Attributes;
 
+export interface GmSessionZeroAttributeInput {
+  rawAttributes: Attributes;
+  setTo14Attribute?: AttributeKey;
+}
+
+export interface GmSessionZeroAttributePreview {
+  rawAttributes: Attributes;
+  baseAttributes: Attributes;
+  growthBonuses: Attributes;
+  finalAttributes: Attributes;
+  backgroundProgress: BackgroundProgress;
+}
+
+export interface GmCharacterNumericStats {
+  attributes: Attributes;
+  hp: number;
+  max_hp: number;
+  system_strain: number;
+  max_system_strain: number;
+  rads: number;
+  max_rads: number;
+  base_ac: number;
+  xp: number;
+  personal_credits: number;
+}
+
 export type Skill = 
   | 'Administer'
   | 'Connect'
