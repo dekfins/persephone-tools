@@ -166,8 +166,10 @@ export function solveTrajectory(p1: PoiDef, p2: PoiDef, day: number, accel: numb
   let tCoast = 0;
   let dAccel = 0.5 * accel * Math.pow(tAccel, 2);
   
-  // Total trip DV combines the baseline intercept push + the speed matching injection delta-v
-  const totalDV = ((vMax * 2) + relVel) / 1000;
+  // The acceleration/deceleration profile already represents the full transit
+  // budget. Orbital velocity is a vector boundary condition, not an additional
+  // scalar delta-v surcharge.
+  const totalDV = (vMax * 2) / 1000;
   let actualTripDv = totalDV;
   let realisticT = tSec;
 
@@ -177,12 +179,8 @@ export function solveTrajectory(p1: PoiDef, p2: PoiDef, day: number, accel: numb
       dist = Math.sqrt(Math.pow(s2_f.x - s1.x, 2) + Math.pow(s2_f.y - s1.y, 2));
       relVel = Math.sqrt(Math.pow(s2_f.vx - s1.vx, 2) + Math.pow(s2_f.vy - s1.vy, 2));
       
-      let transitDv = (limitDV * 1000) - relVel;
-      // If we don't have enough dV to even match velocity, we don't fail by returning null.
-      // We let actualTripDv remain at totalDV so the UI correctly reports INSUFFICIENT DELTA-V.
+      const transitDv = limitDV * 1000;
       if (transitDv > 0) {
-        if (transitDv < 10) transitDv = 10; 
-
         vMax = transitDv / 2;
         tAccel = vMax / accel;
         dAccel = 0.5 * accel * Math.pow(tAccel, 2);
@@ -243,15 +241,13 @@ export function getTransitTelemetry(elapsedDays: number, telemetry: any) {
   const trueTotalDist = (2 * m.sAccel) + (m.vMax * m.tCoast);
   const fraction = Math.max(0, Math.min(1, d / trueTotalDist));
   
-  // Linearly bleed down remaining matching budget along the profile
   const totalPropulsionDv = (m.vMax * 2) / 1000;
   const remainingPropulsionDv = Math.max(0, totalPropulsionDv - (dvSpent / 1000));
-  const remainingMatchingDv = (m.relVel / 1000) * (1 - fraction);
 
   return {
     fraction,
     currentVelocityKM: currentVel / 1000, 
-    remainingDvKM: remainingPropulsionDv + remainingMatchingDv
+    remainingDvKM: remainingPropulsionDv
   };
 }
 
